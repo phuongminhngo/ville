@@ -737,7 +737,7 @@ window.OPT='combo';const SM0=true,CB=true;
    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.computeVertexNormals();return g;};
  const rmat=new THREE.MeshStandardMaterial({color:0x23406e,roughness:.2,metalness:.2,emissive:0x0d1a36,emissiveIntensity:.45,side:THREE.DoubleSide});
  const river=new THREE.Mesh(ribbon(true,.02),rmat);window.CITY.RV=RV;river.receiveShadow=true;scene.add(river);
- const RES=[[11.2,-1.4,2.4,1.0],[7.6,3.9,1.5,1.5],[4.6,5.0,1.9,1.5],[-16.5,.3,2.6,.7],[-6,6,2.4,1.2],[7,-3.8,1.9,.9],[-5,-10,1.6,1.4],[4,-8.8,.5,.5],[-2.5,-8.5,.5,.5],[-1,-4,3.6,2.3],[-10,-4.2,2.8,1.9],[-15.5,-2.5,3.3,1.4],[-5,3.6,3.7,1.4],[7,-6.5,2.4,1.5],[2,6.5,1.9,1.6],[3.6,-2.6,.8,.8],[-13.5,-8.8,1.7,1.7],[-13,6.5,1.9,1.9],[5,.7,2.5,1.1],[-6.9,-4.1,1.6,1.5]];
+ const RES=[[7.6,3.9,1.5,1.5],[4.6,5.0,1.9,1.5],[-16.5,.3,2.6,.7],[-6,6,2.4,1.2],[7,-3.8,1.9,.9],[-5,-10,1.6,1.4],[4,-8.8,.5,.5],[-2.5,-8.5,.5,.5],[-1,-4,3.6,2.3],[-10,-4.2,2.8,1.9],[-15.5,-2.5,3.3,1.4],[-5,3.6,3.7,1.4],[7,-6.5,2.4,1.5],[2,6.5,1.9,1.6],[3.6,-2.6,.8,.8],[-13.5,-8.8,1.7,1.7],[-13,6.5,1.9,1.9],[5,.7,2.5,1.1],[-6.9,-4.1,1.6,1.5]];
  const free=(x,z)=>!RES.some(([cx,cz,hw,hd])=>Math.abs(x-cx)<hw&&Math.abs(z-cz)<hd);
  {const rvp=RV.getSpacedPoints(160);const nearR=(x,z)=>rvp.some(p=>Math.hypot(p.x-x,p.z-z)<2.4);const cm=M(0xf7f3ea),gm=M(0x9ccc5e);
   for(let gx=-18;gx<=12;gx+=2.6)for(let gz=-11;gz<=10;gz+=2.1){const x=gx+((gz*7)%3)*.3,z=gz;const w=2.0,d=1.5;const ok=[[0,0],[w/2,d/2],[-w/2,d/2],[w/2,-d/2],[-w/2,-d/2]].every(([a,b])=>inE(x+a,z+b,.72)&&free(x+a,z+b)&&!nearR(x+a,z+b));
@@ -759,10 +759,10 @@ window.OPT='combo';const SM0=true,CB=true;
    for(const sd of[-1,1]){const bg=new THREE.ExtrudeGeometry(band,{depth:.05,bevelEnabled:false,curveSegments:14});bg.translate(0,0,-.025);bg.rotateY(Math.PI/2);const pm=mesh(bg,COL.stone);pm.position.x=sd*.24;br.add(pm);}
    for(const z of[-L/2+.1,L/2-.1])for(const sd of[-1,1]){at(C(.015,.02,.26,COL.iron,5),br,sd*.24,E+.2,z);const gl=new THREE.Mesh(new THREE.SphereGeometry(.035,6,4),new THREE.MeshBasicMaterial({color:0xffe2a0}));gl.position.set(sd*.24,E+.34,z);br.add(gl);}}}
  // filler Haussmann blocks
- const blocks=SM?[[-5,-10,2.4,2]]:[[12,-7.5,2.6,2.2],[-5,-10,2.4,2]];blocks.forEach(([x,z,w,d])=>RES.push([x,z,w/2+.3,d/2+.3]));
+ const blocks=[];blocks.forEach(([x,z,w,d])=>RES.push([x,z,w/2+.3,d/2+.3]));
  for(const [x,z,w,d] of blocks)haussBlock(scene,x,z,w,d,5);
  // a row of mixed Paris buildings, like a street front
- {let x=9.2;[[.95,5],[1.15,6],[.85,4],[1.05,5]].forEach(([w,f])=>{haussBlock(scene,x+w/2,-1.4,w,1.4,f);x+=w;});}
+
  // trees along the river
  for(let u=0;u<1;u+=.006){const p=RV.getPointAt(u),t=RV.getTangentAt(u),n=new THREE.Vector3(-t.z,0,t.x);if(!inE(p.x,p.z,.78))continue;for(const sd of[-1,1]){const q=p.clone().addScaledVector(n,sd*1.75);if(!free(q.x,q.z)||Math.round(u/.006)%2)continue;const tr=new THREE.Group();tr.position.copy(q);scene.add(tr);at(C(.05,.07,.6,COL.trunk),tr,0,.3,0);at(S(.36,COL.leaf),tr,0,.82,0);}}
  {const tg=new THREE.Mesh(new THREE.PlaneGeometry(4.2,2.6),M(0xb9cf9b));tg.rotation.x=-Math.PI/2;tg.position.set(-6.9,.012,-4.1);scene.add(tg);
