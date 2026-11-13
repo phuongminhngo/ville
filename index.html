@@ -264,7 +264,7 @@ body.night .legend{background:rgba(20,22,50,.82);color:#eef}body.night .legend h
 <aside class="legend" id="legend" aria-label="Légende de navigation"><button class="lg-h" id="lgh" aria-expanded="true"><span>✥ Légende</span><span class="lg-c">▾</span></button>
 <div class="lg-b" id="lgb">
 <div class="lg-s nh-mouse"><h5>Souris</h5><ul><li><span>Glisser</span><span>se déplacer</span></li><li><span>Molette</span><span>zoomer</span></li><li><span>Clic droit + glisser</span><span>tourner · incliner</span></li><li><span>Clic droit</span><span>menu</span></li></ul></div>
-<div class="lg-s nh-mouse"><h5>Trackpad</h5><ul><li><span>2 doigts</span><span>se déplacer</span></li><li><span>Pincer</span><span>zoomer</span></li><li><span>⌥ + 2 doigts ↔</span><span>tourner</span></li><li><span>⌥ + 2 doigts ↕</span><span>incliner</span></li><li><span>Clic à 2 doigts</span><span>menu</span></li></ul></div>
+<div class="lg-s nh-mouse"><h5>Trackpad</h5><ul><li><span>Cliquer-glisser</span><span>se déplacer</span></li><li><span>2 doigts ↔</span><span>tourner</span></li><li><span>2 doigts ↕</span><span>incliner</span></li><li><span>Pincer</span><span>zoomer</span></li><li><span>⌥ + 2 doigts</span><span>se déplacer</span></li><li><span>Clic à 2 doigts</span><span>menu</span></li></ul></div>
 <div class="lg-s nh-mouse"><h5>Clavier</h5><ul><li><span>Flèches</span><span>se déplacer</span></li><li><span>Q / E</span><span>tourner</span></li><li><span>R / F</span><span>incliner</span></li></ul></div>
 <div class="lg-s nh-touch"><h5>Doigts</h5><ul><li><span>1 doigt</span><span>se déplacer</span></li><li><span>Pincer</span><span>zoomer</span></li><li><span>Tourner 2 doigts</span><span>pivoter</span></li><li><span>2 doigts ↕</span><span>incliner</span></li></ul></div>
 <div class="lg-s"><h5>Boussole</h5><ul><li><span>Anneau</span><span>tourner</span></li><li><span>▲ ▼</span><span>incliner, jusqu’en dessous</span></li><li><span>2D / 3D</span><span>vue du dessus</span></li></ul></div>
@@ -664,9 +664,10 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
   cv.addEventListener('wheel',e=>{e.preventDefault();const k=e.deltaMode===1?16:e.deltaMode===2?400:1,dx=e.deltaX*k,dy=e.deltaY*k;
     if(!trackpad&&!e.ctrlKey&&(e.deltaX!==0||(e.deltaMode===0&&!Number.isInteger(e.deltaY))))trackpad=true;
     direct=true;vel.set(0,0,0);tgtT.copy(tgt);
-    if(e.altKey||e.shiftKey){azT=az=az+(dx||(e.shiftKey?dy:0))*.004;if(e.altKey&&!e.shiftKey)el=elT=Math.max(ELMIN,Math.min(ELMAX,el+dy*.003));placeCam();}
+    if(e.shiftKey&&!e.altKey){azT=az=az+(dx||dy)*.004;placeCam();}
     else if(e.ctrlKey||!trackpad){const f=Math.exp(Math.max(-1,Math.min(1,dy*(e.ctrlKey?.01:.0015))));zoomAt(vh*f,e.clientX,e.clientY);}
-    else{const a=ground(e.clientX,e.clientY),b=ground(e.clientX+dx,e.clientY+dy);if(a&&b)panBy(b.x-a.x,b.z-a.z);}
+    else if(e.altKey){const a=ground(e.clientX,e.clientY),b=ground(e.clientX+dx,e.clientY+dy);if(a&&b)panBy(b.x-a.x,b.z-a.z);}
+    else{az=azT=az-dx*.005;el=elT=Math.max(ELMIN,Math.min(ELMAX,el+dy*.004));placeCam();}
     direct=false;tgtT.copy(tgt);vhT=vh;azT=az;elT=el;},{passive:false});
   ['gesturestart','gesturechange'].forEach(t=>cv.addEventListener(t,e=>e.preventDefault()));
   let snapT;
@@ -712,13 +713,27 @@ if(document.fonts)Promise.all([`40px "VT323"`,`30px "Silkscreen"`].map(f=>docume
 function critter(col,scale=1,beret){const g=new THREE.Group();const b=at(S(.17,col),g,0,.2,0);b.scale.set(1,1.1,.95);at(S(.19,col),g,0,.5,0);if(col===COL.rabbit)for(const s of[-1,1])at(mesh(new THREE.CapsuleGeometry(.045,.18,4,10),col),g,s*.07,.75,0,0,0,-s*.12);
   for(const s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(.03,8,6),new THREE.MeshBasicMaterial({color:0x1d1c1a}));e.position.set(s*.07,.52,.17);g.add(e);}
   if(beret)at(C(.15,.14,.05,beret),g,-.02,.67,0,0,0,.2);
-  {const n=CLO.n++,v=n%6,wear=new THREE.Group();g.add(wear);const sh=(mat,h=.26,y=.2,r0=.178,r1=.192)=>{const c=new THREE.Mesh(new THREE.CylinderGeometry(r0,r1,h,8,1,true),mat);c.position.y=y;c.castShadow=true;wear.add(c);return c;};
-   if(v===0){sh(CLO.stripe);const sc=new THREE.Mesh(CLO.scarf,CLO.red);sc.position.y=.335;sc.rotation.x=Math.PI/2;wear.add(sc);}
-   else if(v===1){sh(CLO.trench,.34,.17,.18,.215);const bl=new THREE.Mesh(CLO.belt,CLO.brown);bl.position.y=.2;bl.rotation.x=Math.PI/2;wear.add(bl);const col=new THREE.Mesh(CLO.collar,CLO.trench);col.position.y=.33;col.rotation.x=Math.PI/2;wear.add(col);}
-   else if(v===2){sh(CLO.knit[n%CLO.knit.length]);}
-   else if(v===3){sh(CLO.denim,.16,.15,.186,.194);for(const s of[-1,1]){const st=new THREE.Mesh(CLO.strap,CLO.denim);st.position.set(s*.07,.28,.155);st.rotation.x=-.35;wear.add(st);}sh(CLO.white,.1,.3,.165,.18);}
-   else if(v===4){sh(CLO.stripe);}
-   else{sh(CLO.knit[(n+1)%CLO.knit.length]);const sc=new THREE.Mesh(CLO.scarf,CLO.yellow);sc.position.y=.335;sc.rotation.x=Math.PI/2;wear.add(sc);}}
+  {const n=CLO.n++,R=k=>{const x=Math.sin(n*12.9898+k*78.233)*43758.5453;return x-Math.floor(x);},pick=(arr,k)=>arr[Math.floor(R(k)*arr.length)];
+   const wear=new THREE.Group();g.add(wear);const sh=(mat,h=.26,y=.2,r0=.178,r1=.192)=>{const c=new THREE.Mesh(new THREE.CylinderGeometry(r0,r1,h,8,1,true),mat);c.position.y=y;c.castShadow=true;wear.add(c);return c;};
+   const top=Math.floor(R(1)*9);
+   if(top===0)sh(pick(CLO.pat,2));                                  // patterned shirt: stripes, dots, checks
+   else if(top===1)sh(pick(CLO.knit,2));                             // plain sweater
+   else if(top===2){sh(pick(CLO.coat,2),.34,.17,.18,.215);const bl=new THREE.Mesh(CLO.belt,CLO.brown);bl.position.y=.2;bl.rotation.x=Math.PI/2;wear.add(bl);} // coat with belt
+   else if(top===3){sh(pick(CLO.knit,3),.12,.29,.165,.18);const sk=new THREE.Mesh(CLO.skirt,pick(CLO.pat.concat(CLO.knit),2));sk.position.y=.15;wear.add(sk);} // dress
+   else if(top===4){sh(pick(CLO.knit,3),.1,.3,.165,.18);sh(pick(CLO.jean,2),.16,.15,.186,.194);for(const s of[-1,1]){const st=new THREE.Mesh(CLO.strap,pick(CLO.jean,2));st.position.set(s*.07,.28,.155);st.rotation.x=-.35;wear.add(st);}} // overalls
+   else if(top===5){const m0=pick(CLO.knit,2);sh(m0);const hd=new THREE.Mesh(CLO.hood,m0);hd.position.set(0,.36,-.1);hd.rotation.x=-.5;wear.add(hd);} // hoodie
+   else if(top===6){sh(pick(CLO.knit,2),.26,.2,.18,.194);for(const s of[-1,1]){const lp=new THREE.Mesh(CLO.lapel,CLO.ink);lp.position.set(s*.05,.25,.17);lp.rotation.z=s*.35;wear.add(lp);}} // cardigan
+   else if(top===7){sh(CLO.white,.26);const v=new THREE.Mesh(CLO.vest,pick(CLO.coat,3));v.position.y=.2;wear.add(v);} // shirt and waistcoat
+   else sh(pick(CLO.pat,4),.3,.18,.18,.2);                            // long patterned top
+   // one or two accessories
+   const acc=[Math.floor(R(5)*7),Math.floor(R(6)*7)];new Set(acc).forEach(a=>{
+    if(a===0){const sc=new THREE.Mesh(CLO.scarf,pick(CLO.bright,7));sc.position.y=.335;sc.rotation.x=Math.PI/2;wear.add(sc);}
+    else if(a===1){const bw=new THREE.Mesh(CLO.bow,pick(CLO.bright,8));bw.position.set(0,.34,.15);wear.add(bw);}
+    else if(a===2){const nk=new THREE.Mesh(CLO.neck,CLO.gold);nk.position.y=.33;nk.rotation.x=Math.PI/2;wear.add(nk);}
+    else if(a===3){const bg=new THREE.Mesh(CLO.bag,pick(CLO.bright,9));bg.position.set(.19,.17,.02);wear.add(bg);const sp=new THREE.Mesh(CLO.strapL,CLO.ink);sp.position.set(.08,.27,.04);sp.rotation.z=.75;wear.add(sp);}
+    else if(a===4){for(const s of[-1,1]){const gl=new THREE.Mesh(CLO.lens,CLO.ink);gl.position.set(s*.07,.53,.17);wear.add(gl);}}
+    else if(a===5&&!beret){const hc=pick(CLO.bright,10);const cr=new THREE.Mesh(CLO.crown,hc);cr.position.y=.67;wear.add(cr);const br=new THREE.Mesh(CLO.brim,hc);br.position.y=.63;wear.add(br);}
+    else if(a===6&&!beret){const cp=new THREE.Mesh(CLO.cap,pick(CLO.bright,11));cp.position.y=.64;wear.add(cp);const vz=new THREE.Mesh(CLO.visor,pick(CLO.bright,11));vz.position.set(0,.63,.16);wear.add(vz);}});}
   {const u=new THREE.Group();u.visible=false;const n=UMB.length,kind=[0,1,2,3,0,1,3,0,2,1][n%10];
    if(kind===0){const mt=UMBC[n%UMBC.length];const cn=new THREE.Mesh(UMBG.c,mt);cn.position.set(.06,1.05,0);cn.renderOrder=2;u.add(cn);const ed=new THREE.LineSegments(UMBG.e,UMBG.em);ed.position.copy(cn.position);u.add(ed);
     const tp=new THREE.Mesh(UMBG.t,UMBG.dark);tp.position.set(.06,1.2,0);u.add(tp);const h=new THREE.Mesh(UMBG.h,UMBG.dark);h.position.set(.13,.72,.05);h.rotation.z=.12;u.add(h);}
@@ -728,10 +743,20 @@ function critter(col,scale=1,beret){const g=new THREE.Group();const b=at(S(.17,c
    g.add(u);UMB.push(u);}
   g.scale.setScalar(scale);return g;}
 const UMB=[];window.UMB=UMB;
-const CLO=(()=>{const [c,x]=cnv(64,32,'#fbf8f1');x.fillStyle='#2b4a8f';for(let i=0;i<4;i++)x.fillRect(0,4+i*8,64,4);const t=new THREE.CanvasTexture(c);t.wrapS=THREE.RepeatWrapping;t.repeat.set(3,1);
- const F=c=>new THREE.MeshStandardMaterial({color:c,roughness:.85,flatShading:true,side:THREE.DoubleSide});
- return {n:0,stripe:new THREE.MeshStandardMaterial({map:t,roughness:.85,side:THREE.DoubleSide}),trench:F(0xc8a878),brown:F(0x6b4a32),denim:F(0x4f6fa8),white:F(0xf3efe6),red:F(0xd0453f),yellow:F(0xf2b632),
-  knit:[0xf2a7bd,0xa8d8c4,0xf6d77a,0xc9b8f0,0xf0b08a].map(F),scarf:new THREE.TorusGeometry(.14,.035,4,10),belt:new THREE.TorusGeometry(.19,.018,3,10),collar:new THREE.TorusGeometry(.15,.03,3,10),strap:new THREE.BoxGeometry(.035,.16,.02)};})();
+const CLO=(()=>{const F=c=>new THREE.MeshStandardMaterial({color:c,roughness:.85,flatShading:true,side:THREE.DoubleSide});
+ const P=(draw,rep=3)=>{const [c,x]=cnv(64,32);draw(x);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rep,1);return new THREE.MeshStandardMaterial({map:t,roughness:.85,side:THREE.DoubleSide});};
+ const stripes=(bg,fg)=>P(x=>{x.fillStyle=bg;x.fillRect(0,0,64,32);x.fillStyle=fg;for(let i=0;i<4;i++)x.fillRect(0,4+i*8,64,4);});
+ const dots=(bg,fg)=>P(x=>{x.fillStyle=bg;x.fillRect(0,0,64,32);x.fillStyle=fg;for(let i=0;i<8;i++)for(let j=0;j<4;j++){x.beginPath();x.arc(4+i*8+(j%2)*4,4+j*8,2,0,7);x.fill();}});
+ const checks=(bg,fg)=>P(x=>{x.fillStyle=bg;x.fillRect(0,0,64,32);x.fillStyle=fg;x.globalAlpha=.55;for(let i=0;i<8;i+=2)x.fillRect(i*8,0,8,32);for(let j=0;j<4;j+=2)x.fillRect(0,j*8,64,8);x.globalAlpha=1;});
+ return {n:0,pat:[stripes('#fbf8f1','#2b4a8f'),stripes('#fbf8f1','#d0453f'),stripes('#f6d77a','#2a2321'),stripes('#a8d8c4','#fbf8f1'),dots('#2b4a8f','#fbf8f1'),dots('#f2a7bd','#fbf8f1'),dots('#fbf8f1','#d0453f'),checks('#fbf8f1','#d0453f'),checks('#fbf8f1','#3f9a6b'),checks('#f6d77a','#c87a3a')],
+  knit:[0xf2a7bd,0xa8d8c4,0xf6d77a,0xc9b8f0,0xf0b08a,0x7fb3d5,0xd0453f,0x3f9a6b,0x2b4a8f,0xfbf8f1,0x9a7a8c,0xe8c4a0].map(F),
+  coat:[0xc8a878,0x8a6a4a,0x6b7a8f,0x2f3a4a,0xb05a4a,0x5a7a5a].map(F),jean:[0x4f6fa8,0x2f4a7a,0x7fa0c8,0xc8a878].map(F),
+  bright:[0xd0453f,0xf2b632,0x2b4a8f,0x3f9a6b,0xf2a7bd,0xc9b8f0,0xfbf8f1,0x2a2321].map(F),
+  white:F(0xf3efe6),brown:F(0x6b4a32),ink:F(0x2a2321),gold:F(0xe0b85a),
+  scarf:new THREE.TorusGeometry(.14,.035,4,10),belt:new THREE.TorusGeometry(.19,.018,3,10),neck:new THREE.TorusGeometry(.13,.012,3,12),strap:new THREE.BoxGeometry(.035,.16,.02),
+  skirt:new THREE.CylinderGeometry(.17,.27,.22,8,1,true),hood:new THREE.SphereGeometry(.13,6,4,0,Math.PI*2,0,Math.PI/2),lapel:new THREE.BoxGeometry(.03,.2,.02),vest:new THREE.CylinderGeometry(.185,.196,.22,8,1,true,Math.PI*.15,Math.PI*1.7),
+  bow:new THREE.OctahedronGeometry(.05,0).scale(1.6,.7,.5),bag:new THREE.BoxGeometry(.06,.1,.12),strapL:new THREE.BoxGeometry(.02,.28,.02),lens:new THREE.TorusGeometry(.04,.008,3,10),
+  crown:new THREE.CylinderGeometry(.12,.14,.1,8),brim:new THREE.CylinderGeometry(.22,.22,.015,10),cap:new THREE.SphereGeometry(.17,8,4,0,Math.PI*2,0,Math.PI/2),visor:new THREE.CylinderGeometry(.1,.1,.012,8,1,false,0,Math.PI)};})();
 const UMBG={c:new THREE.ConeGeometry(.44,.22,8),t:new THREE.CylinderGeometry(.012,.012,.08,4),h:new THREE.CylinderGeometry(.014,.014,.7,4),
  coat:new THREE.CylinderGeometry(.2,.3,.62,8,1,true),hood:new THREE.SphereGeometry(.23,8,5,0,Math.PI*2,0,Math.PI*.62),arm:new THREE.CapsuleGeometry(.045,.22,2,5),paw:new THREE.IcosahedronGeometry(.055,0),
  em:new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.7}),dark:new THREE.MeshStandardMaterial({color:0x2a2321,roughness:.6})};
