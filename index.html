@@ -722,8 +722,11 @@ window.OPT='combo';const SM0=true,CB=true;
   anims.push((t,dt)=>{for(let i=0;i<N;i++){life[i]-=dt;if(life[i]<0)put(i);}g.attributes.position.needsUpdate=true;pm.size=5+Math.sin(t*4)*1.5;});}
  // bridges across the Seine
  for(let u=.27;u<.76;u+=.085){const p=RV.getPointAt(u),t=RV.getTangentAt(u);if(!inE(p.x,p.z,.8)||Math.abs(p.x-5)<2.6)continue;const br=new THREE.Group();br.position.set(p.x,0,p.z);br.rotation.y=Math.atan2(t.x,t.z)+Math.PI/2;scene.add(br);
-  at(B(.48,.06,2.7,COL.stone2),br,0,.16,0);for(const s of[-1,1]){at(B(.04,.08,2.7,COL.stone),br,s*.23,.23,0);}
-  for(const z of[-.5,.5]){at(B(.4,.2,.16,COL.stone),br,0,.06,z);}}
+  {const L=3.1,H=.34,sh=new THREE.Shape();sh.moveTo(-L/2,0);sh.lineTo(-L/2,H);sh.lineTo(L/2,H);sh.lineTo(L/2,0);
+   const holes=[[-.85,.36],[0,.42],[.85,.36]];holes.forEach(([cx,r])=>{const h=new THREE.Path();h.moveTo(cx+r,0);h.absarc(cx,.02,r,0,Math.PI,false);h.lineTo(cx+r,0);sh.holes.push(h);});
+   const geo=new THREE.ExtrudeGeometry(sh,{depth:.5,bevelEnabled:false,curveSegments:12});geo.translate(0,0,-.25);geo.rotateY(Math.PI/2);
+   const m=mesh(geo,COL.stone2);br.add(m);for(const sd of[-1,1])at(B(.05,.07,L,COL.stone),br,sd*.24,H+.035,0);
+   for(const z of[-L/2+.08,L/2-.08])for(const sd of[-1,1]){at(C(.015,.02,.26,COL.iron,5),br,sd*.24,H+.16,z);const gl=new THREE.Mesh(new THREE.SphereGeometry(.035,6,4),new THREE.MeshBasicMaterial({color:0xffe2a0}));gl.position.set(sd*.24,H+.3,z);br.add(gl);}}}
  // filler Haussmann blocks
  const blocks=SM?[[-5,-10,2.4,2]]:[[12,-7.5,2.6,2.2],[-5,-10,2.4,2]];blocks.forEach(([x,z,w,d])=>RES.push([x,z,w/2+.3,d/2+.3]));
  for(const [x,z,w,d] of blocks)haussBlock(scene,x,z,w,d,5);
