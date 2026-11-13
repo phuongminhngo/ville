@@ -553,7 +553,7 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
     if(two&&ptrs.size===2){const m=mid(),a=ang2();two.moved=Math.max(two.moved,Math.hypot(m.x-two.x,m.y-two.y),Math.abs(m.d-two.d));
       if(!two.mode&&two.moved>10){const [p,q]=[...ptrs.values()];const dyP=p.y-p.y0,dyQ=q.y-q.y0;const sameV=Math.sign(dyP)===Math.sign(dyQ)&&Math.abs(dyP)>8&&Math.abs(dyQ)>8&&Math.abs(p.x-p.x0)<Math.abs(dyP)&&Math.abs(q.x-q.x0)<Math.abs(dyQ);two.mode=sameV&&Math.abs(m.d-two.d)<20?'tilt':'zoom';}
       if(two.mode==='tilt'){el=elT=Math.max(.45,Math.min(1.25,two.el+(m.y-two.y)*.004));placeCam();}
-      else if(two.mode==='zoom'){let da=a-two.a;if(da>Math.PI)da-=2*Math.PI;if(da<-Math.PI)da+=2*Math.PI;az=azT=two.az-da;zoomAt(two.v*two.d/Math.max(20,m.d),m.x,m.y);
+      else if(two.mode==='zoom'){let da=a-two.a;if(da>Math.PI)da-=2*Math.PI;if(da<-Math.PI)da+=2*Math.PI;az=azT=two.az+da;zoomAt(two.v*two.d/Math.max(20,m.d),m.x,m.y);
         const g0=ground(prevMid.x,prevMid.y),g1=ground(m.x,m.y);if(g0&&g1)panBy(g0.x-g1.x,g0.z-g1.z);}
       prevMid={x:m.x,y:m.y};return;}
     if(qz){const dy=e.clientY-qz.y;if(Math.abs(dy)>4)qz.moved=true;if(qz.moved){zoomAt(qz.v*Math.exp(-dy*.01),qz.x0,qz.y0);return;}}
