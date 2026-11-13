@@ -986,7 +986,7 @@ window.OPT='combo';const SM0=true,CB=true;
   {const b=new THREE.Group();scene.add(b);const hull=mesh(new THREE.BoxGeometry(2.2,.25,.6),0xfbf8f1);hull.position.y=.12;b.add(hull);const bow=mesh(new THREE.ConeGeometry(.3,.5,4).rotateZ(-Math.PI/2).rotateX(Math.PI/4),0xfbf8f1);bow.scale.set(1,1,.7);bow.position.set(1.33,.12,0);b.add(bow);
    const cab=new THREE.Mesh(new THREE.BoxGeometry(1.5,.3,.5),new THREE.MeshPhysicalMaterial({color:0xbfd6e2,transparent:true,opacity:.6,roughness:.1}));cab.position.set(-.1,.4,0);b.add(cab);const rf=mesh(new THREE.BoxGeometry(1.55,.03,.54),0x2a2321);rf.position.set(-.1,.56,0);b.add(rf);
    for(let i=0;i<4;i++){const k=critter([COL.rabbit,COL.duck,COL.cat,COL.peng][i],.5,0);k.position.set(-.7+i*.4,.25,0);b.add(k);}
-   const go=t=>{const u=.42+((t*.006)%1)*.2;const p=RV.getPointAt(u),tg=RV.getTangentAt(u);b.position.set(p.x,.02,p.z);b.rotation.y=Math.atan2(-tg.z,tg.x);};go(0);anims.push(go);}
+   let uA=1,uB=0;for(let u=0;u<=1;u+=.002){const q=RV.getPointAt(u);if(q.x<1.2&&q.x>-12.5){uA=Math.min(uA,u);uB=Math.max(uB,u);}}const go=t=>{const ph=(t*.012)%2,f=ph<1?ph:2-ph,e=f*f*(3-2*f),u=uA+(uB-uA)*e;const p=RV.getPointAt(u),tg=RV.getTangentAt(u),dir=ph<1?1:-1;b.position.set(p.x,.02,p.z);b.rotation.y=Math.atan2(-tg.z*dir,tg.x*dir);};go(0);anims.push(go);}
  }
  // little visitors walking on the quays
  {const cols=[COL.rabbit,COL.cat,COL.duck,COL.peng,0xd9a066,0xf2b38a,0xc9b8f0,0x9a7b5a];const crowd=[];
