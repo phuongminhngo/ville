@@ -756,11 +756,35 @@ window.OPT='combo';const SM0=true,CB=true;
   for(const s of[-1,1]){at(B(.9,2.2,.9,COL.stone2),g,s*3.4,1.1,.2);const [c,x]=cnv(256,256);x.fillStyle='#f6efdc';x.beginPath();x.arc(128,128,124,0,7);x.fill();x.strokeStyle='#c9a24a';x.lineWidth=12;x.stroke();x.strokeStyle='#2a2321';x.lineWidth=8;x.beginPath();x.moveTo(128,128);x.lineTo(128,50);x.moveTo(128,128);x.lineTo(180,150);x.stroke();
    const ck=new THREE.Mesh(new THREE.CircleGeometry(.34,32),new THREE.MeshBasicMaterial({map:tex(c)}));ck.position.set(s*3.4,1.5,.66);g.add(ck);at(mesh(new THREE.ConeGeometry(.6,.7,4),COL.zinc),g,s*3.4,2.55,.2,0,Math.PI/4,0);at(B(.06,.25,.06,COL.gold),g,s*3.4,3.0,.2);}
   L2(scene,'Marque employeur · La Gare',-5,3.6,3.6);}
- {const g=new THREE.Group();g.position.set(7,0,-6.5);scene.add(g);at(B(4,1.9,2.2,0xdfe6ea),g,0,.95,0);
-  const cols=[0xd43b2f,0x2f6fd4,0x2f9e57,0xf2c230];for(let i=0;i<8;i++){const p=at(C(.07,.07,1.9,cols[i%4],10),g,-1.8+i*.52,.95,1.16);}
-  for(let j=0;j<3;j++){const p=at(C(.05,.05,4.1,cols[(j+1)%4],10),g,0,.4+j*.6,1.24,0,0,Math.PI/2);}
-  const esc=at(C(.12,.12,3.4,0xbcd3dd,10),g,0,1.1,1.45,0,0,1.0);esc.material=new THREE.MeshPhysicalMaterial({color:0xbcd3dd,transparent:true,opacity:.7,roughness:.1});
-  for(const s of[-1,1])for(const t of[-1,1])at(B(.08,1.95,.08,0xffffff),g,s*2,.97,t*1.1);
+ {const g=new THREE.Group();g.position.set(7,0,-6.5);scene.add(g);
+  // L'Atelier: a glass box held inside an exposed white steel frame, coloured service pipes on the front, a zigzag escalator tube on the back, white vents on the roof
+  const W=4.4,D=2.2,H=2.3,NF=5,fh=H/NF,white=0xf4f4f2,steel=M(white);
+  // sloping piazza
+  const pz=mesh(new THREE.BoxGeometry(W+1.2,.06,1.4),0xe6dccb);pz.position.set(0,.03,-D/2-.9);pz.rotation.x=-.04;g.add(pz);
+  // glass body and floor slabs
+  const glass=new THREE.MeshPhysicalMaterial({color:0x9fbccb,roughness:.2,metalness:.1,transparent:true,opacity:.82});const body=new THREE.Mesh(new THREE.BoxGeometry(W-.3,H,D-.3),glass);body.position.y=H/2;g.add(body);
+  for(let f=0;f<=NF;f++)at(B(W-.25,.05,D-.25,0xe8e4dc),g,0,f*fh,0);
+  // exposed frame: columns, floor beams and X bracing on both long facades
+  const ncol=9;for(const sz of[-1,1]){const z=sz*(D/2);for(let i=0;i<ncol;i++){const x=-W/2+i*W/(ncol-1);at(B(.07,H+.15,.07,white),g,x,(H+.15)/2,z);}
+   for(let f=1;f<=NF;f++)at(B(W,.05,.06,white),g,0,f*fh,z);
+   for(let i=0;i<ncol-1;i++)for(let f=0;f<NF;f++){if((i+f)%2)continue;const x0=-W/2+i*W/(ncol-1),x1=x0+W/(ncol-1),y0=f*fh,y1=y0+fh;for(const [p,q] of[[[x0,y0],[x1,y1]],[[x1,y0],[x0,y1]]]){const dx=q[0]-p[0],dy=q[1]-p[1];const br=mesh(new THREE.BoxGeometry(.025,Math.hypot(dx,dy),.025),steel);br.position.set((p[0]+q[0])/2,(p[1]+q[1])/2,z+sz*.03);br.rotation.z=-Math.atan2(dx,dy);g.add(br);}}}
+  for(const sx of[-1,1])for(let k=0;k<3;k++)at(B(.07,H+.15,.07,white),g,sx*W/2,(H+.15)/2,-D/2+k*D/2);
+  // front facade: big coloured service pipes (blue, green, yellow) running up and bending over the roof, red lift shafts
+  const pipe=(x,r,col,top)=>{const z=D/2+.18+r;at(C(r,r,top,col,12),g,x,top/2,z);const el=new THREE.Mesh(new THREE.TorusGeometry(.22,r,8,12,Math.PI/2),M(col));el.position.set(x,top,z-.22);el.rotation.y=Math.PI/2;el.rotation.z=0;g.add(el);at(C(r,r,.5,col,12),g,x,top+.22,z-.47,Math.PI/2,0,0);};
+  const pc=[[-1.9,.11,0x3b6fd4],[-1.6,.11,0x3b6fd4],[-1.05,.14,0x3f9e57],[-.72,.09,0x3f9e57],[-.2,.12,0x3b6fd4],[.35,.1,0xf2c230],[.62,.1,0xf2c230],[1.2,.15,0x3f9e57],[1.55,.09,0x3b6fd4],[1.9,.12,0x3f9e57]];
+  pc.forEach(([x,r,c],i)=>pipe(x,r,c,H+(i%3)*.12-.05));
+  for(const x of[-1.35,.95]){at(B(.22,H+.2,.22,0xd43b2f),g,x,(H+.2)/2,D/2+.2);}
+  for(let f=1;f<NF;f+=2)at(C(.06,.06,W,0x3b6fd4,10),g,0,f*fh+.12,D/2+.12,0,0,Math.PI/2);
+  // back facade: the escalator, a glass tube climbing in a zigzag with red underside
+  const tube=new THREE.MeshPhysicalMaterial({color:0xd8e8ee,roughness:.1,transparent:true,opacity:.6});
+  const seg=(x0,y0,x1,y1)=>{const len=Math.hypot(x1-x0,y1-y0);const t=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,len,12),tube);t.position.set((x0+x1)/2,(y0+y1)/2,-D/2-.24);t.rotation.z=-Math.atan2(x1-x0,y1-y0);g.add(t);
+   const r=mesh(new THREE.BoxGeometry(.08,len,.1),0xd43b2f);r.position.set((x0+x1)/2,(y0+y1)/2-.1,-D/2-.24);r.rotation.z=t.rotation.z;g.add(r);};
+  let x=-W/2+.2,y=.25;const step=(W-.4)/(NF-1);for(let k=0;k<NF-1;k++){const nx=x+step*.72;seg(x,y,nx,y+fh);seg(nx,y+fh,x+step,y+fh);x+=step;y+=fh;}
+  at(C(.14,.14,H,0xd8e8ee,10),g,W/2-.15,H/2,-D/2-.24);
+  // roof: white vent funnels, like big periscopes
+  const vent=(x,z,h,r,ry)=>{const v=new THREE.Group();v.position.set(x,0,z);v.rotation.y=ry;g.add(v);at(C(r,r,h,white,12),v,0,h/2,0);const hd=mesh(new THREE.CylinderGeometry(r*1.4,r*1.1,r*2.2,12,1,true),white);hd.position.set(0,h+r*.6,r*.7);hd.rotation.x=Math.PI/2.6;v.add(hd);};
+  vent(-1.2,-.3,H+.45,.12,0);vent(-.4,.2,H+.35,.1,Math.PI);vent(1.3,-.2,H+.5,.13,.6);
+  vent(-1.6,-D/2-1.2,.9,.14,2.6);vent(1.8,-D/2-1.3,.7,.12,-2.4);
   L2(scene,'Direction artistique · L’Atelier',7,3.4,-6.5);}
  {const g=new THREE.Group();g.position.set(-10,0,-4.2);g.scale.setScalar(.8);scene.add(g);at(B(5.4,.18,2.8,COL.walk),g,0,.09,0);
   const wt=windowsTex(1024,256,9,1,'#efe5d2','#d9cbb0');at(mesh(new THREE.BoxGeometry(4.6,1.1,1.5),new THREE.MeshStandardMaterial({map:wt,roughness:.85})),g,0,.73,-.2);
