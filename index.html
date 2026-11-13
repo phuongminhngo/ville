@@ -270,7 +270,7 @@ const MUS={
  serre:{arr:'1er',x:-10,z:-4.2,name:'La Serre',sec:'Vidéo & photo',ey:'(les nymphéas)',desc:'Interviews, témoignages, photobooks et campagnes.',ids:['cofounders','testimonials','onbvideo','seminar','walenty','chemistry','pouvoir']},
  atelier:{arr:'4e',x:7,z:-6.5,name:'L’Atelier',sec:'Direction artistique',ey:'(les tuyaux colorés)',desc:'Identités visuelles, chartes et repositionnements.',ids:['rica','popflex','calme','bread','chewvy']},
  petit:{arr:'8e',x:-15.5,z:-2.5,name:'Le Pavillon',sec:'Nghi Lễ Cưới Hỏi',ey:'(le projet phare)',desc:'Mon produit 360°, de la stratégie à l’identité visuelle.',ids:['nghile_c','nghile_d']},
- accueil:{arr:'6e',x:2,z:6.5,name:'Chez Phuong',sec:'Accueil',ey:'(Saint-Germain)',desc:'Qui je suis, ma formation, mes outils et la suite.',ids:['about','formation','toolbox','avenir']},
+ accueil:{arr:'16e',x:2,z:6.5,name:'Chez Phuong',sec:'Accueil',ey:'(Chaillot)',desc:'Qui je suis, ma formation, mes outils et la suite.',ids:['about','formation','toolbox','avenir']},
  boutique:{arr:'1er',x:3.6,z:-2.6,name:'La Poste',sec:'Contact',ey:'(au bord du Palais)',desc:'On discute de votre projet ?',ids:['shop']}};
 const SV=p=>`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
 const ICON={palais:SV('<path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/><path d="M9 19l3-5 3 5"/><path d="M3 21h18"/>'),
@@ -436,7 +436,7 @@ function selectMus(k,fromCar){sel=k;document.querySelectorAll('#car .cc').forEac
  $('bub').innerHTML=`<i class="bi">${ICON[k]}</i><span><b>${esc(m.name)}</b><small>${esc(m.sec)} · ${m.ids.length} projet${m.ids.length>1?'s':''}</small></span><button data-enter="${k}">Entrer ▸</button>`;$('bub').hidden=false;}
 $('bub').addEventListener('click',e=>{const t=e.target.closest('[data-enter]');if(t)enterMuseum(t.dataset.enter);});
 function placeBubble(){if(!window.CITY||!sel||(typeof IN!=='undefined'&&IN.on)){$('bub').hidden=true;return;}const m=MUS[sel];const v=new THREE.Vector3(m.x,k3h(sel),m.z).project(CITY.cam);const c=CITY.cv;const x=(v.x+1)/2*c.clientWidth,y=(1-v.y)/2*c.clientHeight;const b=$('bub');b.hidden=false;b.style.transform=`translate(${Math.round(x)}px,${Math.round(y)}px) translate(-50%,-100%)`;}
-const k3h=k=>({palais:3.4,gare:3.1,serre:2.4,atelier:2.6,petit:2.9,accueil:4.8,boutique:2.0}[k]||3);
+const k3h=k=>({palais:3.4,gare:3.1,serre:2.4,atelier:2.6,petit:2.9,accueil:2.8,boutique:2.0}[k]||3);
 // mini-map: tap anywhere to go there; a marker shows where you are and which way you look
 {const svg=$('map');const NS='http://www.w3.org/2000/svg';const mk=document.createElementNS(NS,'g');mk.setAttribute('id','mm-me');mk.innerHTML='<path d="M0 0 L-26 -60 A65 65 0 0 1 26 -60 Z" fill="#6f8fc8" opacity=".28"/><circle r="11" fill="#d0607f" stroke="#fff" stroke-width="4"/>';svg.appendChild(mk);
  svg.addEventListener('click',e=>{if(e.target.closest('.pin,image.mz'))return;const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const q=pt.matrixTransform(svg.getScreenCTM().inverse());const x=(q.x-590)/17.5,z=(q.y-520)/17.5;if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.focus(x,z,Math.min(CITY.zoom(),20));});}
@@ -653,7 +653,7 @@ const B=(w,h,d,c)=>mesh(new THREE.BoxGeometry(w,h,d),c),C=(a,b,h,c,s=20)=>mesh(n
 const VT='"VT323",monospace',LBL=[],SCRIPT='"Great Vibes","Pinyon Script",cursive',PIXEL='"Silkscreen","Pixelify Sans",monospace',SANS='"DM Sans",system-ui,sans-serif';
 const NCOUNT={'Le Palais':5,'La Gare':7,'La Serre':7,'L’Atelier':5,'Le Pavillon':2,'chez Phuong':4,'La Poste':1};
 function star(x,cx,cy,r,col){x.fillStyle=col;x.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;x.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr);}x.closePath();x.fill();}
-const ARR={'Le Palais':'1er','La Gare':'7e','La Serre':'1er','L’Atelier':'4e','Le Pavillon':'8e','chez Phuong':'6e','La Poste':'1er'};
+const ARR={'Le Palais':'1er','La Gare':'7e','La Serre':'1er','L’Atelier':'4e','Le Pavillon':'8e','chez Phuong':'16e','La Poste':'1er'};
 function drawLabel(c,x,text){x.clearRect(0,0,c.width,c.height);const W=c.width,H=c.height;const parts=text.split(' · ');const [a,b]=parts.length>1?parts:[null,text];
  const key=b,arr=ARR[key]||ARR[a]||'';const n=NCOUNT[b]??NCOUNT[a];
  // street plaque: green frame, blue enamel, white letters; arched cartouche on top
@@ -930,8 +930,28 @@ window.OPT='combo';const SM0=true,CB=true;
   for(let i=0;i<8;i++){const r=new THREE.Mesh(new THREE.TorusGeometry(.645,.02,4,16,Math.PI/2),M(COL.gold));r.rotation.set(0,i*Math.PI/4,Math.PI/2);r.position.set(0,2.6,-.2);r.scale.set(1,.95,1);g.add(r);}
   at(C(.12,.14,.25,st,10),g,0,3.32,-.2);at(mesh(new THREE.ConeGeometry(.13,.25,10),COL.gold),g,0,3.56,-.2);
   L2(scene,'Nghi Lễ Cưới Hỏi · Le Pavillon',-17,4.8,-1.5);}
- {const g=haussBlock(scene,2,6.5,3,2.4,6);const flag=new THREE.Group();flag.position.set(2,3.9,6.5);scene.add(flag);at(C(.02,.02,.9,COL.iron),flag,0,.45,0);at(B(.5,.3,.02,COL.red),flag,.26,.75,0);
-  L2(scene,'Accueil · chez Phuong',2,5.4,6.5);
+ {// Chez Phuong: a 1930s Art Deco palace, two flat-roofed wings around a stepped courtyard, a colonnade, a pool and a statue
+  const g=new THREE.Group();g.position.set(2,0,6.5);scene.add(g);
+  const [fc,fx]=cnv(256,128,'#f3eee2');fx.fillStyle='#e6dfcf';fx.fillRect(0,0,256,10);fx.fillRect(0,118,256,10);for(let i=0;i<8;i++){fx.fillStyle='#56668f';fx.fillRect(12+i*31,24,13,78);fx.fillStyle='#efe8d8';fx.fillRect(12+i*31,60,13,3);}
+  const ft=tex(fc);const wallM=new THREE.MeshStandardMaterial({map:ft,roughness:.8}),plainM=M(0xf3eee2),roofM=M(0xd9d4c8),stepM=M(0xebe4d4);
+  const wing=(x0,x1)=>{const w=x1-x0,cx=(x0+x1)/2;const b=new THREE.Mesh(new THREE.BoxGeometry(w,1.25,2.3),[wallM,wallM,roofM,plainM,wallM,plainM]);b.position.set(cx,.75,-.25);b.castShadow=b.receiveShadow=true;g.add(b);
+   at(B(w+.08,.08,2.38,0xe6dfcf),g,cx,1.4,-.25);at(B(w-.12,.05,2.2,0xd9d4c8),g,cx,1.46,-.25);
+   const fr=new THREE.Mesh(new THREE.PlaneGeometry(w-.2,.16),new THREE.MeshStandardMaterial({color:0xe2d2b4,roughness:.9}));fr.position.set(cx,1.22,.905);g.add(fr);};
+  at(B(3.7,.12,3.0,0xefe9dc),g,0,.06,0);
+  wing(-1.8,-.65);wing(.65,1.8);
+  {const bk=new THREE.Mesh(new THREE.BoxGeometry(1.3,1.25,.7),[plainM,plainM,roofM,plainM,wallM,plainM]);bk.position.set(0,.75,-1.05);bk.castShadow=true;g.add(bk);at(B(1.38,.08,.78,0xe6dfcf),g,0,1.4,-1.05);}
+  // the colonnade of tall square pillars joining the wings
+  for(let i=0;i<8;i++)at(B(.07,1.0,.07,0xfbf8f1),g,-.56+i*.16,.88,-.55);at(B(1.32,.1,.32,0xf3eee2),g,0,1.43,-.62);at(B(1.32,.04,.32,0xe6dfcf),g,0,1.5,-.62);
+  // stepped terraces down the courtyard, a long pool and a statue on its pedestal
+  for(let k=0;k<4;k++)at(B(1.28,.34-k*.08,.42,k%2?0xefe8d8:0xebe4d4),g,0,.12+(.34-k*.08)/2,-.2+k*.4);
+  const pool=new THREE.Mesh(new THREE.BoxGeometry(.8,.02,.7),new THREE.MeshStandardMaterial({color:0x8fb7c9,roughness:.15,metalness:.2}));pool.position.set(0,.22,.75);g.add(pool);
+  at(B(.24,.32,.24,0xe6dfcf),g,0,.44,.2);const fig=mesh(new THREE.CapsuleGeometry(.07,.26,3,6),0x9a7a4a);fig.position.set(0,.8,.2);g.add(fig);at(S(.06,0x9a7a4a),g,0,1.03,.2);
+  // a bright banner and the flag: a contemporary place inside the old palace
+  {const [c,x]=cnv(64,256,'#d0607f');x.fillStyle='#fffaf2';x.font='34px Silkscreen, monospace';x.textAlign='center';x.save();x.translate(38,128);x.rotate(-Math.PI/2);x.fillText('CHEZ PHUONG',0,0);x.restore();
+   const bn=new THREE.Mesh(new THREE.PlaneGeometry(.26,1.0),new THREE.MeshBasicMaterial({map:tex(c),side:THREE.DoubleSide}));bn.position.set(1.225,.8,.912);g.add(bn);}
+  {const flag=new THREE.Group();flag.position.set(0,1.5,-1.05);g.add(flag);at(C(.02,.02,.9,COL.iron),flag,0,.45,0);at(B(.5,.3,.02,COL.red),flag,.26,.75,0);}
+  for(const s of[-1,1])at(B(.08,.5,.08,0xfbf8f1),g,s*.7,.37,1.35);
+  L2(scene,'Accueil · chez Phuong',2,3.6,6.5);
   const k=new THREE.Group();k.position.set(3.6,0,-2.6);scene.add(k);at(C(.4,.45,1.2,COL.green,12),k,0,.6,0);at(mesh(new THREE.ConeGeometry(.6,.5,12),COL.green),k,0,1.45,0);at(S(.12,COL.gold),k,0,1.75,0);at(C(.42,.42,.3,0xf2e6c8,12),k,0,1.0,0);
   L2(scene,'Contact · La Poste',3.6,2.3,-2.6,.8);
  }
