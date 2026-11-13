@@ -675,6 +675,13 @@ if(document.fonts)Promise.all([`40px "VT323"`,`30px "Silkscreen"`].map(f=>docume
 function critter(col,scale=1,beret){const g=new THREE.Group();const b=at(S(.17,col),g,0,.2,0);b.scale.set(1,1.1,.95);at(S(.19,col),g,0,.5,0);if(col===COL.rabbit)for(const s of[-1,1])at(mesh(new THREE.CapsuleGeometry(.045,.18,4,10),col),g,s*.07,.75,0,0,0,-s*.12);
   for(const s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(.03,8,6),new THREE.MeshBasicMaterial({color:0x1d1c1a}));e.position.set(s*.07,.52,.17);g.add(e);}
   if(beret)at(C(.15,.14,.05,beret),g,-.02,.67,0,0,0,.2);
+  {const n=CLO.n++,v=n%6,wear=new THREE.Group();g.add(wear);const sh=(mat,h=.26,y=.2,r0=.178,r1=.192)=>{const c=new THREE.Mesh(new THREE.CylinderGeometry(r0,r1,h,8,1,true),mat);c.position.y=y;c.castShadow=true;wear.add(c);return c;};
+   if(v===0){sh(CLO.stripe);const sc=new THREE.Mesh(CLO.scarf,CLO.red);sc.position.y=.335;sc.rotation.x=Math.PI/2;wear.add(sc);}
+   else if(v===1){sh(CLO.trench,.34,.17,.18,.215);const bl=new THREE.Mesh(CLO.belt,CLO.brown);bl.position.y=.2;bl.rotation.x=Math.PI/2;wear.add(bl);const col=new THREE.Mesh(CLO.collar,CLO.trench);col.position.y=.33;col.rotation.x=Math.PI/2;wear.add(col);}
+   else if(v===2){sh(CLO.knit[n%CLO.knit.length]);}
+   else if(v===3){sh(CLO.denim,.16,.15,.186,.194);for(const s of[-1,1]){const st=new THREE.Mesh(CLO.strap,CLO.denim);st.position.set(s*.07,.28,.155);st.rotation.x=-.35;wear.add(st);}sh(CLO.white,.1,.3,.165,.18);}
+   else if(v===4){sh(CLO.stripe);}
+   else{sh(CLO.knit[(n+1)%CLO.knit.length]);const sc=new THREE.Mesh(CLO.scarf,CLO.yellow);sc.position.y=.335;sc.rotation.x=Math.PI/2;wear.add(sc);}}
   {const u=new THREE.Group();u.visible=false;const n=UMB.length,kind=[0,1,2,3,0,1,3,0,2,1][n%10];
    if(kind===0){const mt=UMBC[n%UMBC.length];const cn=new THREE.Mesh(UMBG.c,mt);cn.position.set(.06,1.05,0);cn.renderOrder=2;u.add(cn);const ed=new THREE.LineSegments(UMBG.e,UMBG.em);ed.position.copy(cn.position);u.add(ed);
     const tp=new THREE.Mesh(UMBG.t,UMBG.dark);tp.position.set(.06,1.2,0);u.add(tp);const h=new THREE.Mesh(UMBG.h,UMBG.dark);h.position.set(.13,.72,.05);h.rotation.z=.12;u.add(h);}
@@ -684,6 +691,10 @@ function critter(col,scale=1,beret){const g=new THREE.Group();const b=at(S(.17,c
    g.add(u);UMB.push(u);}
   g.scale.setScalar(scale);return g;}
 const UMB=[];window.UMB=UMB;
+const CLO=(()=>{const [c,x]=cnv(64,32,'#fbf8f1');x.fillStyle='#2b4a8f';for(let i=0;i<4;i++)x.fillRect(0,4+i*8,64,4);const t=new THREE.CanvasTexture(c);t.wrapS=THREE.RepeatWrapping;t.repeat.set(3,1);
+ const F=c=>new THREE.MeshStandardMaterial({color:c,roughness:.85,flatShading:true,side:THREE.DoubleSide});
+ return {n:0,stripe:new THREE.MeshStandardMaterial({map:t,roughness:.85,side:THREE.DoubleSide}),trench:F(0xc8a878),brown:F(0x6b4a32),denim:F(0x4f6fa8),white:F(0xf3efe6),red:F(0xd0453f),yellow:F(0xf2b632),
+  knit:[0xf2a7bd,0xa8d8c4,0xf6d77a,0xc9b8f0,0xf0b08a].map(F),scarf:new THREE.TorusGeometry(.14,.035,4,10),belt:new THREE.TorusGeometry(.19,.018,3,10),collar:new THREE.TorusGeometry(.15,.03,3,10),strap:new THREE.BoxGeometry(.035,.16,.02)};})();
 const UMBG={c:new THREE.ConeGeometry(.44,.22,8),t:new THREE.CylinderGeometry(.012,.012,.08,4),h:new THREE.CylinderGeometry(.014,.014,.7,4),
  coat:new THREE.CylinderGeometry(.2,.3,.62,8,1,true),hood:new THREE.SphereGeometry(.23,8,5,0,Math.PI*2,0,Math.PI*.62),arm:new THREE.CapsuleGeometry(.045,.22,2,5),paw:new THREE.IcosahedronGeometry(.055,0),
  em:new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.7}),dark:new THREE.MeshStandardMaterial({color:0x2a2321,roughness:.6})};
