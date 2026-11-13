@@ -204,10 +204,16 @@ body.m-blue #map,body.m-rain #map{filter:brightness(.75) saturate(.85)}
 .genav .gu{left:38px;top:16px}.genav .gd{left:38px;bottom:16px}.genav .gl{left:15px;top:39px}.genav .gr{right:15px;top:39px}
 .genav .gcomp{position:absolute;left:28px;top:28px;width:40px;height:40px;cursor:grab;touch-action:none;box-shadow:none}
 .g3d{font:14px var(--term)!important;font-weight:700}
-.navhelp{position:fixed;z-index:9;left:50%;top:50%;transform:translate(-50%,-50%);width:min(360px,calc(100% - 32px));background:var(--paper,#fffaf2);border:1.5px solid var(--line);border-radius:18px;box-shadow:0 18px 40px rgba(60,30,40,.25);padding:18px 18px 16px;font:15px var(--term,monospace);color:var(--ink)}
-.navhelp h4{margin:0 0 10px;font:16px "Silkscreen",monospace;color:#d0607f}.navhelp ul{margin:0 0 10px;padding:0;list-style:none;display:grid;gap:6px}.navhelp li{display:flex;justify-content:space-between;gap:12px}.navhelp li b{font-weight:700;color:#2b4a8f}
-.navhelp p{margin:0 0 12px;font-size:14px;opacity:.8}.navhelp button{width:100%;padding:9px;border-radius:999px;border:0;background:#d0607f;color:#fff;font:15px "Silkscreen",monospace;cursor:pointer}
-.navhelp .nh-touch{display:none}@media (hover:none) and (pointer:coarse){.navhelp .nh-touch{display:grid}.navhelp .nh-mouse{display:none}}
+html,body{overscroll-behavior:none}
+.legend{position:fixed;z-index:4;left:max(16px,env(safe-area-inset-left,0px));top:calc(118px + env(safe-area-inset-top,0px));width:236px;max-height:calc(100vh - 260px);overflow:auto;overscroll-behavior:contain;background:rgba(255,250,242,.94);border:1.5px solid var(--line);border-radius:16px;box-shadow:0 6px 18px rgba(60,30,40,.12);font:14px var(--term,monospace);color:var(--ink)}
+.legend .lg-h{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;font:13px "Silkscreen",monospace;color:#d0607f}
+.legend .lg-h:focus-visible{outline:2px solid var(--pink);outline-offset:-2px;border-radius:14px}.legend .lg-c{transition:transform .2s}
+.legend.closed{width:auto}.legend.closed .lg-b{display:none}.legend.closed .lg-c{transform:rotate(-90deg)}
+.legend .lg-b{padding:0 12px 10px;display:grid;gap:8px}.legend h5{margin:0 0 3px;font:11px "Silkscreen",monospace;color:#2b4a8f;letter-spacing:.04em}
+.legend ul{margin:0;padding:0;list-style:none;display:grid;gap:2px}.legend li{display:flex;justify-content:space-between;gap:10px}.legend li span:first-child{font-weight:700}.legend li span:last-child{opacity:.75;text-align:right}
+body.night .legend{background:rgba(20,22,50,.82);color:#eef}body.night .legend h5{color:#a9b8ff}
+.legend .nh-touch{display:none}@media (hover:none) and (pointer:coarse){.legend .nh-touch{display:block}.legend .nh-mouse{display:none}}
+@media (max-width:760px){.legend{top:calc(92px + env(safe-area-inset-top,0px));width:210px;max-height:calc(100vh - 300px)}}
 </style>
 <div class="stage">
  <div id="v2d"><svg id="map" viewBox="100 105 1000 790" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Plan de Paris avec les musées de la galerie">
@@ -245,15 +251,19 @@ body.m-blue #map,body.m-rain #map{filter:brightness(.75) saturate(.85)}
  <div class="menu" id="menu" hidden><div class="seg" role="group" aria-label="Vue" hidden><button id="b2d" aria-pressed="false">Plan 2D</button><button id="b3d" aria-pressed="true">3D</button></div>
  <button class="mosc" id="mosc" title="Des mosaïques en pixels sont cachées sur les murs : trouvez-les !">▦ Mosaïques <b id="mosn">0</b>/10</button>
  <div class="moods" role="group" aria-label="Ambiance"><button data-mood="sun" aria-pressed="true">☀ Soleil</button><button data-mood="night" aria-pressed="false">☾ Nuit</button><button data-mood="rain" aria-pressed="false">☂ Pluie</button><button data-mood="snow" aria-pressed="false">❄ Hiver</button></div><button id="bsun" hidden></button><button id="bnight" hidden></button>
- <button class="mi" id="mhelp">✥ Comment naviguer</button><button class="mi" id="mall">⌂ Vue d’ensemble</button><button class="mi" id="mlist">☰ Tous les projets</button></div>
+ <button class="mi" id="mhelp">✥ Légende</button><button class="mi" id="mall">⌂ Vue d’ensemble</button><button class="mi" id="mlist">☰ Tous les projets</button></div>
 </div>
 <div class="zoom" id="zoom" hidden><button id="zin" aria-label="Zoomer">+</button><button id="zout" aria-label="Dézoomer">−</button><button id="rl" aria-label="Tourner à gauche">⟲</button><button id="rr" aria-label="Tourner à droite">⟳</button><button id="zall" class="wide">Vue d'ensemble</button></div>
 <div class="fade" id="fade" aria-hidden="true"></div>
 <div class="inbar" id="inbar" hidden><button id="inexit">← Retour à Paris</button><span id="inname"></span></div>
-<div class="navhelp" id="navhelp" role="dialog" aria-label="Comment naviguer" hidden><h4>Comment naviguer</h4>
-<ul class="nh-mouse"><li><span><b>Glisser</b></span><span>se déplacer</span></li><li><span><b>Molette</b></span><span>zoomer</span></li><li><span><b>2 doigts ↔</b> (trackpad) ou <b>Ctrl + glisser</b></span><span>tourner</span></li><li><span><b>Ctrl + glisser ↕</b></span><span>incliner</span></li><li><span><b>Q / E</b> · <b>R / F</b></span><span>tourner · incliner</span></li></ul>
-<ul class="nh-touch"><li><span><b>1 doigt</b></span><span>se déplacer</span></li><li><span><b>Pincer</b></span><span>zoomer</span></li><li><span><b>Tourner 2 doigts</b></span><span>pivoter</span></li><li><span><b>2 doigts ↕</b></span><span>incliner</span></li></ul>
-<p>La boussole en bas à droite : glisser l’anneau pour tourner, les flèches pour incliner jusqu’à voir la ville d’en dessous, 2D/3D pour la vue du dessus.</p><button id="nhok">Compris</button></div>
+<aside class="legend" id="legend" aria-label="Légende de navigation"><button class="lg-h" id="lgh" aria-expanded="true"><span>✥ Légende</span><span class="lg-c">▾</span></button>
+<div class="lg-b" id="lgb">
+<div class="lg-s nh-mouse"><h5>Souris</h5><ul><li><span>Glisser</span><span>se déplacer</span></li><li><span>Molette</span><span>zoomer</span></li><li><span>Clic droit + glisser</span><span>tourner · incliner</span></li></ul></div>
+<div class="lg-s nh-mouse"><h5>Trackpad</h5><ul><li><span>2 doigts</span><span>se déplacer</span></li><li><span>Pincer</span><span>zoomer</span></li><li><span>⌥ + 2 doigts ↔</span><span>tourner</span></li><li><span>⌥ + 2 doigts ↕</span><span>incliner</span></li></ul></div>
+<div class="lg-s nh-mouse"><h5>Clavier</h5><ul><li><span>Flèches</span><span>se déplacer</span></li><li><span>Q / E</span><span>tourner</span></li><li><span>R / F</span><span>incliner</span></li></ul></div>
+<div class="lg-s nh-touch"><h5>Doigts</h5><ul><li><span>1 doigt</span><span>se déplacer</span></li><li><span>Pincer</span><span>zoomer</span></li><li><span>Tourner 2 doigts</span><span>pivoter</span></li><li><span>2 doigts ↕</span><span>incliner</span></li></ul></div>
+<div class="lg-s"><h5>Boussole</h5><ul><li><span>Anneau</span><span>tourner</span></li><li><span>▲ ▼</span><span>incliner, jusqu’en dessous</span></li><li><span>2D / 3D</span><span>vue du dessus</span></li></ul></div>
+</div></aside>
 <div class="hint" id="hint">Cliquez sur un musée pour voir ses projets</div>
 <div class="sheet" id="sheet"><button class="grab" id="pclose" aria-label="Fermer la liste"><i></i>Fermer</button><aside class="panel" id="panel" aria-live="polite"></aside></div>
 <div class="car" id="car" role="list"></div>
@@ -419,7 +429,9 @@ function openSheet(on){$('sheet').classList.toggle('open',on);if(on&&!cur)home()
 $('blist').onclick=()=>openSheet(!$('sheet').classList.contains('open'));$('pclose').onclick=()=>openSheet(false);
 $('bmenu').onclick=()=>{const m=$('menu');m.hidden=!m.hidden;$('bmenu').setAttribute('aria-expanded',!m.hidden);};
 addEventListener('pointerdown',e=>{if(!$('menu').hidden&&!e.target.closest('#menu,#bmenu')){$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded',false);}});
-{const nh=$('navhelp');const show=()=>{nh.hidden=false;};$('nhok').onclick=()=>{nh.hidden=true;try{localStorage.setItem('navhelp','1');}catch(e){}};$('mhelp').onclick=()=>{$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded','false');show();};let seen=null;try{seen=localStorage.getItem('navhelp');}catch(e){}if(!seen)setTimeout(show,1800);}
+{const lg=$('legend'),h=$('lgh');const set=o=>{lg.classList.toggle('closed',!o);h.setAttribute('aria-expanded',o);try{localStorage.setItem('legend',o?'1':'0');}catch(e){}};
+ let st=null;try{st=localStorage.getItem('legend');}catch(e){}set(st?st==='1':!matchMedia('(max-width:760px)').matches);
+ h.onclick=()=>set(lg.classList.contains('closed'));$('mhelp').onclick=()=>{$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded','false');set(true);};}
 $('mall').onclick=()=>{$('menu').hidden=true;if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
 $('mlist').onclick=()=>{$('menu').hidden=true;openSheet(true);};
 $('brec').onclick=()=>{if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
@@ -631,7 +643,16 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
     if(performance.now()-lastMove>90)vel.set(0,0,0);
     if(!ptrs.size){drag=null;down=null;cv.style.cursor='grab';if(!tap&&vel.length()<.4){direct=false;tgtT.copy(tgt);vhT=vh;}if(tap){direct=false;tgtT.copy(tgt);vhT=vh;}}};
   cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',e=>{ptrs.delete(e.pointerId);drag=null;down=null;two=null;qz=null;vel.set(0,0,0);direct=false;tgtT.copy(tgt);vhT=vh;});
-  cv.addEventListener('wheel',e=>{e.preventDefault();if(!e.ctrlKey&&Math.abs(e.deltaX)>Math.abs(e.deltaY)*1.2){azT=az=az+e.deltaX*.004;placeCam();return;}direct=true;vel.set(0,0,0);tgtT.copy(tgt);const f=Math.exp(Math.max(-1,Math.min(1,e.deltaY*(e.ctrlKey?.01:.0015))));zoomAt(vh*f,e.clientX,e.clientY);direct=false;tgtT.copy(tgt);vhT=vh;},{passive:false});
+  // wheel: a mouse wheel zooms; on a trackpad two fingers pan, pinch zooms, Option/Shift + two fingers rotate (and Option tilts)
+  let trackpad=false;
+  cv.addEventListener('wheel',e=>{e.preventDefault();const k=e.deltaMode===1?16:e.deltaMode===2?400:1,dx=e.deltaX*k,dy=e.deltaY*k;
+    if(!trackpad&&!e.ctrlKey&&(e.deltaX!==0||(e.deltaMode===0&&!Number.isInteger(e.deltaY))))trackpad=true;
+    direct=true;vel.set(0,0,0);tgtT.copy(tgt);
+    if(e.altKey||e.shiftKey){azT=az=az+(dx||(e.shiftKey?dy:0))*.004;if(e.altKey&&!e.shiftKey)el=elT=Math.max(ELMIN,Math.min(ELMAX,el+dy*.003));placeCam();}
+    else if(e.ctrlKey||!trackpad){const f=Math.exp(Math.max(-1,Math.min(1,dy*(e.ctrlKey?.01:.0015))));zoomAt(vh*f,e.clientX,e.clientY);}
+    else{const a=ground(e.clientX,e.clientY),b=ground(e.clientX+dx,e.clientY+dy);if(a&&b)panBy(b.x-a.x,b.z-a.z);}
+    direct=false;tgtT.copy(tgt);vhT=vh;azT=az;elT=el;},{passive:false});
+  ['gesturestart','gesturechange'].forEach(t=>cv.addEventListener(t,e=>e.preventDefault()));
   let snapT;
   api.panScreen=(dx,dy)=>{const s=vh*.12;const rx=Math.cos(az),rz=-Math.sin(az),fx=-Math.sin(az),fz=-Math.cos(az);tgtT.x=Math.max(-26,Math.min(18,tgtT.x+(dx*rx-dy*fx)*s));tgtT.z=Math.max(-18,Math.min(14,tgtT.z+(dx*rz-dy*fz)*s));direct=false;};
   api.north=()=>{azT=.18;elT=EL0;};let flyT;api.flyTo=(x,z,v)=>{const d=Math.hypot(x-tgt.x,z-tgt.z);tgtT.set(x,0,z);direct=false;vel.set(0,0,0);clearTimeout(flyT);if(d>5){vhT=Math.max(vh,Math.min(vh0*1.05,v+d*1.1));flyT=setTimeout(()=>api.zoomTo(v),Math.min(900,300+d*25));}else api.zoomTo(v);};api.northOnly=()=>{azT=.18;};api.heading=()=>az;api.tiltNow=()=>el;
@@ -1204,8 +1225,7 @@ window.OPT='combo';const SM0=true,CB=true;
    anims.push(t=>{g.rotation.y=t*.5;horses.forEach((h,i)=>h.position.y=.7+Math.sin(t*3+i)*.08);});
    if(!CB){crit(COL.rabbit,8.6,7.6,2.3);crit(COL.duck,11.4,7.5,-2.3,.7);}}
   // café terrace with striped awning
-  {const g=new THREE.Group();g.position.set(CB?4.6:6,0,CB?5.0:9.6);scene.add(g);at(B(3,1.3,1.2,0xefe5d2),g,0,.65,-.6);
-   const aw=mesh(new THREE.BoxGeometry(3.1,.06,.7),0xc23b3b);aw.position.set(0,1.1,.15);aw.rotation.x=.35;g.add(aw);
+  {const g=new THREE.Group();g.position.set(CB?4.6:6,0,CB?5.0:9.6);scene.add(g);
    for(let i=0;i<3;i++){const x=-1.1+i*1.1;at(C(.22,.22,.04,0xfbf8f1,14),g,x,.45,.9);at(C(.02,.02,.45,COL.iron,6),g,x,.22,.9);}
    {const cx=CB?4.6:6,cz=CB?5.0:9.6;crit(COL.cat,cx-1.1,cz+1.1,0,.75);crit(COL.peng,cx,cz+1.2,Math.PI,.75);crit(COL.rabbit,cx+1.1,cz+1.1,0,.75);}}
   // advertising columns
