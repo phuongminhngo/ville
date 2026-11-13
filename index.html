@@ -194,6 +194,10 @@ body.m-blue #v3d{background:radial-gradient(circle at 32% 12%,#fffbe8 0,#fff4cf 
 body.m-rain #v3d{background:linear-gradient(180deg,#2e3646 0%,#4c5568 55%,#7d8597 100%)}
 body.m-snow #v3d{background:linear-gradient(180deg,#aeb8c9 0%,#d9dfe7 60%,#f1f3f6 100%)}
 body.m-blue #map,body.m-rain #map{filter:brightness(.75) saturate(.85)}
+.gcw{display:grid;grid-template-areas:". u ." "l c r" ". d .";grid-template-columns:26px 46px 26px;grid-template-rows:22px 46px 22px;align-items:center;justify-items:center;gap:2px}
+.gcw .ga{width:24px;height:22px;padding:0;display:grid;place-items:center;border:1.5px solid var(--line);border-radius:8px;background:rgba(255,250,242,.96);color:var(--ink);font:11px var(--term);cursor:pointer;box-shadow:0 2px 8px rgba(60,30,40,.12);touch-action:none}
+.gcw .ga:hover{background:#fff}.gcw .ga:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
+.gcw .gcomp{cursor:grab;touch-action:none}.gcw .gcomp:active{cursor:grabbing}
 </style>
 <div class="stage">
  <div id="v2d"><svg id="map" viewBox="100 105 1000 790" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Plan de Paris avec les musées de la galerie">
@@ -241,7 +245,7 @@ body.m-blue #map,body.m-rain #map{filter:brightness(.75) saturate(.85)}
 <div class="car" id="car" role="list"></div>
 <div class="bub" id="bub" hidden></div>
 <div class="tip" id="tip" hidden></div>
-<div class="gm" id="gm"><button class="gmb gcomp" id="bcomp" aria-label="Remettre le nord en haut" hidden><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><g id="needle"><path d="M12 3l3.5 9h-7z" fill="#d0607f"/><path d="M12 21l3.5-9h-7z" fill="#9aa3b5"/></g></svg></button><div class="gzoom"><button class="gmb" id="gzin" aria-label="Zoomer">+</button><button class="gmb" id="gzout" aria-label="Dézoomer">−</button></div><button class="gmb" id="brec" aria-label="Revenir à la vue d’ensemble">⌖</button></div>
+<div class="gm" id="gm"><div class="gcw" id="gcw"><button class="ga" data-r="-1" style="grid-area:l" aria-label="Tourner à gauche">◀</button><button class="ga" data-t="1" style="grid-area:u" aria-label="Vue du dessus">▲</button><button class="gmb gcomp" style="grid-area:c" id="bcomp" aria-label="Boussole : glisser pour tourner et incliner, toucher pour remettre le nord" title="Glisser pour tourner et incliner · toucher pour remettre le nord"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><g id="needle"><path d="M12 3l3.5 9h-7z" fill="#d0607f"/><path d="M12 21l3.5-9h-7z" fill="#9aa3b5"/></g></svg></button><button class="ga" data-t="-1" style="grid-area:d" aria-label="Vue d’en bas">▼</button><button class="ga" data-r="1" style="grid-area:r" aria-label="Tourner à droite">▶</button></div><div class="gzoom"><button class="gmb" id="gzin" aria-label="Zoomer">+</button><button class="gmb" id="gzout" aria-label="Dézoomer">−</button></div><button class="gmb" id="brec" aria-label="Revenir à la vue d’ensemble">⌖</button></div>
 <div class="toast" id="toast" hidden></div>
 <div class="card-wrap" id="cardwrap" hidden><article class="card" id="card" role="dialog" aria-modal="true"></article></div>
 <script>
@@ -426,8 +430,14 @@ function placeMarker(){if(!window.CITY)return;const t=CITY.tgt;$('mm-me').setAtt
 let hovT=0;function hoverPick(e){if(!window.CITY||e.buttons||e.pointerType!=='mouse')return;const now=performance.now();if(now-hovT<60)return;hovT=now;const r=CITY.cv.getBoundingClientRect();const k=museumAt((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
  CITY.cv.style.cursor=k?'pointer':'grab';const tp=$('tip');if(k&&k!==sel){tp.textContent=MUS[k].name+' · '+MUS[k].sec;tp.style.transform=`translate(${e.clientX+14}px,${e.clientY+14}px)`;tp.hidden=false;}else tp.hidden=true;}
 function museumAt(nx,ny){const rc=new THREE.Raycaster();rc.setFromCamera({x:nx,y:ny},CITY.cam);const hits=rc.intersectObjects(CITY.scene.children,true).filter(h=>h.object.visible).slice(0,4);for(const h of hits){const p=h.object.isSprite?h.object.position:h.point;let best=null,bd=1e9;for(const k of ORDER){const m=MUS[k];const d=Math.hypot(p.x-m.x,p.z-m.z);const lim=k==='boutique'?1.3:3.4;if(d<lim&&d<bd){bd=d;best=k;}}if(best)return best;}return null;}
-addEventListener('keydown',e=>{if(!window.CITY||e.target.closest('input,textarea')||!$('cardwrap').hidden)return;const k=e.key.toLowerCase();const d={arrowleft:[-1,0],a:[-1,0],arrowright:[1,0],d:[1,0],arrowup:[0,-1],w:[0,-1],arrowdown:[0,1],s:[0,1]}[k];if(d){e.preventDefault();CITY.panScreen(d[0],d[1]);}});
-$('gzin').onclick=()=>window.CITY&&CITY.zoomTo(CITY.zoom()/1.5);$('gzout').onclick=()=>window.CITY&&CITY.zoomTo(CITY.zoom()*1.5);$('bcomp').onclick=()=>window.CITY&&CITY.north();
+addEventListener('keydown',e=>{if(!window.CITY||e.target.closest('input,textarea')||!$('cardwrap').hidden)return;const k=e.key.toLowerCase();const d={arrowleft:[-1,0],a:[-1,0],arrowright:[1,0],d:[1,0],arrowup:[0,-1],w:[0,-1],arrowdown:[0,1],s:[0,1]}[k];if(d){e.preventDefault();CITY.panScreen(d[0],d[1]);return;}if(k==='q'||k==='e'){e.preventDefault();CITY.rotate((k==='q'?-1:1)*Math.PI/8);}else if(k==='r'||k==='f'){e.preventDefault();CITY.tiltBy(k==='r'?.18:-.18);}});
+$('gzin').onclick=()=>window.CITY&&CITY.zoomTo(CITY.zoom()/1.5);$('gzout').onclick=()=>window.CITY&&CITY.zoomTo(CITY.zoom()*1.5);{let cd=null;const bc=$('bcomp');
+ bc.addEventListener('pointerdown',e=>{cd={x:e.clientX,y:e.clientY,moved:0};bc.setPointerCapture(e.pointerId);e.preventDefault();});
+ bc.addEventListener('pointermove',e=>{if(!cd||!window.CITY)return;const dx=e.clientX-cd.x,dy=e.clientY-cd.y;cd.moved+=Math.abs(dx)+Math.abs(dy);cd.x=e.clientX;cd.y=e.clientY;CITY.rotate(-dx*.012);CITY.tiltBy(dy*.008);});
+ const end=()=>{if(cd&&cd.moved<5&&window.CITY)CITY.north();cd=null;};bc.addEventListener('pointerup',end);bc.addEventListener('pointercancel',()=>cd=null);
+ document.querySelectorAll('#gcw .ga').forEach(a=>{let iv=null;const step=()=>{if(!window.CITY)return;if(a.dataset.r)CITY.rotate(+a.dataset.r*Math.PI/8);else CITY.tiltBy(+a.dataset.t*.18);};
+  a.addEventListener('pointerdown',e=>{e.preventDefault();step();clearInterval(iv);iv=setInterval(step,260);});['pointerup','pointerleave','pointercancel'].forEach(t=>a.addEventListener(t,()=>clearInterval(iv)));
+  a.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();step();}});});}
 carCity();$('map').setAttribute('viewBox','190 150 680 680');$('map').setAttribute('preserveAspectRatio','xMidYMid slice');
 home();
 </script>
@@ -562,7 +572,7 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
   const scene=new THREE.Scene();const cam=new THREE.OrthographicCamera(-1,1,1,-1,.1,200);
   scene.add(new THREE.HemisphereLight(0xf6e0e8,0x9a7a8c,.55));const d=new THREE.DirectionalLight(0xffe8dc,.85);d.position.set(-12,14,10);d.castShadow=true;d.shadow.mapSize.set(2048,2048);Object.assign(d.shadow.camera,{left:-24,right:24,top:24,bottom:-24,near:1,far:80});d.shadow.radius=3;d.shadow.bias=-.0006;scene.add(d);
   let az=.18,azT=.18,vh=vh0,vhT=vh0;const tgt=tgt0.clone(),tgtT=tgt0.clone();const ptrs=new Map();let drag=null,pinch=null,down=null;
-  const api={scene,anims:[],cam,R,cv,onPick:null,tgt,tgtT,az(){return az;},tilt(v){elT=v;},rotate(d){azT+=d;},zoomTo(v){vhT=Math.max(4.5,Math.min(vh0*1.15,v));},zoom(){return vhT;},focus(x,z,v){tgtT.set(x,0,z);api.zoomTo(v);},reset(){tgtT.copy(tgt0);vhT=vh0;azT=.18;elT=EL0;}};
+  const api={scene,anims:[],cam,R,cv,onPick:null,tgt,tgtT,az(){return az;},tilt(v){elT=Math.max(-.55,Math.min(1.35,v));},tiltBy(d){elT=Math.max(-.55,Math.min(1.35,elT+d));},rotate(d){azT+=d;},zoomTo(v){vhT=Math.max(4.5,Math.min(vh0*1.15,v));},zoom(){return vhT;},focus(x,z,v){tgtT.set(x,0,z);api.zoomTo(v);},reset(){tgtT.copy(tgt0);vhT=vh0;azT=.18;elT=EL0;}};
   // ---- city-builder controls : drag pans with momentum, pinch/wheel zoom toward the fingers or cursor, tap selects, double-tap zooms in.
   // The ground point under the finger stays under the finger, so the city feels held in the hand.
   cv.addEventListener('contextmenu',e=>e.preventDefault());
@@ -577,21 +587,21 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
   // 1 finger: drag to pan, fling to glide · double tap: zoom in · double tap + drag up/down: zoom
   // 2 fingers: pinch to zoom, twist to rotate, slide up/down together to tilt, quick two-finger tap: zoom out
   // mouse: drag to pan, wheel to zoom at the cursor, right-drag (or Shift-drag) to rotate and tilt
-  const EL0=el;let lastTap=0,lastTapXY=null,qz=null,two=null;
+  const EL0=el,ELMIN=-.55,ELMAX=1.35;let lastTap=0,lastTapXY=null,qz=null,two=null;
   const ang2=()=>{const [p,q]=[...ptrs.values()];return Math.atan2(q.y-p.y,q.x-p.x);};
   cv.addEventListener('pointerdown',e=>{ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY});cv.setPointerCapture(e.pointerId);direct=true;vel.set(0,0,0);tgtT.copy(tgt);vhT=vh;azT=az;elT=el;clearTimeout(snapT);
     if(ptrs.size===1){const now=performance.now();if(lastTapXY&&now-lastTap<300&&Math.hypot(e.clientX-lastTapXY.x,e.clientY-lastTapXY.y)<40){qz={y:e.clientY,v:vh,x0:e.clientX,y0:e.clientY,moved:false};}
-      drag={x:e.clientX,y:e.clientY,rot:e.button===2||e.shiftKey,a:az,el:el};down={x:e.clientX,y:e.clientY,t:now};cv.style.cursor='grabbing';}
+      drag={x:e.clientX,y:e.clientY,rot:e.button===2||e.shiftKey||e.ctrlKey||e.altKey||e.metaKey,a:az,el:el};down={x:e.clientX,y:e.clientY,t:now};cv.style.cursor='grabbing';}
     else if(ptrs.size===2){const m=mid();two={t:performance.now(),d:m.d,a:ang2(),x:m.x,y:m.y,mode:null,moved:0,v:vh,az:az,el:el};drag=null;down=null;qz=null;}});
   cv.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;const pp=ptrs.get(e.pointerId),prev={x:pp.x,y:pp.y};pp.x=e.clientX;pp.y=e.clientY;
     if(two&&ptrs.size===2){const m=mid(),a=ang2();two.moved=Math.max(two.moved,Math.hypot(m.x-two.x,m.y-two.y),Math.abs(m.d-two.d));
       if(!two.mode&&two.moved>10){const [p,q]=[...ptrs.values()];const dyP=p.y-p.y0,dyQ=q.y-q.y0;const sameV=Math.sign(dyP)===Math.sign(dyQ)&&Math.abs(dyP)>8&&Math.abs(dyQ)>8&&Math.abs(p.x-p.x0)<Math.abs(dyP)&&Math.abs(q.x-q.x0)<Math.abs(dyQ);two.mode=sameV&&Math.abs(m.d-two.d)<20?'tilt':'zoom';}
-      if(two.mode==='tilt'){el=elT=Math.max(.45,Math.min(1.25,two.el+(m.y-two.y)*.004));placeCam();}
+      if(two.mode==='tilt'){el=elT=Math.max(ELMIN,Math.min(ELMAX,two.el+(m.y-two.y)*.004));placeCam();}
       else if(two.mode==='zoom'){let da=a-two.a;if(da>Math.PI)da-=2*Math.PI;if(da<-Math.PI)da+=2*Math.PI;az=azT=two.az+da;zoomAt(two.v*two.d/Math.max(20,m.d),m.x,m.y);
         const g0=ground(prevMid.x,prevMid.y),g1=ground(m.x,m.y);if(g0&&g1)panBy(g0.x-g1.x,g0.z-g1.z);}
       prevMid={x:m.x,y:m.y};return;}
     if(qz){const dy=e.clientY-qz.y;if(Math.abs(dy)>4)qz.moved=true;if(qz.moved){zoomAt(qz.v*Math.exp(-dy*.01),qz.x0,qz.y0);return;}}
-    if(drag){if(drag.rot){az=azT=drag.a-(e.clientX-drag.x)*.006;el=elT=Math.max(.45,Math.min(1.25,drag.el+(e.clientY-drag.y)*.004));placeCam();return;}
+    if(drag){if(drag.rot){az=azT=drag.a-(e.clientX-drag.x)*.006;el=elT=Math.max(ELMIN,Math.min(ELMAX,drag.el+(e.clientY-drag.y)*.004));placeCam();return;}
       const a=ground(prev.x,prev.y),b=ground(e.clientX,e.clientY);if(a&&b){const dx=a.x-b.x,dz=a.z-b.z;panBy(dx,dz);const now=performance.now(),dt=Math.max(8,now-lastMove)/1000;lastMove=now;vel.lerp(new THREE.Vector3(dx/dt,0,dz/dt),.5);}}});
   let prevMid={x:0,y:0};cv.addEventListener('pointerdown',()=>{if(ptrs.size===2){const m=mid();prevMid={x:m.x,y:m.y};}});
   const up=e=>{const was=ptrs.size;ptrs.delete(e.pointerId);const tap=down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<6;
@@ -601,7 +611,7 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
     if(performance.now()-lastMove>90)vel.set(0,0,0);
     if(!ptrs.size){drag=null;down=null;cv.style.cursor='grab';if(!tap&&vel.length()<.4){direct=false;tgtT.copy(tgt);vhT=vh;}if(tap){direct=false;tgtT.copy(tgt);vhT=vh;}}};
   cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',e=>{ptrs.delete(e.pointerId);drag=null;down=null;two=null;qz=null;vel.set(0,0,0);direct=false;tgtT.copy(tgt);vhT=vh;});
-  cv.addEventListener('wheel',e=>{e.preventDefault();direct=true;vel.set(0,0,0);tgtT.copy(tgt);const f=Math.exp(Math.max(-1,Math.min(1,e.deltaY*(e.ctrlKey?.01:.0015))));zoomAt(vh*f,e.clientX,e.clientY);direct=false;tgtT.copy(tgt);vhT=vh;},{passive:false});
+  cv.addEventListener('wheel',e=>{e.preventDefault();if(!e.ctrlKey&&Math.abs(e.deltaX)>Math.abs(e.deltaY)*1.2){azT=az=az+e.deltaX*.004;placeCam();return;}direct=true;vel.set(0,0,0);tgtT.copy(tgt);const f=Math.exp(Math.max(-1,Math.min(1,e.deltaY*(e.ctrlKey?.01:.0015))));zoomAt(vh*f,e.clientX,e.clientY);direct=false;tgtT.copy(tgt);vhT=vh;},{passive:false});
   let snapT;
   api.panScreen=(dx,dy)=>{const s=vh*.12;const rx=Math.cos(az),rz=-Math.sin(az),fx=-Math.sin(az),fz=-Math.cos(az);tgtT.x=Math.max(-26,Math.min(18,tgtT.x+(dx*rx-dy*fx)*s));tgtT.z=Math.max(-18,Math.min(14,tgtT.z+(dx*rz-dy*fz)*s));direct=false;};
   api.north=()=>{azT=.18;elT=EL0;};api.heading=()=>az;api.tiltNow=()=>el;
@@ -645,12 +655,21 @@ if(document.fonts)Promise.all([`40px "VT323"`,`30px "Silkscreen"`].map(f=>docume
 function critter(col,scale=1,beret){const g=new THREE.Group();const b=at(S(.17,col),g,0,.2,0);b.scale.set(1,1.1,.95);at(S(.19,col),g,0,.5,0);if(col===COL.rabbit)for(const s of[-1,1])at(mesh(new THREE.CapsuleGeometry(.045,.18,4,10),col),g,s*.07,.75,0,0,0,-s*.12);
   for(const s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(.03,8,6),new THREE.MeshBasicMaterial({color:0x1d1c1a}));e.position.set(s*.07,.52,.17);g.add(e);}
   if(beret)at(C(.15,.14,.05,beret),g,-.02,.67,0,0,0,.2);
-  {const u=new THREE.Group();u.visible=false;const uc=UMBC[UMB.length%5];
-   const cn=new THREE.Mesh(UMBG.c,uc);cn.position.set(.06,1.05,0);u.add(cn);const tp=new THREE.Mesh(UMBG.t,UMBC[5]);tp.position.set(.06,1.2,0);u.add(tp);
-   const h=new THREE.Mesh(UMBG.h,UMBC[5]);h.position.set(.13,.72,.05);h.rotation.z=.12;u.add(h);g.add(u);UMB.push(u);}
+  {const u=new THREE.Group();u.visible=false;const n=UMB.length,kind=[0,1,2,3,0,1,3,0,2,1][n%10];
+   if(kind===0){const mt=UMBC[n%UMBC.length];const cn=new THREE.Mesh(UMBG.c,mt);cn.position.set(.06,1.05,0);cn.renderOrder=2;u.add(cn);const ed=new THREE.LineSegments(UMBG.e,UMBG.em);ed.position.copy(cn.position);u.add(ed);
+    const tp=new THREE.Mesh(UMBG.t,UMBG.dark);tp.position.set(.06,1.2,0);u.add(tp);const h=new THREE.Mesh(UMBG.h,UMBG.dark);h.position.set(.13,.72,.05);h.rotation.z=.12;u.add(h);}
+   else if(kind===1){const mt=COATC[n%COATC.length];const body=new THREE.Mesh(UMBG.coat,mt);body.position.set(0,.33,0);body.renderOrder=2;u.add(body);const hood=new THREE.Mesh(UMBG.hood,mt);hood.position.set(0,.5,-.01);hood.renderOrder=2;u.add(hood);
+    const ed=new THREE.LineSegments(UMBG.ce,UMBG.em);ed.position.copy(body.position);u.add(ed);}
+   else if(kind===3){for(const s of[-1,1]){const ar=mesh(UMBG.arm,col);ar.position.set(s*.13,.62,.02);ar.rotation.z=-s*.55;u.add(ar);const pw=mesh(UMBG.paw,col);pw.position.set(s*.05,.74,.03);u.add(pw);}}
+   g.add(u);UMB.push(u);}
   g.scale.setScalar(scale);return g;}
-const UMB=[];window.UMB=UMB;const UMBG={c:new THREE.ConeGeometry(.44,.22,8),t:new THREE.CylinderGeometry(.012,.012,.08,4),h:new THREE.CylinderGeometry(.014,.014,.7,4)};
-const UMBC=[0xd0607f,0x2b4a8f,0xf6c94a,0x3f9a6b,0xe2564f,0x2a2321].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.6,flatShading:true}));
+const UMB=[];window.UMB=UMB;
+const UMBG={c:new THREE.ConeGeometry(.44,.22,8),t:new THREE.CylinderGeometry(.012,.012,.08,4),h:new THREE.CylinderGeometry(.014,.014,.7,4),
+ coat:new THREE.CylinderGeometry(.2,.3,.62,8,1,true),hood:new THREE.SphereGeometry(.23,8,5,0,Math.PI*2,0,Math.PI*.62),arm:new THREE.CapsuleGeometry(.045,.22,2,5),paw:new THREE.IcosahedronGeometry(.055,0),
+ em:new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.7}),dark:new THREE.MeshStandardMaterial({color:0x2a2321,roughness:.6})};
+UMBG.e=new THREE.EdgesGeometry(UMBG.c);UMBG.ce=new THREE.EdgesGeometry(new THREE.CylinderGeometry(.2,.3,.62,8,1,true));
+const clear=c=>new THREE.MeshStandardMaterial({color:c,roughness:.1,metalness:.1,transparent:true,opacity:.42,depthWrite:false,side:THREE.DoubleSide,flatShading:true});
+const UMBC=[0xeaf4ff,0xffd6e4,0xd6ecff,0xfff3c4,0xdff5e4].map(clear),COATC=[0xfff1a8,0xffc9dc,0xcfe6ff,0xe9e9f2].map(clear);
 function windowsTex(w,h,cols,rows,stone,frame){const [c,x]=cnv(w,h,stone);for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){const ww=w/cols,hh=h/rows,px=i*ww+ww*.3,py=j*hh+hh*.22;x.fillStyle=Math.random()<.22?'#f6c97a':'#56668f';x.beginPath();x.roundRect(px,py,ww*.4,hh*.56,Math.min(ww,hh)*.08);x.fill();x.fillStyle='rgba(255,255,255,.55)';x.fillRect(px-ww*.04,py+hh*.56,ww*.48,hh*.05);}return tex(c);}
 
 const FAC={cream:['#ebe7e0','#d9d4cb'],beige:['#e5e0d6','#d2ccc1'],grey:['#e8e8e6','#d4d4d1'],brick:['#e6ddd6','#d6cdc4'],gold:['#e7e2d8','#d1cabd']};
@@ -1091,7 +1110,12 @@ window.OPT='combo';const SM0=true,CB=true;
     const cmx=new THREE.MeshStandardMaterial({color:0xffffff,emissive:0xfbe9ee,emissiveIntensity:.45,roughness:1,flatShading:true});
     const n=120,im=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),cmx,n),o=new THREE.Object3D();
     for(let i=0;i<n;i++){const a=i/n*Math.PI*2+Math.random()*.05,s=.82+Math.random()*.16;o.position.set(OX+Math.cos(a)*PA*s,-2.75-Math.random()*.35,OZ+Math.sin(a)*PB*s);const k=.55+Math.random()*.6;o.scale.set(k*1.5,k*.75,k*1.3);o.rotation.y=Math.random()*3;o.updateMatrix();im.setMatrixAt(i,o.matrix);}
-    scene.add(im);}
+    scene.add(im);
+    // floating-island rock under the plinth
+    {const geo=new THREE.ConeGeometry(1,1,14,3);const pp=geo.attributes.position;for(let i=0;i<pp.count;i++){const y=pp.getY(i);if(y<.49&&y>-.49){const f=.85+Math.random()*.3;pp.setX(i,pp.getX(i)*f);pp.setZ(i,pp.getZ(i)*f);pp.setY(i,y+(Math.random()-.5)*.12);}}geo.computeVertexNormals();
+     const rk=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xb08060,emissive:0x5a3426,emissiveIntensity:.6,roughness:.95,flatShading:true}));rk.rotation.x=Math.PI;rk.scale.set(PA*.97,5.5,PB*.97);rk.position.set(OX,-2.57-2.75,OZ);scene.add(rk);
+     const r2=new THREE.Mesh(new THREE.ConeGeometry(1,1,7,1),new THREE.MeshStandardMaterial({color:0x9a6a50,emissive:0x4a2a20,emissiveIntensity:.6,roughness:.95,flatShading:true}));r2.rotation.x=Math.PI;
+     for(const [dx,dz,s,h] of[[.45,.2,5,3],[-.4,-.3,4,2.6],[.1,-.5,3.2,2.2],[-.2,.45,3.6,2.4]]){const c=r2.clone();c.scale.set(s,h,s);c.position.set(OX+dx*PA*.6,-2.6-h/2-2.2,OZ+dz*PB*.6);scene.add(c);}}}
    window.CITY.outerSigns=SIGNS;}
   // sky: clouds, a hot-air balloon, birds and a little plane with a banner
   const cm=new THREE.MeshStandardMaterial({color:0xfff1ea,roughness:1,transparent:true,opacity:.92});
@@ -1176,7 +1200,7 @@ window.OPT='combo';const SM0=true,CB=true;
 }
 })();
 
-const w8=setInterval(()=>{if(window.CITY&&CITY.RV){clearInterval(w8);CITY.onPick=pick;addMosaics3d();setMood(mood);$('inexit').onclick=()=>exitMuseum();tagExteriors();CITY.anims.push(dollTick);const SP=[];CITY.scene.traverse(o=>{if(o.isSprite)SP.push([o,o.scale.clone()]);});CITY.anims.push(()=>{const z=CITY.zoom(),k=Math.max(.36,Math.min(.72,z/40));SP.forEach(([o,s])=>{o.scale.set(s.x*k,s.y*k,1);});placeBubble();placeMarker();const hd=CITY.heading()-.18,tl=CITY.tiltNow()-.8;$('needle').setAttribute('transform',`rotate(${(hd*180/Math.PI).toFixed(1)} 12 12)`);$('bcomp').hidden=Math.abs(Math.atan2(Math.sin(hd),Math.cos(hd)))<.04&&Math.abs(tl)<.03;});CITY.cv.addEventListener('pointermove',hoverPick);CITY.cv.addEventListener('pointerleave',()=>$('tip').hidden=true);if(cur)openMus(cur);}},60);
+const w8=setInterval(()=>{if(window.CITY&&CITY.RV){clearInterval(w8);CITY.onPick=pick;addMosaics3d();setMood(mood);$('inexit').onclick=()=>exitMuseum();tagExteriors();CITY.anims.push(dollTick);const SP=[];CITY.scene.traverse(o=>{if(o.isSprite)SP.push([o,o.scale.clone()]);});CITY.anims.push(()=>{const z=CITY.zoom(),k=Math.max(.36,Math.min(.72,z/40));const up=CITY.tiltNow()>.04;SP.forEach(([o,s])=>{o.scale.set(s.x*k,s.y*k,1);o.visible=up;});placeBubble();placeMarker();const hd=CITY.heading()-.18,tl=CITY.tiltNow()-.8;$('needle').setAttribute('transform',`rotate(${(hd*180/Math.PI).toFixed(1)} 12 12)`);});CITY.cv.addEventListener('pointermove',hoverPick);CITY.cv.addEventListener('pointerleave',()=>$('tip').hidden=true);if(cur)openMus(cur);}},60);
 }
 setView('3d');
 </script>
