@@ -263,7 +263,7 @@ const ICON={palais:SV('<path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/><path d
  accueil:SV('<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>'),
  boutique:SV('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>')};
 const MUSOF={};Object.entries(MUS).forEach(([k,m])=>m.ids.forEach(id=>MUSOF[id]=k));
-const ORDER=['palais','gare','serre','atelier','petit','accueil','boutique'];
+const ORDER=['accueil','boutique','palais','gare','serre','atelier','petit'];
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const px=t=>{t=String(t).toUpperCase();return `<b>${esc(t[0])}</b>${esc(t.slice(1))}`;};
 const thumb=e=>{const i=(e.imgs||[])[0];return i?`style="background-image:url('${i.src}')"`:'';};
