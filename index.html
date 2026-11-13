@@ -667,7 +667,7 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
     if(e.shiftKey&&!e.altKey){azT=az=az+(dx||dy)*.004;placeCam();}
     else if(e.ctrlKey||!trackpad){const f=Math.exp(Math.max(-1,Math.min(1,dy*(e.ctrlKey?.01:.0015))));zoomAt(vh*f,e.clientX,e.clientY);}
     else if(e.altKey){const a=ground(e.clientX,e.clientY),b=ground(e.clientX+dx,e.clientY+dy);if(a&&b)panBy(b.x-a.x,b.z-a.z);}
-    else{az=azT=az-dx*.005;el=elT=Math.max(ELMIN,Math.min(ELMAX,el+dy*.004));placeCam();}
+    else{az=azT=az+dx*.005;el=elT=Math.max(ELMIN,Math.min(ELMAX,el-dy*.004));placeCam();}
     direct=false;tgtT.copy(tgt);vhT=vh;azT=az;elT=el;},{passive:false});
   ['gesturestart','gesturechange'].forEach(t=>cv.addEventListener(t,e=>e.preventDefault()));
   let snapT;
@@ -874,7 +874,7 @@ window.OPT='combo';const SM0=true,CB=true;
    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.computeVertexNormals();return g;};
  const rmat=new THREE.MeshStandardMaterial({color:0x23406e,roughness:.2,metalness:.2,emissive:0x0d1a36,emissiveIntensity:.45,side:THREE.DoubleSide});
  const river=new THREE.Mesh(ribbon(true,.02),rmat);window.CITY.RV=RV;river.receiveShadow=true;scene.add(river);
- const RES=[[7.6,3.9,1.5,1.5],[4.6,5.0,1.9,1.5],[-16.5,.3,2.6,.7],[-6,6,2.4,1.2],[7,-3.8,1.9,.9],[-5,-10,1.6,1.4],[4,-8.8,.5,.5],[-2.5,-8.5,.5,.5],[-1,-4,3.6,2.3],[-10,-4.2,2.8,1.9],[-15.5,-2.5,3.3,1.4],[-5,3.6,3.7,1.4],[7,-6.5,2.4,1.5],[2,6.5,1.9,1.6],[3.6,-2.6,.8,.8],[-13.5,-8.8,1.7,1.7],[-13,6.5,1.9,1.9],[5,.7,2.5,1.1],[-6.9,-4.1,1.6,1.5]];
+ const RES=[[-13,6.5,2.5,2.3],[-10.1,5.2,1.6,1.5],[7.6,3.9,1.5,1.5],[4.6,5.0,1.9,1.5],[-16.5,.3,2.6,.7],[-6,6,2.4,1.2],[7,-3.8,1.9,.9],[-5,-10,1.6,1.4],[4,-8.8,.5,.5],[-2.5,-8.5,.5,.5],[-1,-4,3.6,2.3],[-10,-4.2,2.8,1.9],[-15.5,-2.5,3.3,1.4],[-5,3.6,3.7,1.4],[7,-6.5,2.4,1.5],[2,6.5,1.9,1.6],[3.6,-2.6,.8,.8],[-13.5,-8.8,1.7,1.7],[-13,6.5,1.9,1.9],[5,.7,2.5,1.1],[-6.9,-4.1,1.6,1.5]];
  const LAMPS=[];const free=(x,z)=>!RES.some(([cx,cz,hw,hd])=>Math.abs(x-cx)<hw&&Math.abs(z-cz)<hd);
  {const rvp=RV.getSpacedPoints(160);const nearR=(x,z)=>rvp.some(p=>Math.hypot(p.x-x,p.z-z)<2.4);const cm=M(0xf7f3ea),gm=M(0x9ccc5e);
   for(let gx=-18;gx<=12;gx+=2.6)for(let gz=-11;gz<=10;gz+=2.1){const x=gx+((gz*7)%3)*.3,z=gz;const w=2.0,d=1.5;const ok=[[0,0],[w/2,d/2],[-w/2,d/2],[w/2,-d/2],[-w/2,-d/2]].every(([a,b])=>inE(x+a,z+b,.72)&&free(x+a,z+b)&&!nearR(x+a,z+b));
@@ -1058,7 +1058,31 @@ window.OPT='combo';const SM0=true,CB=true;
   const sparks=[];for(let i=0;i<46;i++){const h=Math.random()*8.6,r=Math.max(.12,1.35*(1-h/6.6));const a=Math.random()*Math.PI*2;const sp=new THREE.Mesh(new THREE.SphereGeometry(.05,6,4),new THREE.MeshBasicMaterial({color:0xffe9a8}));sp.position.set(Math.cos(a)*r,h+.2,Math.sin(a)*r);e.add(sp);sparks.push(sp);}
   anims.push(t=>sparks.forEach((sp,i)=>sp.visible=Math.sin(t*7+i*2.3)>.2));
   
-  {const lw=new THREE.Mesh(new THREE.PlaneGeometry(2.4,SM?2.6:3.6),M(0x9fbf8a));lw.rotation.set(-Math.PI/2,0,.55);lw.position.set(-11.6,.015,8.3);lw.receiveShadow=true;scene.add(lw);}}
+  // a small formal park around the tower: gravel plaza, four lawns with low hedges, flower beds, rows of trees, benches
+  {const P=new THREE.Group();P.position.set(-13,0,6.5);P.rotation.y=.4;scene.add(P);const W=4.4,D=3.9;
+   const fl=(w,d,c,y)=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(w,d),M(c));p.rotation.x=-Math.PI/2;p.position.y=y;p.receiveShadow=true;P.add(p);return p;};
+   fl(W,D,0xe6dccb,.012);const pz=new THREE.Mesh(new THREE.CircleGeometry(1.55,24),M(0xddd2bf));pz.rotation.x=-Math.PI/2;pz.position.y=.014;P.add(pz);
+   const lawns=[],o=new THREE.Object3D();for(const sx of[-1,1])for(const sz of[-1,1]){const cx=sx*(W/4+.32),cz=sz*(D/4+.28),lw=W/2-.95,ld=D/2-.85;const l=fl(lw,ld,0x9fcf7f,.02);l.position.x=cx;l.position.z=cz;lawns.push([cx,cz,lw,ld]);}
+   // low hedges around each lawn
+   const H=[];lawns.forEach(([cx,cz,lw,ld])=>{H.push([cx,cz-ld/2,lw,.08],[cx,cz+ld/2,lw,.08],[cx-lw/2,cz,.08,ld],[cx+lw/2,cz,.08,ld]);});
+   const hm=new THREE.InstancedMesh(new THREE.BoxGeometry(1,.14,1),new THREE.MeshStandardMaterial({color:0x4f7f4a,roughness:.9,flatShading:true}),H.length);H.forEach(([x,z,w,d],i)=>{o.position.set(x,.07,z);o.rotation.set(0,0,0);o.scale.set(w,1,d);o.updateMatrix();hm.setMatrixAt(i,o.matrix);});hm.castShadow=true;P.add(hm);
+   // flower beds dotted in the lawns
+   const fc=[0xf2a7bd,0xf6d77a,0xd0453f,0xc9b8f0,0xfbf8f1],FN=60,fm=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.045,0),new THREE.MeshStandardMaterial({roughness:.8,flatShading:true}),FN),cc=new THREE.Color();
+   for(let i=0;i<FN;i++){const [cx,cz,lw,ld]=lawns[i%4];const u=(i/4|0)%5,v=(i/20|0);o.position.set(cx-lw/2+.18+u*(lw-.36)/4,.06,cz+(v-1)*(ld/2-.15));o.scale.setScalar(1);o.updateMatrix();fm.setMatrixAt(i,o.matrix);fm.setColorAt(i,cc.set(fc[(i+v)%fc.length]));}P.add(fm);
+   // two rows of trees along the long sides
+   const TN=12,tc=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.3,0),new THREE.MeshStandardMaterial({color:0x6f9f5a,roughness:.85,flatShading:true}),TN),tt=new THREE.InstancedMesh(new THREE.CylinderGeometry(.04,.05,.4,5),M(0x7a5a40),TN);
+   for(let i=0;i<TN;i++){const sx=i<6?-1:1,k=i%6;const x=sx*(W/2-.2),z=-D/2+.35+k*(D-.7)/5;o.position.set(x,.2,z);o.scale.set(1,1,1);o.updateMatrix();tt.setMatrixAt(i,o.matrix);o.position.set(x,.62,z);o.scale.set(1,1.15,1);o.updateMatrix();tc.setMatrixAt(i,o.matrix);}
+   tc.castShadow=tt.castShadow=true;P.add(tc,tt);
+   // the long lawn stretching east, cut by a gravel walk, with tree rows and flower borders
+   {const X0=W/2+.05,X1=X0+2.4,cx=(X0+X1)/2;fl(X1-X0,2.9,0xe6dccb,.012).position.x=cx;
+    for(const sz of[-1,1]){const l=fl(X1-X0-.3,.95,0x9fcf7f,.02);l.position.set(cx,.02,sz*.65);
+     const hb=new THREE.Mesh(new THREE.BoxGeometry(X1-X0-.3,.14,.08),hm.material);hb.position.set(cx,.07,sz*.18);P.add(hb);
+     for(let k=0;k<5;k++){const x=X0+.3+k*(X1-X0-.6)/4;const t=new THREE.Mesh(tt.geometry,tt.material);t.position.set(x,.2,sz*1.3);P.add(t);const c=new THREE.Mesh(tc.geometry,tc.material);c.position.set(x,.62,sz*1.3);c.scale.set(1,1.15,1);c.castShadow=true;P.add(c);}
+     for(let k=0;k<7;k++){const f=new THREE.Mesh(fm.geometry,new THREE.MeshStandardMaterial({color:fc[(k+(sz>0?2:0))%fc.length],flatShading:true}));f.position.set(X0+.25+k*(X1-X0-.5)/6,.06,sz*.65);P.add(f);}}
+    const pond=new THREE.Mesh(new THREE.CircleGeometry(.32,12),new THREE.MeshStandardMaterial({color:0x8fb7c9,roughness:.15,metalness:.2}));pond.rotation.x=-Math.PI/2;pond.position.set(X1-.35,.03,0);pond.scale.set(1,.7,1);P.add(pond);
+    at(C(.34,.36,.06,0xe6dfcf,12),P,X1-.35,.02,0).scale.set(1,1,.72);}
+   // benches facing the plaza
+   for(const [x,z,r] of[[-1.15,-1.15,.8],[1.15,-1.15,-.8],[-1.15,1.15,2.35],[1.15,1.15,-2.35]]){const b=new THREE.Group();b.position.set(x,0,z);b.rotation.y=r;P.add(b);at(B(.42,.04,.14,0x8a5a3a),b,0,.16,0);at(B(.42,.12,.03,0x8a5a3a),b,0,.25,-.07);for(const s of[-1,1])at(B(.03,.16,.12,COL.iron),b,s*.18,.08,0);}}}
  {const g=new THREE.Group();g.position.set(-13.5,0,-8.8);g.scale.setScalar(.75);scene.add(g);at(C(2.0,2.0,.04,0xcfc3ad,40),g,0,.02,0);at(C(1.3,1.3,.06,0x9fbf8a,40),g,0,.03,0);
   for(let i=0;i<6;i++){const a=i/6*Math.PI;at(B(6,.03,.7,0xcfc3ad),g,0,.015,0,0,a,0);}
   const st=0xe6e1d6,dk=0xd3ccbf;
