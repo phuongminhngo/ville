@@ -205,6 +205,10 @@ body.m-blue #map,body.m-rain #map{filter:brightness(.75) saturate(.85)}
 .genav .gcomp{position:absolute;left:28px;top:28px;width:40px;height:40px;cursor:grab;touch-action:none;box-shadow:none}
 .g3d{font:14px var(--term)!important;font-weight:700}
 html,body{overscroll-behavior:none}
+.ctxm{position:fixed;z-index:10;min-width:200px;background:var(--paper,#fffaf2);border:1.5px solid var(--line);border-radius:14px;box-shadow:0 12px 30px rgba(60,30,40,.22);padding:6px;display:grid;gap:2px}
+.ctxm button{all:unset;box-sizing:border-box;padding:7px 10px;border-radius:9px;font:15px var(--term,monospace);color:var(--ink);cursor:pointer}
+.ctxm button:hover,.ctxm button:focus-visible{background:rgba(208,96,127,.14)}.ctxm button:first-child{color:#d0607f}
+body.night .ctxm{background:#1d2148;color:#eef}body.night .ctxm button{color:#eef}
 .legend{position:fixed;z-index:4;left:max(16px,env(safe-area-inset-left,0px));top:calc(118px + env(safe-area-inset-top,0px));width:236px;max-height:calc(100vh - 260px);overflow:auto;overscroll-behavior:contain;background:rgba(255,250,242,.94);border:1.5px solid var(--line);border-radius:16px;box-shadow:0 6px 18px rgba(60,30,40,.12);font:14px var(--term,monospace);color:var(--ink)}
 .legend .lg-h{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;font:13px "Silkscreen",monospace;color:#d0607f}
 .legend .lg-h:focus-visible{outline:2px solid var(--pink);outline-offset:-2px;border-radius:14px}.legend .lg-c{transition:transform .2s}
@@ -256,10 +260,11 @@ body.night .legend{background:rgba(20,22,50,.82);color:#eef}body.night .legend h
 <div class="zoom" id="zoom" hidden><button id="zin" aria-label="Zoomer">+</button><button id="zout" aria-label="Dézoomer">−</button><button id="rl" aria-label="Tourner à gauche">⟲</button><button id="rr" aria-label="Tourner à droite">⟳</button><button id="zall" class="wide">Vue d'ensemble</button></div>
 <div class="fade" id="fade" aria-hidden="true"></div>
 <div class="inbar" id="inbar" hidden><button id="inexit">← Retour à Paris</button><span id="inname"></span></div>
+<div class="ctxm" id="ctxm" role="menu" hidden></div>
 <aside class="legend" id="legend" aria-label="Légende de navigation"><button class="lg-h" id="lgh" aria-expanded="true"><span>✥ Légende</span><span class="lg-c">▾</span></button>
 <div class="lg-b" id="lgb">
-<div class="lg-s nh-mouse"><h5>Souris</h5><ul><li><span>Glisser</span><span>se déplacer</span></li><li><span>Molette</span><span>zoomer</span></li><li><span>Clic droit + glisser</span><span>tourner · incliner</span></li></ul></div>
-<div class="lg-s nh-mouse"><h5>Trackpad</h5><ul><li><span>2 doigts</span><span>se déplacer</span></li><li><span>Pincer</span><span>zoomer</span></li><li><span>⌥ + 2 doigts ↔</span><span>tourner</span></li><li><span>⌥ + 2 doigts ↕</span><span>incliner</span></li></ul></div>
+<div class="lg-s nh-mouse"><h5>Souris</h5><ul><li><span>Glisser</span><span>se déplacer</span></li><li><span>Molette</span><span>zoomer</span></li><li><span>Clic droit + glisser</span><span>tourner · incliner</span></li><li><span>Clic droit</span><span>menu</span></li></ul></div>
+<div class="lg-s nh-mouse"><h5>Trackpad</h5><ul><li><span>2 doigts</span><span>se déplacer</span></li><li><span>Pincer</span><span>zoomer</span></li><li><span>⌥ + 2 doigts ↔</span><span>tourner</span></li><li><span>⌥ + 2 doigts ↕</span><span>incliner</span></li><li><span>Clic à 2 doigts</span><span>menu</span></li></ul></div>
 <div class="lg-s nh-mouse"><h5>Clavier</h5><ul><li><span>Flèches</span><span>se déplacer</span></li><li><span>Q / E</span><span>tourner</span></li><li><span>R / F</span><span>incliner</span></li></ul></div>
 <div class="lg-s nh-touch"><h5>Doigts</h5><ul><li><span>1 doigt</span><span>se déplacer</span></li><li><span>Pincer</span><span>zoomer</span></li><li><span>Tourner 2 doigts</span><span>pivoter</span></li><li><span>2 doigts ↕</span><span>incliner</span></li></ul></div>
 <div class="lg-s"><h5>Boussole</h5><ul><li><span>Anneau</span><span>tourner</span></li><li><span>▲ ▼</span><span>incliner, jusqu’en dessous</span></li><li><span>2D / 3D</span><span>vue du dessus</span></li></ul></div>
@@ -432,6 +437,16 @@ addEventListener('pointerdown',e=>{if(!$('menu').hidden&&!e.target.closest('#men
 {const lg=$('legend'),h=$('lgh');const set=o=>{lg.classList.toggle('closed',!o);h.setAttribute('aria-expanded',o);try{localStorage.setItem('legend',o?'1':'0');}catch(e){}};
  let st=null;try{st=localStorage.getItem('legend');}catch(e){}set(st?st==='1':!matchMedia('(max-width:760px)').matches);
  h.onclick=()=>set(lg.classList.contains('closed'));$('mhelp').onclick=()=>{$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded','false');set(true);};}
+{const cm=$('ctxm');const close=()=>{cm.hidden=true;};
+ const open=(cx,cy)=>{if(!window.CITY)return;const r=CITY.cv.getBoundingClientRect();const nx=(cx-r.left)/r.width*2-1,ny=-(cy-r.top)/r.height*2+1;const k=museumAt(nx,ny),g=CITY.groundAt(cx,cy);const flat=CITY.tiltT()>1.3;
+  const items=[];if(k)items.push(['◉ Ouvrir '+MUS[k].name,()=>selectMus(k)]);
+  if(g)items.push(['⌖ Centrer ici',()=>CITY.flyTo(g.x,g.z,Math.max(6,CITY.zoom()/1.6))]);
+  items.push([flat?'▱ Vue 3D':'▭ Vue 2D (du dessus)',()=>{CITY.tilt(flat?.8:1.5);if(!flat)CITY.northOnly();}]);
+  items.push(['↻ Tourner de 90°',()=>CITY.rotate(Math.PI/2)],['↺ Tourner de −90°',()=>CITY.rotate(-Math.PI/2)],['N Retour au nord',()=>CITY.north()]);
+  cm.innerHTML='';items.forEach(([t,f])=>{const bt=document.createElement('button');bt.setAttribute('role','menuitem');bt.textContent=t;bt.onclick=()=>{close();f();};cm.appendChild(bt);});
+  cm.hidden=false;const w=cm.offsetWidth,h=cm.offsetHeight;cm.style.left=Math.min(cx,innerWidth-w-8)+'px';cm.style.top=Math.min(cy,innerHeight-h-8)+'px';cm.firstChild.focus({preventScroll:true});};
+ const wait=setInterval(()=>{if(window.CITY){clearInterval(wait);CITY.onContext=open;}},200);
+ addEventListener('pointerdown',e=>{if(!cm.hidden&&!cm.contains(e.target))close();},true);addEventListener('keydown',e=>{if(e.key==='Escape')close();});addEventListener('wheel',()=>close(),{passive:true});}
 $('mall').onclick=()=>{$('menu').hidden=true;if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
 $('mlist').onclick=()=>{$('menu').hidden=true;openSheet(true);};
 $('brec').onclick=()=>{if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
@@ -623,7 +638,7 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
   const ang2=()=>{const [p,q]=[...ptrs.values()];return Math.atan2(q.y-p.y,q.x-p.x);};
   cv.addEventListener('pointerdown',e=>{ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY});cv.setPointerCapture(e.pointerId);direct=true;vel.set(0,0,0);tgtT.copy(tgt);vhT=vh;azT=az;elT=el;clearTimeout(snapT);
     if(ptrs.size===1){const now=performance.now();if(lastTapXY&&now-lastTap<300&&Math.hypot(e.clientX-lastTapXY.x,e.clientY-lastTapXY.y)<40){qz={y:e.clientY,v:vh,x0:e.clientX,y0:e.clientY,moved:false};}
-      drag={x:e.clientX,y:e.clientY,rot:e.button===2||e.shiftKey||e.ctrlKey||e.altKey||e.metaKey,a:az,el:el};down={x:e.clientX,y:e.clientY,t:now};cv.style.cursor='grabbing';}
+      drag={x:e.clientX,y:e.clientY,rot:e.button===2||e.shiftKey||e.ctrlKey||e.altKey||e.metaKey,a:az,el:el};down={x:e.clientX,y:e.clientY,t:now,ctx:e.button===2||e.ctrlKey};cv.style.cursor='grabbing';}
     else if(ptrs.size===2){const m=mid();two={t:performance.now(),d:m.d,a:ang2(),x:m.x,y:m.y,mode:null,moved:0,v:vh,az:az,el:el};drag=null;down=null;qz=null;}});
   cv.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;const pp=ptrs.get(e.pointerId),prev={x:pp.x,y:pp.y};pp.x=e.clientX;pp.y=e.clientY;
     if(two&&ptrs.size===2){const m=mid(),a=ang2();two.moved=Math.max(two.moved,Math.hypot(m.x-two.x,m.y-two.y),Math.abs(m.d-two.d));
@@ -639,6 +654,7 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
   const up=e=>{const was=ptrs.size;ptrs.delete(e.pointerId);const tap=down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<6;
     if(two&&was===2){if(performance.now()-two.t<260&&two.moved<10){zoomAt(vh*1.7,two.x,two.y);}two=null;if(ptrs.size===1){const [p]=[...ptrs.values()];drag={x:p.x,y:p.y,rot:false,a:az,el:el};}vel.set(0,0,0);return;}
     if(qz){const moved=qz.moved;qz=null;lastTap=0;lastTapXY=null;if(!moved){const pt=ground(e.clientX,e.clientY);if(pt){tgtT.copy(tgt);vhT=vh;zoomAt(vh/2,e.clientX,e.clientY);}}down=null;drag=null;cv.style.cursor='grab';direct=false;tgtT.copy(tgt);vhT=vh;return;}
+    if(tap&&down.ctx&&api.onContext&&ptrs.size===0){api.onContext(e.clientX,e.clientY);drag=null;down=null;cv.style.cursor='grab';direct=false;tgtT.copy(tgt);vhT=vh;return;}
     if(tap){lastTap=performance.now();lastTapXY={x:e.clientX,y:e.clientY};if(api.onPick){const r=cv.getBoundingClientRect();api.onPick((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);}vel.set(0,0,0);}
     if(performance.now()-lastMove>90)vel.set(0,0,0);
     if(!ptrs.size){drag=null;down=null;cv.style.cursor='grab';if(!tap&&vel.length()<.4){direct=false;tgtT.copy(tgt);vhT=vh;}if(tap){direct=false;tgtT.copy(tgt);vhT=vh;}}};
@@ -655,7 +671,7 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
   ['gesturestart','gesturechange'].forEach(t=>cv.addEventListener(t,e=>e.preventDefault()));
   let snapT;
   api.panScreen=(dx,dy)=>{const s=vh*.12;const rx=Math.cos(az),rz=-Math.sin(az),fx=-Math.sin(az),fz=-Math.cos(az);tgtT.x=Math.max(-26,Math.min(18,tgtT.x+(dx*rx-dy*fx)*s));tgtT.z=Math.max(-18,Math.min(14,tgtT.z+(dx*rz-dy*fz)*s));direct=false;};
-  api.north=()=>{azT=.18;elT=EL0;};let flyT;api.flyTo=(x,z,v)=>{const d=Math.hypot(x-tgt.x,z-tgt.z);tgtT.set(x,0,z);direct=false;vel.set(0,0,0);clearTimeout(flyT);if(d>5){vhT=Math.max(vh,Math.min(vh0*1.05,v+d*1.1));flyT=setTimeout(()=>api.zoomTo(v),Math.min(900,300+d*25));}else api.zoomTo(v);};api.northOnly=()=>{azT=.18;};api.heading=()=>az;api.tiltNow=()=>el;
+  api.north=()=>{azT=.18;elT=EL0;};api.groundAt=(cx,cy)=>ground(cx,cy);let flyT;api.flyTo=(x,z,v)=>{const d=Math.hypot(x-tgt.x,z-tgt.z);tgtT.set(x,0,z);direct=false;vel.set(0,0,0);clearTimeout(flyT);if(d>5){vhT=Math.max(vh,Math.min(vh0*1.05,v+d*1.1));flyT=setTimeout(()=>api.zoomTo(v),Math.min(900,300+d*25));}else api.zoomTo(v);};api.northOnly=()=>{azT=.18;};api.heading=()=>az;api.tiltNow=()=>el;
   api.momentum=dt=>{if(!direct||ptrs.size)return;if(vel.length()<.05){vel.set(0,0,0);direct=false;return;}panBy(vel.x*dt,vel.z*dt);vel.multiplyScalar(Math.exp(-4.5*dt));};
   function size(){const w=cv.clientWidth,h=cv.clientHeight;if(!w)return;R.setSize(w,h,false);const a=w/h;const v=vh*(a<1?1.55:1);cam.left=-v*a/2;cam.right=v*a/2;cam.top=v/2;cam.bottom=-v/2;cam.updateProjectionMatrix();}
   new ResizeObserver(size).observe(cv);size();
@@ -800,7 +816,7 @@ window.OPT='combo';const SM0=true,CB=true;
  const per=flat(new THREE.RingGeometry(.93,.975,160),COL.road,.005);per.scale.set(EA,EB,1);per.position.x=OX;per.position.z=OZ;
  const bd=flat(new THREE.RingGeometry(.56,.575,160),COL.road,.004);bd.scale.set(EA,EB,1);bd.position.x=OX;bd.position.z=OZ;
  // avenues radiating from the star roundabout
- const ET=[-13.5,-8.8],AV=[];for(let i=0;i<12;i++){const a=i/12*Math.PI*2-.876;const dx=Math.cos(a),dz=-Math.sin(a),R=.93,qa=(dx/EA)**2+(dz/EB)**2,qb=2*((ET[0]-OX)*dx/EA**2+(ET[1]-OZ)*dz/EB**2),qc=((ET[0]-OX)/EA)**2+((ET[1]-OZ)/EB)**2-R*R;const len=Math.min(i===0?4.6:9.5,(-qb+Math.sqrt(qb*qb-4*qa*qc))/(2*qa));const av=new THREE.Mesh(new THREE.PlaneGeometry(len,.5),M(0xc4b6a2));av.rotation.set(-Math.PI/2,0,a);av.position.set(ET[0]+Math.cos(a)*len/2,.006,ET[1]-Math.sin(a)*len/2);av.receiveShadow=true;scene.add(av);AV.push([dx,dz,len]);}
+ const ET=[-13.5,-8.8],AV=[];for(let i=0;i<12;i++){const a=i/12*Math.PI*2-.876;const dx=Math.cos(a),dz=-Math.sin(a),R=.93,qa=(dx/EA)**2+(dz/EB)**2,qb=2*((ET[0]-OX)*dx/EA**2+(ET[1]-OZ)*dz/EB**2),qc=((ET[0]-OX)/EA)**2+((ET[1]-OZ)/EB)**2-R*R;const len=Math.min(i===0?4.6:9.5,(-qb+Math.sqrt(qb*qb-4*qa*qc))/(2*qa));const av=new THREE.Mesh(new THREE.PlaneGeometry(len,.5),M(0xa9adb3));av.rotation.set(-Math.PI/2,0,a);av.position.set(ET[0]+Math.cos(a)*len/2,.006,ET[1]-Math.sin(a)*len/2);av.receiveShadow=true;scene.add(av);AV.push([dx,dz,len]);}
  {const pts=[];AV.forEach(([dx,dz,len])=>{for(let t=2.2;t<len;t+=.9)for(const sd of[-1,1])pts.push(ET[0]+dx*t-dz*sd*.3,.32,ET[1]+dz*t+dx*sd*.3);});
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xffd27a,size:.16})));
   const n=pts.length/6|0,im=new THREE.InstancedMesh(new THREE.SphereGeometry(.17,7,5),M(0x6f9a5a),n),o=new THREE.Object3D();let k=0;
@@ -978,7 +994,7 @@ window.OPT='combo';const SM0=true,CB=true;
  }
  {const e=new THREE.Group();e.position.set(-13,0,6.5);e.rotation.y=.4;scene.add(e);
   // open lattice tower: every beam is one instance of a single box, so it stays light
-  const rose=0xd9a08a,dk=0xb7806b,mats=[];const beams=[];
+  const rose=0x8d9299,dk=0x6c7178,mats=[];const beams=[];
   const beam=(p,q,w=.05)=>beams.push([p.clone(),q.clone(),w]);
   const V=(x,y,z)=>new THREE.Vector3(x,y,z);
   // a square frustum of lattice: corner posts, rings and X braces on each face
@@ -996,7 +1012,7 @@ window.OPT='combo';const SM0=true,CB=true;
   // tall top shaft
   frustum(0,0,0,0,.4,.1,5.18,8.6,7,.05,.022);
   // lantern, cabin and spire
-  at(B(.3,.16,.3,dk),e,0,8.66,0);at(C(.12,.14,.32,0xf3e1d2,8),e,0,8.9,0);at(C(.15,.15,.05,dk,8),e,0,9.08,0);at(mesh(new THREE.ConeGeometry(.07,.7,6),rose),e,0,9.45,0);
+  at(B(.3,.16,.3,dk),e,0,8.66,0);at(C(.12,.14,.32,0xd6d9dd,8),e,0,8.9,0);at(C(.15,.15,.05,dk,8),e,0,9.08,0);at(mesh(new THREE.ConeGeometry(.07,.7,6),rose),e,0,9.45,0);
   const unit=new THREE.BoxGeometry(1,1,1),im=new THREE.InstancedMesh(unit,new THREE.MeshStandardMaterial({color:rose,roughness:.65,flatShading:true}),beams.length);const o=new THREE.Object3D(),up=V(0,1,0);
   beams.forEach(([p,q,w],i)=>{const d=q.clone().sub(p);o.position.copy(p).addScaledVector(d,.5);o.quaternion.setFromUnitVectors(up,d.clone().normalize());o.scale.set(w,d.length()+w*.6,w);o.updateMatrix();im.setMatrixAt(i,o.matrix);});
   im.castShadow=true;im.receiveShadow=true;e.add(im);
