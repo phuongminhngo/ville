@@ -230,7 +230,7 @@ body.m-blue #map,body.m-rain #map{filter:brightness(.75) saturate(.85)}
  <div class="bar-r"><button class="ib" id="blist" aria-label="Tous les projets">☰</button><button class="ib" id="bmenu" aria-label="Menu" aria-expanded="false">⋯</button></div>
  <div class="menu" id="menu" hidden><div class="seg" role="group" aria-label="Vue" hidden><button id="b2d" aria-pressed="false">Plan 2D</button><button id="b3d" aria-pressed="true">3D</button></div>
  <button class="mosc" id="mosc" title="Des mosaïques en pixels sont cachées sur les murs : trouvez-les !">▦ Mosaïques <b id="mosn">0</b>/10</button>
- <div class="moods" role="group" aria-label="Ambiance"><button data-mood="sun" aria-pressed="true">☀ Soleil</button><button data-mood="blue" aria-pressed="false">◐ Heure bleue</button><button data-mood="night" aria-pressed="false">☾ Nuit</button><button data-mood="rain" aria-pressed="false">☂ Pluie</button><button data-mood="snow" aria-pressed="false">❄ Hiver</button></div><button id="bsun" hidden></button><button id="bnight" hidden></button>
+ <div class="moods" role="group" aria-label="Ambiance"><button data-mood="sun" aria-pressed="true">☀ Soleil</button><button data-mood="night" aria-pressed="false">☾ Nuit</button><button data-mood="rain" aria-pressed="false">☂ Pluie</button><button data-mood="snow" aria-pressed="false">❄ Hiver</button></div><button id="bsun" hidden></button><button id="bnight" hidden></button>
  <button class="mi" id="mall">⌂ Vue d’ensemble</button><button class="mi" id="mlist">☰ Tous les projets</button></div>
 </div>
 <div class="zoom" id="zoom" hidden><button id="zin" aria-label="Zoomer">+</button><button id="zout" aria-label="Dézoomer">−</button><button id="rl" aria-label="Tourner à gauche">⟲</button><button id="rr" aria-label="Tourner à droite">⟳</button><button id="zall" class="wide">Vue d'ensemble</button></div>
@@ -317,7 +317,7 @@ function applyNight(){document.body.classList.toggle('night',night);$('bsun').se
 $('bsun').onclick=()=>setMood('sun');$('bnight').onclick=()=>setMood('night');
 // ---------- moods: sunset (default), blue hour, night, rain, winter
 const MOODS={sun:null,
- night:{h:[0x5d6bc0,0x0c0e20,.32],d:[0x9fb0ff,.3],r:[0x16264a,0x1a2a60],win:.38},
+ night:{h:[0x8394e0,0x241f3a,.5],d:[0xb2b8ff,.35],r:[0x1d2c5c,0x1a2a60],win:.55},
  blue:{h:[0x8394e0,0x241f3a,.5],d:[0xb2b8ff,.35],r:[0x1d2c5c,0x1a2a60],win:.55},
  rain:{h:[0x9aa6c4,0x2a2e38,.55],d:[0xc8d2ff,.25],r:[0x24324e,0x101a30],win:.45,fx:'rain'},
  snow:{h:[0xeef4ff,0x9aa6b8,.95],d:[0xfff6ea,.9],r:[0x5a7590,0x000000],win:0,fx:'snow',roofs:0xf3f6fa}};
@@ -328,7 +328,7 @@ function moodFx(){const sc=CITY.scene;FX={};const mk=(n,line)=>{const pos=new Fl
  CITY.anims.push((t,dt)=>{for(const k of['rain','snow']){const f=FX[k];if(!f.o.visible)continue;const v=f.line?9:.9;f.sp.forEach((p,i)=>{p[1]-=v*dt;if(f.line===false)p[0]+=Math.sin(t+i)*.004;if(p[1]<0)p[1]=12;if(f.line){f.pos.set([p[0],p[1],p[2],p[0]+.04,p[1]-.4,p[2]],i*6);}else f.pos.set(p,i*3);});f.g.attributes.position.needsUpdate=true;}});
  ROOFS=[];const seen=new Set();sc.traverse(o=>{if(!o.isMesh)return;(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(seen.has(m)||!m.color)return;seen.add(m);const hx=m.color.getHex();if(hx===0x70809c||hx===0x5b6a86)ROOFS.push([m,hx,0xf3f6fa]);else if(hx===0xa9cf7f||hx===0x9ccc5e||hx===0xb9cf9b||hx===0x9fbf8a||hx===0x8fb072)ROOFS.push([m,hx,0xe9eef2]);});});}
 function setMood(k){mood=k;night=k!=='sun'&&k!=='snow';document.querySelectorAll('.moods button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mood===k));
- document.body.classList.remove('night','m-blue','m-rain','m-snow');if(k==='night')document.body.classList.add('night');else if(k!=='sun')document.body.classList.add('m-'+k);
+ document.body.classList.remove('night','m-blue','m-rain','m-snow');if(k==='night')document.body.classList.add('night','m-blue');else if(k!=='sun')document.body.classList.add('m-'+k);
  if(!window.CITY)return;night=false;applyNight();const c=MOODS[k];if(!FX)moodFx();
  FX.rain.o.visible=c&&c.fx==='rain';FX.snow.o.visible=c&&c.fx==='snow';ROOFS.forEach(([m,hx,sn])=>m.color.set(c&&c.roofs?sn:hx));
  if(!c)return;NS.h.color.set(c.h[0]);NS.h.groundColor.set(c.h[1]);NS.h.intensity=c.h[2];NS.d.color.set(c.d[0]);NS.d.intensity=c.d[1];if(NS.r){NS.r.color.set(c.r[0]);NS.r.emissive.set(c.r[1]);}
