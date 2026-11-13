@@ -194,10 +194,20 @@ body.m-blue #v3d{background:radial-gradient(circle at 32% 12%,#fffbe8 0,#fff4cf 
 body.m-rain #v3d{background:linear-gradient(180deg,#2e3646 0%,#4c5568 55%,#7d8597 100%)}
 body.m-snow #v3d{background:linear-gradient(180deg,#aeb8c9 0%,#d9dfe7 60%,#f1f3f6 100%)}
 body.m-blue #map,body.m-rain #map{filter:brightness(.75) saturate(.85)}
-.gcw{display:grid;grid-template-areas:". u ." "l c r" ". d .";grid-template-columns:26px 46px 26px;grid-template-rows:22px 46px 22px;align-items:center;justify-items:center;gap:2px}
-.gcw .ga{width:24px;height:22px;padding:0;display:grid;place-items:center;border:1.5px solid var(--line);border-radius:8px;background:rgba(255,250,242,.96);color:var(--ink);font:11px var(--term);cursor:pointer;box-shadow:0 2px 8px rgba(60,30,40,.12);touch-action:none}
-.gcw .ga:hover{background:#fff}.gcw .ga:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
-.gcw .gcomp{cursor:grab;touch-action:none}.gcw .gcomp:active{cursor:grabbing}
+.genav{position:relative;width:96px;height:96px}
+.gering{position:absolute;inset:0;border-radius:50%;background:rgba(255,250,242,.94);border:1.5px solid var(--line);box-shadow:0 4px 14px rgba(60,30,40,.14);cursor:grab;touch-action:none}
+.gering:active{cursor:grabbing}.gering::after{content:"";position:absolute;inset:22px;border-radius:50%;border:1px dashed rgba(42,35,33,.18)}
+.gering .gen{position:absolute;left:50%;top:2px;transform:translateX(-50%);font:12px var(--term);color:#d0607f;font-weight:700}
+.gering .get{position:absolute;left:50%;top:50%;width:2px;height:7px;margin:-3.5px -1px;background:rgba(42,35,33,.35);transform:rotate(var(--r)) translateY(-41px)}
+.genav .ga{position:absolute;width:20px;height:18px;padding:0;display:grid;place-items:center;border:0;border-radius:6px;background:none;color:var(--ink);font:10px var(--term);cursor:pointer;touch-action:none}
+.genav .ga:hover{background:rgba(208,96,127,.14)}.genav .ga:focus-visible{outline:2px solid var(--pink)}
+.genav .gu{left:38px;top:16px}.genav .gd{left:38px;bottom:16px}.genav .gl{left:15px;top:39px}.genav .gr{right:15px;top:39px}
+.genav .gcomp{position:absolute;left:28px;top:28px;width:40px;height:40px;cursor:grab;touch-action:none;box-shadow:none}
+.g3d{font:14px var(--term)!important;font-weight:700}
+.navhelp{position:fixed;z-index:9;left:50%;top:50%;transform:translate(-50%,-50%);width:min(360px,calc(100% - 32px));background:var(--paper,#fffaf2);border:1.5px solid var(--line);border-radius:18px;box-shadow:0 18px 40px rgba(60,30,40,.25);padding:18px 18px 16px;font:15px var(--term,monospace);color:var(--ink)}
+.navhelp h4{margin:0 0 10px;font:16px "Silkscreen",monospace;color:#d0607f}.navhelp ul{margin:0 0 10px;padding:0;list-style:none;display:grid;gap:6px}.navhelp li{display:flex;justify-content:space-between;gap:12px}.navhelp li b{font-weight:700;color:#2b4a8f}
+.navhelp p{margin:0 0 12px;font-size:14px;opacity:.8}.navhelp button{width:100%;padding:9px;border-radius:999px;border:0;background:#d0607f;color:#fff;font:15px "Silkscreen",monospace;cursor:pointer}
+.navhelp .nh-touch{display:none}@media (hover:none) and (pointer:coarse){.navhelp .nh-touch{display:grid}.navhelp .nh-mouse{display:none}}
 </style>
 <div class="stage">
  <div id="v2d"><svg id="map" viewBox="100 105 1000 790" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Plan de Paris avec les musées de la galerie">
@@ -235,17 +245,21 @@ body.m-blue #map,body.m-rain #map{filter:brightness(.75) saturate(.85)}
  <div class="menu" id="menu" hidden><div class="seg" role="group" aria-label="Vue" hidden><button id="b2d" aria-pressed="false">Plan 2D</button><button id="b3d" aria-pressed="true">3D</button></div>
  <button class="mosc" id="mosc" title="Des mosaïques en pixels sont cachées sur les murs : trouvez-les !">▦ Mosaïques <b id="mosn">0</b>/10</button>
  <div class="moods" role="group" aria-label="Ambiance"><button data-mood="sun" aria-pressed="true">☀ Soleil</button><button data-mood="night" aria-pressed="false">☾ Nuit</button><button data-mood="rain" aria-pressed="false">☂ Pluie</button><button data-mood="snow" aria-pressed="false">❄ Hiver</button></div><button id="bsun" hidden></button><button id="bnight" hidden></button>
- <button class="mi" id="mall">⌂ Vue d’ensemble</button><button class="mi" id="mlist">☰ Tous les projets</button></div>
+ <button class="mi" id="mhelp">✥ Comment naviguer</button><button class="mi" id="mall">⌂ Vue d’ensemble</button><button class="mi" id="mlist">☰ Tous les projets</button></div>
 </div>
 <div class="zoom" id="zoom" hidden><button id="zin" aria-label="Zoomer">+</button><button id="zout" aria-label="Dézoomer">−</button><button id="rl" aria-label="Tourner à gauche">⟲</button><button id="rr" aria-label="Tourner à droite">⟳</button><button id="zall" class="wide">Vue d'ensemble</button></div>
 <div class="fade" id="fade" aria-hidden="true"></div>
 <div class="inbar" id="inbar" hidden><button id="inexit">← Retour à Paris</button><span id="inname"></span></div>
+<div class="navhelp" id="navhelp" role="dialog" aria-label="Comment naviguer" hidden><h4>Comment naviguer</h4>
+<ul class="nh-mouse"><li><span><b>Glisser</b></span><span>se déplacer</span></li><li><span><b>Molette</b></span><span>zoomer</span></li><li><span><b>2 doigts ↔</b> (trackpad) ou <b>Ctrl + glisser</b></span><span>tourner</span></li><li><span><b>Ctrl + glisser ↕</b></span><span>incliner</span></li><li><span><b>Q / E</b> · <b>R / F</b></span><span>tourner · incliner</span></li></ul>
+<ul class="nh-touch"><li><span><b>1 doigt</b></span><span>se déplacer</span></li><li><span><b>Pincer</b></span><span>zoomer</span></li><li><span><b>Tourner 2 doigts</b></span><span>pivoter</span></li><li><span><b>2 doigts ↕</b></span><span>incliner</span></li></ul>
+<p>La boussole en bas à droite : glisser l’anneau pour tourner, les flèches pour incliner jusqu’à voir la ville d’en dessous, 2D/3D pour la vue du dessus.</p><button id="nhok">Compris</button></div>
 <div class="hint" id="hint">Cliquez sur un musée pour voir ses projets</div>
 <div class="sheet" id="sheet"><button class="grab" id="pclose" aria-label="Fermer la liste"><i></i>Fermer</button><aside class="panel" id="panel" aria-live="polite"></aside></div>
 <div class="car" id="car" role="list"></div>
 <div class="bub" id="bub" hidden></div>
 <div class="tip" id="tip" hidden></div>
-<div class="gm" id="gm"><div class="gcw" id="gcw"><button class="ga" data-r="-1" style="grid-area:l" aria-label="Tourner à gauche">◀</button><button class="ga" data-t="1" style="grid-area:u" aria-label="Vue du dessus">▲</button><button class="gmb gcomp" style="grid-area:c" id="bcomp" aria-label="Boussole : glisser pour tourner et incliner, toucher pour remettre le nord" title="Glisser pour tourner et incliner · toucher pour remettre le nord"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><g id="needle"><path d="M12 3l3.5 9h-7z" fill="#d0607f"/><path d="M12 21l3.5-9h-7z" fill="#9aa3b5"/></g></svg></button><button class="ga" data-t="-1" style="grid-area:d" aria-label="Vue d’en bas">▼</button><button class="ga" data-r="1" style="grid-area:r" aria-label="Tourner à droite">▶</button></div><div class="gzoom"><button class="gmb" id="gzin" aria-label="Zoomer">+</button><button class="gmb" id="gzout" aria-label="Dézoomer">−</button></div><button class="gmb" id="brec" aria-label="Revenir à la vue d’ensemble">⌖</button></div>
+<div class="gm" id="gm"><div class="genav" id="gcw"><div class="gering" id="gering" title="Glisser l’anneau pour tourner"><span class="gen">N</span><span class="get" style="--r:90deg"></span><span class="get" style="--r:180deg"></span><span class="get" style="--r:270deg"></span></div><button class="ga gu" data-t="1" aria-label="Incliner vers le dessus">▲</button><button class="ga gl" data-r="-1" aria-label="Tourner à gauche">◀</button><button class="ga gr" data-r="1" aria-label="Tourner à droite">▶</button><button class="ga gd" data-t="-1" aria-label="Incliner vers le bas">▼</button><button class="gmb gcomp" id="bcomp" aria-label="Boussole : glisser pour tourner et incliner, toucher pour remettre le nord" title="Glisser pour tourner et incliner · toucher pour remettre le nord"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><g id="needle"><path d="M12 3l3.5 9h-7z" fill="#d0607f"/><path d="M12 21l3.5-9h-7z" fill="#9aa3b5"/></g></svg></button></div><button class="gmb g3d" id="b3dt" aria-label="Basculer entre vue 2D et 3D">2D</button><div class="gzoom"><button class="gmb" id="gzin" aria-label="Zoomer">+</button><button class="gmb" id="gzout" aria-label="Dézoomer">−</button></div><button class="gmb" id="brec" aria-label="Revenir à la vue d’ensemble">⌖</button></div>
 <div class="toast" id="toast" hidden></div>
 <div class="card-wrap" id="cardwrap" hidden><article class="card" id="card" role="dialog" aria-modal="true"></article></div>
 <script>
@@ -390,7 +404,7 @@ const MZ3=[];function addMosaics3d(){MZ.forEach((z,i)=>{const t=new THREE.Canvas
  const m=new THREE.Mesh(new THREE.PlaneGeometry(.7,.7),new THREE.MeshStandardMaterial({map:t,roughness:.5,emissive:0xffffff,emissiveMap:t,emissiveIntensity:.25}));m.position.set(0,1.1,.03);m.userData.mos=i;fr.userData.mos=i;post.userData.mos=i;g.add(m);
  const back=m.clone();back.rotation.y=Math.PI;back.position.z=-.03;g.add(back);MZ3[i]=g;});
  CITY.anims.push(t=>MZ3.forEach((g,i)=>{const s=found.has(i)?1:1+Math.max(0,Math.sin(t*3+i))*.12;g.scale.setScalar(s);}));}
-function hintMz(){const left=MZ.map((z,i)=>i).filter(i=>!found.has(i));if(!left.length)return;const c=CITY.tgtT;left.sort((a,b)=>Math.hypot(MZ[a].x-c.x,MZ[a].z-c.z)-Math.hypot(MZ[b].x-c.x,MZ[b].z-c.z));const z=MZ[left[0]];if(view!=='3d')setView('3d');CITY.focus(z.x,z.z,11);$('toast').hidden=true;}
+function hintMz(){const left=MZ.map((z,i)=>i).filter(i=>!found.has(i));if(!left.length)return;const c=CITY.tgtT;left.sort((a,b)=>Math.hypot(MZ[a].x-c.x,MZ[a].z-c.z)-Math.hypot(MZ[b].x-c.x,MZ[b].z-c.z));const z=MZ[left[0]];if(view!=='3d')setView('3d');CITY.flyTo(z.x,z.z,11);$('toast').hidden=true;}
 
 // center the logo art exactly in its box (the notes and stars overflow the h1 box, so measure them)
 function centerLogo(){const box=document.querySelector('.logo'),h=box&&box.querySelector('.h2x');if(!h)return;h.style.transform='';
@@ -405,6 +419,7 @@ function openSheet(on){$('sheet').classList.toggle('open',on);if(on&&!cur)home()
 $('blist').onclick=()=>openSheet(!$('sheet').classList.contains('open'));$('pclose').onclick=()=>openSheet(false);
 $('bmenu').onclick=()=>{const m=$('menu');m.hidden=!m.hidden;$('bmenu').setAttribute('aria-expanded',!m.hidden);};
 addEventListener('pointerdown',e=>{if(!$('menu').hidden&&!e.target.closest('#menu,#bmenu')){$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded',false);}});
+{const nh=$('navhelp');const show=()=>{nh.hidden=false;};$('nhok').onclick=()=>{nh.hidden=true;try{localStorage.setItem('navhelp','1');}catch(e){}};$('mhelp').onclick=()=>{$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded','false');show();};let seen=null;try{seen=localStorage.getItem('navhelp');}catch(e){}if(!seen)setTimeout(show,1800);}
 $('mall').onclick=()=>{$('menu').hidden=true;if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
 $('mlist').onclick=()=>{$('menu').hidden=true;openSheet(true);};
 $('brec').onclick=()=>{if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
@@ -417,7 +432,7 @@ function scrollCarTo(k){const el=$('car').querySelector(`.cc[data-k="${k}"]`);if
 // select a place: fly there, show the bubble above it
 function selectMus(k,fromCar){sel=k;document.querySelectorAll('#car .cc').forEach(el=>el.classList.toggle('on',el.dataset.k===k));document.querySelectorAll('#map .pin').forEach(p=>p.classList.toggle('sel',p.dataset.m===k));
  if(!k){$('bub').hidden=true;return;}const m=MUS[k];if(typeof IN!=='undefined'&&IN.on&&DH.k!==k)exitMuseum(true);openMus(k);
- if(window.CITY&&!(typeof IN!=='undefined'&&IN.on))CITY.focus(m.x,m.z,20);if(!fromCar)scrollCarTo(k);
+ if(window.CITY&&!(typeof IN!=='undefined'&&IN.on))CITY.flyTo(m.x,m.z,20);if(!fromCar)scrollCarTo(k);
  $('bub').innerHTML=`<i class="bi">${ICON[k]}</i><span><b>${esc(m.name)}</b><small>${esc(m.sec)} · ${m.ids.length} projet${m.ids.length>1?'s':''}</small></span><button data-enter="${k}">Entrer ▸</button>`;$('bub').hidden=false;}
 $('bub').addEventListener('click',e=>{const t=e.target.closest('[data-enter]');if(t)enterMuseum(t.dataset.enter);});
 function placeBubble(){if(!window.CITY||!sel||(typeof IN!=='undefined'&&IN.on)){$('bub').hidden=true;return;}const m=MUS[sel];const v=new THREE.Vector3(m.x,k3h(sel),m.z).project(CITY.cam);const c=CITY.cv;const x=(v.x+1)/2*c.clientWidth,y=(1-v.y)/2*c.clientHeight;const b=$('bub');b.hidden=false;b.style.transform=`translate(${Math.round(x)}px,${Math.round(y)}px) translate(-50%,-100%)`;}
@@ -435,6 +450,11 @@ $('gzin').onclick=()=>window.CITY&&CITY.zoomTo(CITY.zoom()/1.5);$('gzout').oncli
  bc.addEventListener('pointerdown',e=>{cd={x:e.clientX,y:e.clientY,moved:0};bc.setPointerCapture(e.pointerId);e.preventDefault();});
  bc.addEventListener('pointermove',e=>{if(!cd||!window.CITY)return;const dx=e.clientX-cd.x,dy=e.clientY-cd.y;cd.moved+=Math.abs(dx)+Math.abs(dy);cd.x=e.clientX;cd.y=e.clientY;CITY.rotate(-dx*.012);CITY.tiltBy(dy*.008);});
  const end=()=>{if(cd&&cd.moved<5&&window.CITY)CITY.north();cd=null;};bc.addEventListener('pointerup',end);bc.addEventListener('pointercancel',()=>cd=null);
+ {const rg=$('gering');let ra=null;const ang=e=>{const r=rg.getBoundingClientRect();return Math.atan2(e.clientY-(r.top+r.height/2),e.clientX-(r.left+r.width/2));};
+  rg.addEventListener('pointerdown',e=>{ra=ang(e);rg.setPointerCapture(e.pointerId);e.preventDefault();});
+  rg.addEventListener('pointermove',e=>{if(ra==null||!window.CITY)return;const a=ang(e);let d=a-ra;if(d>Math.PI)d-=2*Math.PI;if(d<-Math.PI)d+=2*Math.PI;ra=a;CITY.rotate(-d);});
+  ['pointerup','pointercancel'].forEach(t=>rg.addEventListener(t,()=>ra=null));
+  $('b3dt').onclick=()=>{if(!window.CITY)return;const flat=CITY.tiltT()>1.3;CITY.tilt(flat?.8:1.5);if(!flat)CITY.northOnly();};}
  document.querySelectorAll('#gcw .ga').forEach(a=>{let iv=null;const step=()=>{if(!window.CITY)return;if(a.dataset.r)CITY.rotate(+a.dataset.r*Math.PI/8);else CITY.tiltBy(+a.dataset.t*.18);};
   a.addEventListener('pointerdown',e=>{e.preventDefault();step();clearInterval(iv);iv=setInterval(step,260);});['pointerup','pointerleave','pointercancel'].forEach(t=>a.addEventListener(t,()=>clearInterval(iv)));
   a.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();step();}});});}
@@ -572,7 +592,7 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
   const scene=new THREE.Scene();const cam=new THREE.OrthographicCamera(-1,1,1,-1,.1,200);
   scene.add(new THREE.HemisphereLight(0xf6e0e8,0x9a7a8c,.55));const d=new THREE.DirectionalLight(0xffe8dc,.85);d.position.set(-12,14,10);d.castShadow=true;d.shadow.mapSize.set(2048,2048);Object.assign(d.shadow.camera,{left:-24,right:24,top:24,bottom:-24,near:1,far:80});d.shadow.radius=3;d.shadow.bias=-.0006;scene.add(d);
   let az=.18,azT=.18,vh=vh0,vhT=vh0;const tgt=tgt0.clone(),tgtT=tgt0.clone();const ptrs=new Map();let drag=null,pinch=null,down=null;
-  const api={scene,anims:[],cam,R,cv,onPick:null,tgt,tgtT,az(){return az;},tilt(v){elT=Math.max(-.55,Math.min(1.35,v));},tiltBy(d){elT=Math.max(-.55,Math.min(1.35,elT+d));},rotate(d){azT+=d;},zoomTo(v){vhT=Math.max(4.5,Math.min(vh0*1.15,v));},zoom(){return vhT;},focus(x,z,v){tgtT.set(x,0,z);api.zoomTo(v);},reset(){tgtT.copy(tgt0);vhT=vh0;azT=.18;elT=EL0;}};
+  const api={scene,anims:[],cam,R,cv,onPick:null,tgt,tgtT,az(){return az;},tilt(v){elT=Math.max(-.55,Math.min(1.5,v));},tiltBy(d){elT=Math.max(-.55,Math.min(1.5,elT+d));},tiltT(){return elT;},rotate(d){azT+=d;},zoomTo(v){vhT=Math.max(4.5,Math.min(vh0*1.15,v));},zoom(){return vhT;},focus(x,z,v){tgtT.set(x,0,z);api.zoomTo(v);},reset(){tgtT.copy(tgt0);vhT=vh0;azT=.18;elT=EL0;}};
   // ---- city-builder controls : drag pans with momentum, pinch/wheel zoom toward the fingers or cursor, tap selects, double-tap zooms in.
   // The ground point under the finger stays under the finger, so the city feels held in the hand.
   cv.addEventListener('contextmenu',e=>e.preventDefault());
@@ -587,7 +607,7 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
   // 1 finger: drag to pan, fling to glide · double tap: zoom in · double tap + drag up/down: zoom
   // 2 fingers: pinch to zoom, twist to rotate, slide up/down together to tilt, quick two-finger tap: zoom out
   // mouse: drag to pan, wheel to zoom at the cursor, right-drag (or Shift-drag) to rotate and tilt
-  const EL0=el,ELMIN=-.55,ELMAX=1.35;let lastTap=0,lastTapXY=null,qz=null,two=null;
+  const EL0=el,ELMIN=-.55,ELMAX=1.5;let lastTap=0,lastTapXY=null,qz=null,two=null;
   const ang2=()=>{const [p,q]=[...ptrs.values()];return Math.atan2(q.y-p.y,q.x-p.x);};
   cv.addEventListener('pointerdown',e=>{ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY});cv.setPointerCapture(e.pointerId);direct=true;vel.set(0,0,0);tgtT.copy(tgt);vhT=vh;azT=az;elT=el;clearTimeout(snapT);
     if(ptrs.size===1){const now=performance.now();if(lastTapXY&&now-lastTap<300&&Math.hypot(e.clientX-lastTapXY.x,e.clientY-lastTapXY.y)<40){qz={y:e.clientY,v:vh,x0:e.clientX,y0:e.clientY,moved:false};}
@@ -614,7 +634,7 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
   cv.addEventListener('wheel',e=>{e.preventDefault();if(!e.ctrlKey&&Math.abs(e.deltaX)>Math.abs(e.deltaY)*1.2){azT=az=az+e.deltaX*.004;placeCam();return;}direct=true;vel.set(0,0,0);tgtT.copy(tgt);const f=Math.exp(Math.max(-1,Math.min(1,e.deltaY*(e.ctrlKey?.01:.0015))));zoomAt(vh*f,e.clientX,e.clientY);direct=false;tgtT.copy(tgt);vhT=vh;},{passive:false});
   let snapT;
   api.panScreen=(dx,dy)=>{const s=vh*.12;const rx=Math.cos(az),rz=-Math.sin(az),fx=-Math.sin(az),fz=-Math.cos(az);tgtT.x=Math.max(-26,Math.min(18,tgtT.x+(dx*rx-dy*fx)*s));tgtT.z=Math.max(-18,Math.min(14,tgtT.z+(dx*rz-dy*fz)*s));direct=false;};
-  api.north=()=>{azT=.18;elT=EL0;};api.heading=()=>az;api.tiltNow=()=>el;
+  api.north=()=>{azT=.18;elT=EL0;};let flyT;api.flyTo=(x,z,v)=>{const d=Math.hypot(x-tgt.x,z-tgt.z);tgtT.set(x,0,z);direct=false;vel.set(0,0,0);clearTimeout(flyT);if(d>5){vhT=Math.max(vh,Math.min(vh0*1.05,v+d*1.1));flyT=setTimeout(()=>api.zoomTo(v),Math.min(900,300+d*25));}else api.zoomTo(v);};api.northOnly=()=>{azT=.18;};api.heading=()=>az;api.tiltNow=()=>el;
   api.momentum=dt=>{if(!direct||ptrs.size)return;if(vel.length()<.05){vel.set(0,0,0);direct=false;return;}panBy(vel.x*dt,vel.z*dt);vel.multiplyScalar(Math.exp(-4.5*dt));};
   function size(){const w=cv.clientWidth,h=cv.clientHeight;if(!w)return;R.setSize(w,h,false);const a=w/h;const v=vh*(a<1?1.55:1);cam.left=-v*a/2;cam.right=v*a/2;cam.top=v/2;cam.bottom=-v/2;cam.updateProjectionMatrix();}
   new ResizeObserver(size).observe(cv);size();
@@ -1091,17 +1111,27 @@ window.OPT='combo';const SM0=true,CB=true;
       const hole2=hole.clone();hole2.position.z*=-1;hole2.rotation.y+=Math.PI;g.add(hole2);const hb2=hb.clone();hb2.position.z*=-1;hb2.rotation.y+=Math.PI;g.add(hb2);}prev=r;}}
     // a small station on the line
     {const a=96*D,p=P(a),q=ring(TS+.07,a),g=new THREE.Group();g.position.copy(q);g.rotation.y=-a-Math.PI/2+Math.PI;scene.add(g);
+     {const e=new THREE.Group();e.position.set(1.3,0,.45);g.add(e);const ir=FM(0x3c6e5a);
+      for(const s of[-1,1]){const st=mesh(new THREE.CylinderGeometry(.025,.035,.9,5),ir);st.position.set(s*.32,.45,0);e.add(st);const cv=mesh(new THREE.TorusGeometry(.12,.02,4,8,Math.PI*.8),ir);cv.position.set(s*.22,.9,0);cv.rotation.z=s>0?0:Math.PI*.2;e.add(cv);
+       const gl=new THREE.Mesh(new THREE.SphereGeometry(.06,6,4).scale(1,1.5,1),new THREE.MeshBasicMaterial({color:0xf08a4b}));gl.position.set(s*.12,.98,0);e.add(gl);}
+      for(let k=0;k<5;k++)at(mesh(new THREE.BoxGeometry(.6,.02,.012),ir),e,0,.15+k*.1,-.12);
+      const [c,x]=cnv(320,60,'#3c6e5a');x.fillStyle='#f5ecd2';x.fillRect(6,6,308,48);x.fillStyle='#3c6e5a';x.font='30px VT323, monospace';x.textAlign='center';x.textBaseline='middle';x.fillText('MÉTROPOLITAIN',160,32);
+      const sp=new THREE.Mesh(new THREE.PlaneGeometry(.62,.12),new THREE.MeshBasicMaterial({map:tex(c),side:THREE.DoubleSide}));sp.position.set(0,.82,0);e.add(sp);}
      at(mesh(new THREE.BoxGeometry(1.8,.08,.4),FM(0xe2d5bc)),g,0,.04,0);at(mesh(new THREE.BoxGeometry(.9,.45,.35),FM(0xf2e6d0)),g,0,.3,.15);const rf=mesh(new THREE.BoxGeometry(1.9,.05,.6),FM(0xb5583e));rf.position.set(0,.58,.05);rf.rotation.x=-.12;g.add(rf);}
     // train: engine + carriages
-    const tr=[],mk=(col,eng)=>{const g=new THREE.Group();at(mesh(new THREE.BoxGeometry(.8,.32,.42),FM(col)),g,0,.28,0);at(mesh(new THREE.BoxGeometry(.84,.06,.46),FM(eng?0x2a2321:0xfbf8f1)),g,0,.47,0);
-      if(eng){at(mesh(new THREE.CylinderGeometry(.06,.08,.22,6),FM(0x2a2321)),g,.25,.6,0);const lt=new THREE.Mesh(new THREE.SphereGeometry(.05,6,4),new THREE.MeshBasicMaterial({color:0xffe2a0}));lt.position.set(.42,.3,0);g.add(lt);}
-      else for(const s of[-1,1])for(let k=0;k<3;k++){const w=new THREE.Mesh(new THREE.PlaneGeometry(.16,.12),M(0x56668f));w.position.set(-.24+k*.24,.32,s*.212);w.rotation.y=s>0?0:Math.PI;g.add(w);}
-      for(const x of[-.25,.25])for(const s of[-1,1])at(mesh(new THREE.CylinderGeometry(.07,.07,.04,6).rotateX(Math.PI/2),FM(0x2a2321)),g,x,.08,s*.2);
+    const tr=[],MW=FM(0xe9ecef),MR=FM(0xc9d0d8),MJ=FM(0x3fa58a),MB=FM(0x2b4a8f),MG=FM(0x33405a),MD=FM(0xf7f6f0),MK=FM(0x2a2321);
+    const mk=(front,back)=>{const g=new THREE.Group();at(mesh(new THREE.BoxGeometry(.86,.3,.4),MW),g,0,.29,0);
+      const rf=mesh(new THREE.CylinderGeometry(.2,.2,.86,8,1,false,0,Math.PI).rotateZ(Math.PI/2),MR);rf.scale.set(1,.45,1);rf.position.y=.44;g.add(rf);
+      at(mesh(new THREE.BoxGeometry(.87,.07,.41),MJ),g,0,.17,0);at(mesh(new THREE.BoxGeometry(.87,.025,.41),MB),g,0,.225,0);at(mesh(new THREE.BoxGeometry(.72,.11,.405),MG),g,0,.34,0);
+      for(const x of[-.22,.22])at(mesh(new THREE.BoxGeometry(.12,.23,.412),MD),g,x,.3,0);for(const x of[-.22,.22])at(mesh(new THREE.BoxGeometry(.012,.2,.414),MK),g,x,.3,0);
+      for(const x of[-.28,.28])at(mesh(new THREE.BoxGeometry(.2,.05,.3),MK),g,x,.07,0);
+      for(const [on,s] of[[front,1],[back,-1]])if(on){const n=mesh(new THREE.BoxGeometry(.1,.3,.4),MW);n.position.set(s*.47,.29,0);g.add(n);const ws=mesh(new THREE.BoxGeometry(.02,.14,.32),MG);ws.position.set(s*.52,.36,0);ws.rotation.z=-s*.25;g.add(ws);
+       at(mesh(new THREE.BoxGeometry(.1,.07,.41),MJ),g,s*.47,.17,0);for(const z of[-.12,.12]){const l=new THREE.Mesh(new THREE.SphereGeometry(.028,6,4),new THREE.MeshBasicMaterial({color:s>0?0xfff2c0:0xff5a4a}));l.position.set(s*.525,.22,z);g.add(l);}}
       scene.add(g);tr.push(g);};
-    mk(0xc23b3b,1);mk(0x2b4a8f);mk(0xf6c94a);mk(0x3f9a6b);
-    const puffs=[];for(let i=0;i<5;i++){const pf=new THREE.Mesh(new THREE.IcosahedronGeometry(.12,0),new THREE.MeshStandardMaterial({color:0xffffff,transparent:true,opacity:.8,flatShading:true}));scene.add(pf);puffs.push(pf);}
+    mk(1,0);mk(0,0);mk(0,0);mk(0,1);window.CITY.train=tr;
+    const puffs=[];for(let i=0;i<0;i++){const pf=new THREE.Mesh(new THREE.IcosahedronGeometry(.12,0),new THREE.MeshStandardMaterial({color:0xffffff,transparent:true,opacity:.8,flatShading:true}));scene.add(pf);puffs.push(pf);}
     const len=a=>{const dx=-Math.sin(a)*tA,dz=Math.cos(a)*tB;return Math.hypot(dx,dz);};
-    let ang=0;anims.push((t,dt)=>{ang+=(dt||.016)*1.4/len(ang);let a=ang;tr.forEach((g,i)=>{const p=P(a),d=P(a+.001).sub(p);g.position.set(p.x,GY+.03,p.z);g.rotation.y=Math.atan2(-d.z,d.x);a-=.9/len(a);});
+    let ang=0;anims.push((t,dt)=>{ang+=(dt||.016)*1.4/len(ang);let a=ang;tr.forEach((g,i)=>{const p=P(a),d=P(a+.001).sub(p);g.position.set(p.x,GY+.03,p.z);g.rotation.y=Math.atan2(-d.z,d.x);a-=.98/len(a);});
      const e=tr[0];puffs.forEach((pf,i)=>{const k=((t*1.2+i/5)%1);pf.position.set(e.position.x,e.position.y+.75+k*.9,e.position.z);pf.scale.setScalar(.6+k*1.6);pf.material.opacity=.8*(1-k);});});}
    // under the plinth: metro tunnels in the cut-away and a sea of clouds below
    {const tm=M(0x1f1b24);for(const a of[.9,2.2,-2.6]){const p=new THREE.Vector3(OX+Math.cos(a)*PA*1.002,-1.25,OZ+Math.sin(a)*PB*1.002);const g=new THREE.Group();g.position.copy(p);g.lookAt(OX+Math.cos(a)*PA*3,-1.25,OZ+Math.sin(a)*PB*3);scene.add(g);
@@ -1200,7 +1230,7 @@ window.OPT='combo';const SM0=true,CB=true;
 }
 })();
 
-const w8=setInterval(()=>{if(window.CITY&&CITY.RV){clearInterval(w8);CITY.onPick=pick;addMosaics3d();setMood(mood);$('inexit').onclick=()=>exitMuseum();tagExteriors();CITY.anims.push(dollTick);const SP=[];CITY.scene.traverse(o=>{if(o.isSprite)SP.push([o,o.scale.clone()]);});CITY.anims.push(()=>{const z=CITY.zoom(),k=Math.max(.36,Math.min(.72,z/40));const up=CITY.tiltNow()>.04;SP.forEach(([o,s])=>{o.scale.set(s.x*k,s.y*k,1);o.visible=up;});placeBubble();placeMarker();const hd=CITY.heading()-.18,tl=CITY.tiltNow()-.8;$('needle').setAttribute('transform',`rotate(${(hd*180/Math.PI).toFixed(1)} 12 12)`);});CITY.cv.addEventListener('pointermove',hoverPick);CITY.cv.addEventListener('pointerleave',()=>$('tip').hidden=true);if(cur)openMus(cur);}},60);
+const w8=setInterval(()=>{if(window.CITY&&CITY.RV){clearInterval(w8);CITY.onPick=pick;addMosaics3d();setMood(mood);$('inexit').onclick=()=>exitMuseum();tagExteriors();CITY.anims.push(dollTick);const SP=[];CITY.scene.traverse(o=>{if(o.isSprite)SP.push([o,o.scale.clone()]);});CITY.anims.push(()=>{const z=CITY.zoom(),k=Math.max(.36,Math.min(.72,z/40));const up=CITY.tiltNow()>.04;SP.forEach(([o,s])=>{o.scale.set(s.x*k,s.y*k,1);o.visible=up;});placeBubble();placeMarker();const hd=CITY.heading()-.18,tl=CITY.tiltNow()-.8;$('needle').setAttribute('transform',`rotate(${(hd*180/Math.PI).toFixed(1)} 12 12)`);$('gering').style.transform=`rotate(${(-hd*180/Math.PI).toFixed(1)}deg)`;$('b3dt').textContent=CITY.tiltT()>1.3?'3D':'2D';});CITY.cv.addEventListener('pointermove',hoverPick);CITY.cv.addEventListener('pointerleave',()=>$('tip').hidden=true);if(cur)openMus(cur);}},60);
 }
 setView('3d');
 </script>
