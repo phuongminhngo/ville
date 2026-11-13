@@ -322,7 +322,7 @@ const MZ=[
  {m:'heart',x:1.7,y:1.2,z:-1.46,ry:0,id:'linkedin',f:"6 → 12 posts LinkedIn par mois : une cadence doublée et tenue."},
  {m:'palette',x:8.6,y:1.4,z:-5.38,ry:0,id:'rica',f:"Rica Lewis : heritage denim × modernité asiatique."},
  {m:'cup',x:3.52,y:1.6,z:6.5,ry:Math.PI/2,id:'bread',f:"BREAD : une identité visuelle pour du pain maison et du café."},
- {m:'star',x:5.4,y:.55,z:1.07,ry:0,id:'avenir',f:"La suite ? La direction artistique, dans un contexte international."}];
+ {m:'star',x:2.9,y:.55,z:2.4,ry:0,id:'avenir',f:"La suite ? La direction artistique, dans un contexte international."}];
 const PIX={rabbit:['..w..w..','..wp.wp.','..w..w..','.wwwwww.','.wkwwkw.','.wwppww.','..wwww..','.ww..ww.'],
  croissant:['........','...oo...','.oyooyo.','oyoyoyoy','yoyoyoyo','.o....o.','........','........'],
  suitcase:['...kk...','..k..k..','.rrrrrr.','.rwrrwr.','.rrrrrr.','.rwrrwr.','.rrrrrr.','..k..k..'],
@@ -750,11 +750,26 @@ window.OPT='combo';const SM0=true,CB=true;
   const pyr=new THREE.Mesh(new THREE.ConeGeometry(1.0,1.15,4),new THREE.MeshPhysicalMaterial({color:0x9fd2df,roughness:.05,metalness:.2,transparent:true,opacity:.55}));pyr.rotation.y=Math.PI/4;pyr.position.set(0,.6,.6);pyr.castShadow=true;g.add(pyr);
   const ed=new THREE.LineSegments(new THREE.WireframeGeometry(new THREE.ConeGeometry(1.0,1.15,4,7,true)),new THREE.LineBasicMaterial({color:0x2f4a52,transparent:true,opacity:.8}));ed.rotation.copy(pyr.rotation);ed.position.copy(pyr.position);g.add(ed);
   L2(scene,'Communication · Le Palais',-1,3.8,-4);}
- {const g=new THREE.Group();g.position.set(-5,0,3.6);scene.add(g);const gf=facadeTex(14,2,'gold',{archBottom:true,pilaster:true}),gs=facadeTex(4,2,'gold',{archBottom:true});
-  at(mesh(new THREE.BoxGeometry(6.4,1.5,2),[gs,gs,M(0xead6b8),M(0xead6b8),gf,gf]),g,0,.75,0);at(B(6.5,.08,2.08,0xdcc4a0),g,0,1.52,0);
-  const vault=mesh(new THREE.CylinderGeometry(1,1,6.2,24,1,false,0,Math.PI),new THREE.MeshPhysicalMaterial({color:0x9fb8c4,roughness:.2,metalness:.3,transparent:true,opacity:.85}));vault.rotation.z=Math.PI/2;vault.rotation.y=0;vault.scale.set(1,1,1);vault.position.set(0,1.5,0);g.add(vault);
-  for(const s of[-1,1]){at(B(.9,2.2,.9,COL.stone2),g,s*3.4,1.1,.2);const [c,x]=cnv(256,256);x.fillStyle='#f6efdc';x.beginPath();x.arc(128,128,124,0,7);x.fill();x.strokeStyle='#c9a24a';x.lineWidth=12;x.stroke();x.strokeStyle='#2a2321';x.lineWidth=8;x.beginPath();x.moveTo(128,128);x.lineTo(128,50);x.moveTo(128,128);x.lineTo(180,150);x.stroke();
-   const ck=new THREE.Mesh(new THREE.CircleGeometry(.34,32),new THREE.MeshBasicMaterial({map:tex(c)}));ck.position.set(s*3.4,1.5,.66);g.add(ck);at(mesh(new THREE.ConeGeometry(.6,.7,4),COL.zinc),g,s*3.4,2.55,.2,0,Math.PI/4,0);at(B(.06,.25,.06,COL.gold),g,s*3.4,3.0,.2);}
+ const prism=(w,h,d,col)=>{const sh=new THREE.Shape([new THREE.Vector2(-d/2,0),new THREE.Vector2(d/2,0),new THREE.Vector2(0,h)]);const geo=new THREE.ExtrudeGeometry(sh,{depth:w,bevelEnabled:false});geo.translate(0,0,-w/2);geo.rotateY(Math.PI/2);return mesh(geo,col);};
+ const clockFace=(r)=>{const [c,x]=cnv(256,256);x.fillStyle='#fbf6ea';x.beginPath();x.arc(128,128,124,0,7);x.fill();x.strokeStyle='#c9a24a';x.lineWidth=14;x.stroke();x.fillStyle='#2a2321';for(let i=0;i<12;i++){const a=i/12*Math.PI*2;x.fillRect(128+Math.cos(a)*96-4,128+Math.sin(a)*96-4,8,8);}x.strokeStyle='#2a2321';x.lineWidth=8;x.beginPath();x.moveTo(128,128);x.lineTo(128,52);x.moveTo(128,128);x.lineTo(178,150);x.stroke();return new THREE.Mesh(new THREE.CircleGeometry(r,32),new THREE.MeshBasicMaterial({map:tex(c)}));};
+ const archWin=(w,h,mull)=>{const [c,x]=cnv(256,256,'rgba(0,0,0,0)');x.fillStyle='#dcc4a0';x.beginPath();x.moveTo(0,256);x.lineTo(0,128);x.arc(128,128,128,Math.PI,0);x.lineTo(256,256);x.fill();x.fillStyle='#7f9bb3';x.beginPath();x.moveTo(14,256);x.lineTo(14,128);x.arc(128,128,114,Math.PI,0);x.lineTo(242,256);x.fill();x.strokeStyle='#efe2c8';x.lineWidth=6;for(let i=1;i<mull;i++){x.beginPath();x.moveTo(14+i*228/mull,256);x.lineTo(14+i*228/mull,40);x.stroke();}for(let j=1;j<4;j++){x.beginPath();x.moveTo(14,256-j*55);x.lineTo(242,256-j*55);x.stroke();}x.beginPath();x.arc(128,128,60,Math.PI,0);x.stroke();
+  return new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:tex(c),transparent:true,alphaTest:.5,roughness:.4}));};
+ {const g=new THREE.Group();g.position.set(-5,0,3.6);scene.add(g);const st=M(0xead6b8),trim=0xdcc4a0;
+  const gf=facadeTex(14,2,'gold',{archBottom:true,pilaster:true}),gs=facadeTex(4,2,'gold',{archBottom:true});
+  at(mesh(new THREE.BoxGeometry(6.0,1.5,2.0),[gs,gs,st,st,gf,gf]),g,0,.75,0);at(B(6.1,.1,2.1,trim),g,0,1.55,0);
+  for(let i=0;i<14;i++)at(C(.04,.05,.18,0xf1e2c8,6),g,-2.8+i*.43,1.69,1.0);
+  // glass barrel roof with iron ribs and a stone mansard edge
+  mansard(g,6.0,2.0,1.6,.25,COL.zinc,COL.zincD);
+  const v=mesh(new THREE.CylinderGeometry(.82,.82,5.6,24,1,true,0,Math.PI),new THREE.MeshPhysicalMaterial({color:0xa9c6d4,roughness:.15,metalness:.3,transparent:true,opacity:.75,side:THREE.DoubleSide}));v.rotation.z=Math.PI/2;v.position.y=1.85;g.add(v);
+  for(let i=0;i<12;i++){const r=new THREE.Mesh(new THREE.TorusGeometry(.83,.025,4,16,Math.PI),M(0x7a6a5a));r.rotation.y=Math.PI/2;r.position.set(-2.75+i*.5,1.85,0);g.add(r);}
+  // the two great arched glass windows at the ends
+  for(const sx of[-1,1]){const w=archWin(1.5,1.4,6);w.position.set(sx*3.01,.85,0);w.rotation.y=sx*Math.PI/2;g.add(w);}
+  // corner pavilions on the river side, each with a big clock
+  for(const sx of[-1,1]){const p=new THREE.Group();p.position.set(sx*2.75,0,.75);g.add(p);const pf=facadeTex(2,3,'gold',{archBottom:true});at(mesh(new THREE.BoxGeometry(.9,2.2,.9),pf),p,0,1.1,0);at(B(1.0,.1,1.0,trim),p,0,2.25,0);
+   const ck=clockFace(.3);ck.position.set(0,1.55,.46);p.add(ck);const rim=new THREE.Mesh(new THREE.TorusGeometry(.31,.04,6,24),M(COL.gold));rim.position.copy(ck.position);p.add(rim);
+   const rf=mesh(new THREE.CylinderGeometry(.22,.56,.6,4,1).rotateY(Math.PI/4),COL.zinc);rf.position.y=2.6;p.add(rf);at(B(.06,.25,.06,COL.gold),p,0,3.0,0);}
+  // a small clock over the central entrance too
+  {const ck=clockFace(.2);ck.position.set(0,1.2,1.01);g.add(ck);}
   L2(scene,'Marque employeur · La Gare',-5,3.6,3.6);}
  {const g=new THREE.Group();g.position.set(7,0,-6.5);scene.add(g);
   // L'Atelier: a glass box held inside an exposed white steel frame, coloured service pipes on the front, a zigzag escalator tube on the back, white vents on the roof
@@ -786,23 +801,38 @@ window.OPT='combo';const SM0=true,CB=true;
   vent(-1.2,-.3,H+.45,.12,0);vent(-.4,.2,H+.35,.1,Math.PI);vent(1.3,-.2,H+.5,.13,.6);
   vent(-1.6,-D/2-1.2,.9,.14,2.6);vent(1.8,-D/2-1.3,.7,.12,-2.4);
   L2(scene,'Direction artistique · L’Atelier',7,3.4,-6.5);}
- {const g=new THREE.Group();g.position.set(-10,0,-4.2);g.scale.setScalar(.8);scene.add(g);at(B(5.4,.18,2.8,COL.walk),g,0,.09,0);
-  const wt=windowsTex(1024,256,9,1,'#efe5d2','#d9cbb0');at(mesh(new THREE.BoxGeometry(4.6,1.1,1.5),new THREE.MeshStandardMaterial({map:wt,roughness:.85})),g,0,.73,-.2);
-  const roof=mesh(new THREE.CylinderGeometry(.75,.75,4.5,20,1,false,0,Math.PI),new THREE.MeshPhysicalMaterial({color:0xf6d6c0,roughness:.15,metalness:.2,transparent:true,opacity:.8}));roof.rotation.z=Math.PI/2;roof.scale.set(.5,1,1);roof.position.set(0,1.28,-.2);g.add(roof);
-  for(let i=0;i<4;i++)at(C(.07,.08,1.0,0xf4efe4,10),g,-.45+i*.3,.68,.6);const ped=new THREE.Shape();ped.moveTo(-.65,0);ped.lineTo(.65,0);ped.lineTo(0,.3);ped.lineTo(-.65,0);const pd=mesh(new THREE.ExtrudeGeometry(ped,{depth:.3,bevelEnabled:false}),COL.stone2);pd.position.set(0,1.18,.45);g.add(pd);
-  const pond=mesh(new THREE.CylinderGeometry(.9,.9,.05,32),new THREE.MeshStandardMaterial({color:0x6f9fa8,roughness:.15,metalness:.2}));pond.scale.set(1.4,1,.55);pond.position.set(0,.2,1.3);g.add(pond);
-  for(let i=0;i<9;i++){const lp=mesh(new THREE.CylinderGeometry(.11,.11,.02,12),0x6f9a58);lp.position.set(-1+Math.random()*2,.24,1.1+Math.random()*.45);g.add(lp);if(i%3===0)at(S(.05,0xf2a7b5),g,lp.position.x,.28,lp.position.z);}
-  for(const s of[-1,1])for(let i=0;i<3;i++){const t=new THREE.Group();t.position.set(s*(2.9),0,-1+i*.9);g.add(t);at(C(.05,.07,.6,COL.trunk),t,0,.3,0);at(B(.6,.6,.6,0x5f9a58),t,0,.85,0);}
+ {const g=new THREE.Group();g.position.set(-10,0,-4.2);g.scale.setScalar(.8);scene.add(g);at(B(5.6,.16,3.0,COL.walk),g,0,.08,0);const st=M(0xf1e4cf);
+  at(B(4.8,1.15,1.5,0xf1e4cf),g,0,.74,-.2);at(B(4.9,.1,1.6,0xdcc4a0),g,0,1.36,-.2);
+  // the long glazed side facing the garden: tall windows between stone piers
+  for(let i=0;i<10;i++){const x=-2.2+i*.49;const w=new THREE.Mesh(new THREE.PlaneGeometry(.36,.85),new THREE.MeshPhysicalMaterial({color:0x8fb0c4,roughness:.1,metalness:.2}));w.position.set(x,.72,.56);g.add(w);at(B(.04,.85,.02,0xefe2c8),g,x,.72,.57);}
+  // flat roof with a long low glass skylight
+  const sk=prism(4.4,.28,.9,new THREE.MeshPhysicalMaterial({color:0xcfe3ee,roughness:.1,metalness:.2,transparent:true,opacity:.75}));sk.position.set(0,1.41,-.2);g.add(sk);for(let i=0;i<9;i++)at(B(.025,.3,.92,0xefe2c8),g,-2+i*.5,1.55,-.2);
+  // classical portico at the east end: four columns and a pediment
+  const pt=new THREE.Group();pt.position.set(2.62,0,-.2);g.add(pt);at(B(.5,.12,1.3,0xe6d8c4),pt,0,.24,0);for(let i=0;i<4;i++)at(C(.06,.07,.95,0xfbf6ea,10),pt,.12,.77,-.45+i*.3);at(B(.5,.1,1.35,0xdcc4a0),pt,0,1.28,0);
+  const ped=prism(.5,.32,1.4,0xf1e4cf);ped.position.set(0,1.33,0);ped.rotation.y=Math.PI/2;ped.scale.set(1,1,1);pt.add(ped);
+  const pond=mesh(new THREE.CylinderGeometry(.9,.9,.05,32),new THREE.MeshStandardMaterial({color:0x6f9fa8,roughness:.15,metalness:.2}));pond.scale.set(1.4,1,.55);pond.position.set(0,.2,1.4);g.add(pond);
+  for(let i=0;i<9;i++){const lp=mesh(new THREE.CylinderGeometry(.11,.11,.02,12),0x6f9a58);lp.position.set(-1+Math.random()*2,.24,1.2+Math.random()*.45);g.add(lp);if(i%3===0)at(S(.05,0xf2a7b5),g,lp.position.x,.28,lp.position.z);}
+  for(const s of[-1,1])for(let i=0;i<3;i++){const t=new THREE.Group();t.position.set(s*(3.1),0,-1+i*.9);g.add(t);at(C(.05,.07,.6,COL.trunk),t,0,.3,0);at(B(.6,.6,.6,0x5f9a58),t,0,.85,0);}
   L2(scene,"Vidéo & photo · La Serre",-10,2.8,-4.2);}
- {const g=new THREE.Group();g.position.set(-15.5,0,-2.5);scene.add(g);const pf=facadeTex(11,1,'cream',{arch:true}),ps=facadeTex(4,1,'cream',{arch:true});
-  at(mesh(new THREE.BoxGeometry(5.2,1.2,1.8),[ps,ps,M(COL.stone),M(COL.stone),pf,pf]),g,0,.6,0);mansard(g,5.2,1.8,1.32,.35,COL.zinc,COL.zincD);
-  at(B(5.4,.14,1.95,COL.stone2),g,0,1.25,0);for(const s of[-1,1])at(B(.8,1.5,2.0,COL.stone),g,s*2.6,.75,0);
-  for(let i=0;i<12;i++){const x=-2.1+i*(4.2/11);if(Math.abs(x)<.7)continue;at(C(.06,.06,1.1,0xf4efe4,10),g,x,.6,.95);}
-  at(B(1.5,2.0,2.1,COL.stone),g,0,1.0,0);
-  const arch=mesh(new THREE.CylinderGeometry(.5,.5,.06,24,1,false,0,Math.PI),COL.gold);arch.rotation.set(Math.PI/2,0,Math.PI/2);arch.position.set(0,1.3,1.06);g.add(arch);
-  at(B(1.0,1.3,.06,COL.gold),g,0,.65,1.06);
-  const dome=mesh(new THREE.SphereGeometry(.85,32,16,0,Math.PI*2,0,Math.PI/2),0x8a97a3);dome.scale.set(1,.8,1);dome.position.set(0,2.0,-.2);g.add(dome);at(S(.1,COL.gold),g,0,2.75,-.2);
-  for(const s of[-1,1])at(C(.03,.03,.5,COL.gold,8),g,s*.3,2.25,.75);
+ {const g=new THREE.Group();g.position.set(-15.5,0,-2.5);scene.add(g);const st=0xf3e7d4,trim=0xdcc4a0;
+  const pf=facadeTex(11,1,'cream',{arch:true}),ps=facadeTex(4,1,'cream',{arch:true});
+  at(B(5.6,.16,2.2,0xe6d8c4),g,0,.08,0);at(mesh(new THREE.BoxGeometry(5.0,1.15,1.7),[ps,ps,M(st),M(st),pf,pf]),g,0,.73,-.05);at(B(5.1,.1,1.8,trim),g,0,1.35,-.05);
+  for(let i=0;i<26;i++){const x=-2.35+i*(4.7/25);if(Math.abs(x)<.85)continue;at(C(.045,.05,1.0,0xfbf6ea,10),g,x,.66,.86);}
+  at(B(5.0,.08,.12,trim),g,0,1.2,.86);
+  // corner pavilions with small roofs
+  for(const sx of[-1,1]){at(B(.8,1.5,1.9,st),g,sx*2.6,.83,0);at(B(.9,.1,2.0,trim),g,sx*2.6,1.62,0);const r=mesh(new THREE.CylinderGeometry(.3,.62,.45,4,1).rotateY(Math.PI/4),COL.zinc);r.scale.set(1,1,1.9);r.position.set(sx*2.6,1.9,0);g.add(r);}
+  // central entrance: tall stone frontispiece, deep arch, golden gate, columns either side
+  at(B(1.6,2.05,2.1,st),g,0,1.11,0);at(B(1.7,.12,2.2,trim),g,0,2.2,0);
+  const archBack=mesh(new THREE.CylinderGeometry(.42,.42,.1,24,1,false,0,Math.PI),0x5a4a40);archBack.rotation.set(Math.PI/2,0,Math.PI/2);archBack.position.set(0,1.15,1.03);g.add(archBack);at(B(.84,1.0,.1,0x5a4a40),g,0,.6,1.03);
+  const gate=mesh(new THREE.CylinderGeometry(.38,.38,.04,24,1,false,0,Math.PI),COL.gold);gate.rotation.set(Math.PI/2,0,Math.PI/2);gate.position.set(0,1.15,1.08);g.add(gate);at(B(.76,1.0,.04,COL.gold),g,0,.6,1.08);
+  for(let i=0;i<7;i++)at(B(.012,1.3,.02,0x8a6a2a),g,-.3+i*.1,.75,1.11);
+  for(const sx of[-1,1])for(const dx of[.62,.74])at(C(.05,.055,1.6,0xfbf6ea,10),g,sx*dx,.95,1.07);
+  at(B(1.7,.18,.12,trim),g,0,1.82,1.08);
+  // ribbed dome on a drum, lantern on top
+  at(C(.62,.62,.35,st,24),g,0,2.42,-.2);for(let i=0;i<12;i++){const a=i/12*Math.PI*2;at(B(.06,.35,.06,0xfbf6ea),g,Math.cos(a)*.63,2.42,-.2+Math.sin(a)*.63);}
+  const dome=mesh(new THREE.SphereGeometry(.64,24,12,0,Math.PI*2,0,Math.PI/2),0x8a97a3);dome.scale.set(1,.95,1);dome.position.set(0,2.6,-.2);g.add(dome);
+  for(let i=0;i<8;i++){const r=new THREE.Mesh(new THREE.TorusGeometry(.645,.02,4,16,Math.PI/2),M(COL.gold));r.rotation.set(0,i*Math.PI/4,Math.PI/2);r.position.set(0,2.6,-.2);r.scale.set(1,.95,1);g.add(r);}
+  at(C(.12,.14,.25,st,10),g,0,3.32,-.2);at(mesh(new THREE.ConeGeometry(.13,.25,10),COL.gold),g,0,3.56,-.2);
   L2(scene,'Nghi Lễ Cưới Hỏi · Le Pavillon',-17,4.8,-1.5);}
  {const g=haussBlock(scene,2,6.5,3,2.4,6);const flag=new THREE.Group();flag.position.set(2,3.9,6.5);scene.add(flag);at(C(.02,.02,.9,COL.iron),flag,0,.45,0);at(B(.5,.3,.02,COL.red),flag,.26,.75,0);
   L2(scene,'Accueil · chez Phuong',2,5.4,6.5);
@@ -840,11 +870,31 @@ window.OPT='combo';const SM0=true,CB=true;
   {const lw=new THREE.Mesh(new THREE.PlaneGeometry(2.4,SM?2.6:3.6),M(0x9fbf8a));lw.rotation.set(-Math.PI/2,0,.55);lw.position.set(-11.6,.015,8.3);lw.receiveShadow=true;scene.add(lw);}}
  {const g=new THREE.Group();g.position.set(-13.5,0,-8.8);g.scale.setScalar(.75);scene.add(g);at(C(2.0,2.0,.04,0xcfc3ad,40),g,0,.02,0);at(C(1.3,1.3,.06,0x9fbf8a,40),g,0,.03,0);
   for(let i=0;i<6;i++){const a=i/6*Math.PI;at(B(6,.03,.7,0xcfc3ad),g,0,.015,0,0,a,0);}
-  const st=0xeadfc8;for(const s of[-1,1])at(B(.55,1.4,.9,st),g,s*.5,.75,0);at(B(1.6,.55,.9,st),g,0,1.7,0);at(B(1.7,.12,1.0,0xd9cbb0),g,0,2.02,0);
+  const st=0xeadfc8,dk=0xd9cbb0;
+  for(const sx of[-1,1])for(const sz of[-1,1]){at(B(.58,1.45,.34,st),g,sx*.6,.725,sz*.33);at(B(.4,.5,.02,dk),g,sx*.6,.75,sz*.51);}
+  const vF=mesh(new THREE.CylinderGeometry(.31,.31,1.0,16,1,true,0,Math.PI),M(st));vF.material=new THREE.MeshStandardMaterial({color:st,side:THREE.DoubleSide});vF.rotation.set(Math.PI/2,0,Math.PI/2);vF.position.set(0,1.45,0);g.add(vF);
+  const vS=mesh(new THREE.CylinderGeometry(.16,.16,1.78,12,1,true,0,Math.PI),M(st));vS.material=new THREE.MeshStandardMaterial({color:st,side:THREE.DoubleSide});vS.rotation.set(0,0,Math.PI/2);vS.rotation.order='ZXY';vS.rotation.set(Math.PI/2,Math.PI/2,0);vS.position.set(0,.95,0);
+  at(B(1.78,.4,1.02,st),g,0,1.78,0);at(B(1.9,.1,1.1,dk),g,0,2.03,0);at(B(1.82,.32,1.04,st),g,0,2.24,0);at(B(1.86,.06,1.08,dk),g,0,2.42,0);
+  for(let i=0;i<10;i++)for(const sz of[-1,1])at(C(.04,.04,.02,dk,10),g,-.8+i*.178,2.24,sz*.53,Math.PI/2,0,0);
   }
  {const g=new THREE.Group();g.position.set(5,0,.7);g.rotation.y=.1;scene.add(g);const isl=at(C(1.0,1.0,.12,0xe2d5bc,24),g,0,.06,0);isl.scale.set(2.2,1,.75);
-  at(B(1.8,.8,.7,0xe6dac2),g,.4,.5,0);for(const s of[-1,1])at(B(.4,1.4,.4,0xe6dac2),g,-.65,.8,s*.22);at(mesh(new THREE.ConeGeometry(.12,.9,6),0x5c6b78),g,.6,1.3,0);
-  const rf=mesh(new THREE.CylinderGeometry(.01,.62,.4,4,1).rotateY(Math.PI/4),0x5c6b78);rf.scale.set(2.2,1,.8);rf.position.set(.4,1.08,0);g.add(rf);
+  const st=0xe8dcc6,rf=0x6b7584;
+  // nave and choir with a steep roof
+  at(B(1.9,.7,.62,st),g,.25,.47,0);const nr=prism(1.9,.42,.66,rf);nr.position.set(.25,.82,0);g.add(nr);
+  // transept
+  at(B(.42,.7,1.0,st),g,.2,.47,0);const tr=prism(1.0,.42,.46,rf);tr.rotation.y=Math.PI/2;tr.position.set(.2,.82,0);g.add(tr);
+  // rounded apse
+  const ap=mesh(new THREE.CylinderGeometry(.31,.31,.7,12,1,false,0,Math.PI),st);ap.position.set(1.2,.47,0);ap.rotation.y=-Math.PI/2;g.add(ap);const apr=mesh(new THREE.ConeGeometry(.33,.42,12,1,false,0,Math.PI),rf);apr.position.set(1.2,1.03,0);apr.rotation.y=-Math.PI/2;g.add(apr);
+  // flying buttresses
+  for(let i=0;i<6;i++)for(const sz of[-1,1]){const b=mesh(new THREE.BoxGeometry(.05,.5,.05),st);b.position.set(-.4+i*.28,.42,sz*.42);b.rotation.x=sz*-.5;g.add(b);at(B(.07,.45,.07,st),g,-.4+i*.28,.3,sz*.52);}
+  // west front: twin square towers, rose window, three portals, gallery
+  const W=new THREE.Group();W.position.set(-.82,0,0);g.add(W);at(B(.3,1.15,.95,st),W,0,.69,0);for(const sz of[-1,1])at(B(.32,.55,.34,st),W,0,1.53,sz*.3);
+  for(const sz of[-1,1])for(let k=0;k<2;k++)at(B(.02,.32,.06,0x6b6058),W,-.17,1.5,sz*.3+(k?.07:-.07));
+  const rose=new THREE.Mesh(new THREE.CircleGeometry(.14,16),M(0x5c6ea0));rose.position.set(-.155,.98,0);rose.rotation.y=-Math.PI/2;W.add(rose);const rr=new THREE.Mesh(new THREE.TorusGeometry(.14,.02,4,16),M(0xf3ead8));rr.position.copy(rose.position);rr.rotation.y=-Math.PI/2;W.add(rr);
+  for(const sz of[-.3,0,.3]){const pt=mesh(new THREE.CylinderGeometry(.09,.09,.02,12,1,false,0,Math.PI),0x5a4a40);pt.rotation.set(Math.PI/2,0,0);pt.rotation.order='YXZ';pt.rotation.set(0,-Math.PI/2,Math.PI/2);pt.position.set(-.155,.5,sz);W.add(pt);at(B(.02,.32,.18,0x5a4a40),W,-.155,.34,sz);}
+  at(B(.02,.06,.95,0xf3ead8),W,-.155,1.22,0);
+  // the spire at the crossing
+  at(C(.06,.08,.2,st,6),g,.2,1.3,0);at(mesh(new THREE.ConeGeometry(.07,.85,6),rf),g,.2,1.82,0);
   }
  // glowing streetlamps along the quays
  for(let i=0;i<12;i++){const x=-15+i*2.7;for(const z of[ -.4+Math.sin(i)*.2, 5.4+Math.sin(i)*.2]){at(C(.02,.03,.8,COL.iron,6),scene,x,.4,z);const gl=new THREE.Mesh(new THREE.SphereGeometry(.09,10,8),new THREE.MeshBasicMaterial({color:0xffe2a0}));gl.position.set(x,.85,z);scene.add(gl);}}
