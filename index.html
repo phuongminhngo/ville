@@ -265,13 +265,13 @@ body.night .legend{background:rgba(20,22,50,.82);color:#eef}body.night .legend h
  <div class="menu" id="menu" hidden><div class="seg" role="group" aria-label="Vue" hidden><button id="b2d" aria-pressed="false">Plan 2D</button><button id="b3d" aria-pressed="true">3D</button></div>
  <button class="mosc" id="mosc" title="Des mosaïques en pixels sont cachées sur les murs : trouvez-les !">▦ Mosaïques <b id="mosn">0</b>/10</button>
  <div class="moods" role="group" aria-label="Ambiance"><button data-mood="sun" aria-pressed="true">☀ Soleil</button><button data-mood="night" aria-pressed="false">☾ Nuit</button><button data-mood="rain" aria-pressed="false">☂ Pluie</button><button data-mood="snow" aria-pressed="false">❄ Hiver</button></div><button id="bsun" hidden></button><button id="bnight" hidden></button>
- <button class="mi" id="mhelp">✥ Légende</button><button class="mi" id="mpin">✎ Placer les bâtiments</button><button class="mi" id="msky">☁ Remettre le ciel en place</button><button class="mi" id="mall">⌂ Vue d’ensemble</button><button class="mi" id="mlist">☰ Tous les projets</button></div>
+ <button class="mi" id="mhelp">✥ Légende</button><button class="mi" id="msky">☁ Remettre le ciel en place</button><button class="mi" id="mall">⌂ Vue d’ensemble</button><button class="mi" id="mlist">☰ Tous les projets</button></div>
 </div>
 <div class="zoom" id="zoom" hidden><button id="zin" aria-label="Zoomer">+</button><button id="zout" aria-label="Dézoomer">−</button><button id="rl" aria-label="Tourner à gauche">⟲</button><button id="rr" aria-label="Tourner à droite">⟳</button><button id="zall" class="wide">Vue d'ensemble</button></div>
 <div class="fade" id="fade" aria-hidden="true"></div>
 <div class="inbar" id="inbar" hidden><button id="inexit">← Retour à Paris</button><span id="inname"></span></div>
 <div class="ctxm" id="ctxm" role="menu" hidden></div>
-<div class="pinbar" id="pinbar" role="toolbar" aria-label="Placer les bâtiments" hidden><b>✎ Placer les bâtiments</b><span id="pinsel">Glissez un bâtiment pour le déplacer</span><button id="pinl" aria-label="Tourner à gauche">⟲</button><button id="pinr" aria-label="Tourner à droite">⟳</button><button id="pincopy">Copier la disposition</button><button id="pinreset">Réinitialiser</button><button id="pindone" class="pk">Terminé</button></div>
+
 <aside class="legend" id="legend" aria-label="Légende, projets et thème"><div class="lg-tabs" role="tablist"><button class="lg-t" id="lgh" data-p="lgb" role="tab" aria-selected="true">✥ Légende</button><button class="lg-t" data-p="lgp" role="tab" aria-selected="false">☰ Projets</button></div>
 <div class="lg-b" id="lgb" role="tabpanel">
 <div class="lg-s nh-mouse"><h5>Souris</h5><ul><li><span>Glisser</span><span>se déplacer</span></li><li><span>Molette</span><span>zoomer</span></li><li><span>Clic droit + glisser</span><span>tourner · incliner</span></li><li><span>Clic droit</span><span>menu</span></li></ul></div>
@@ -503,7 +503,7 @@ addEventListener('pointerdown',e=>{if(!$('menu').hidden&&!e.target.closest('#men
 $('msky').onclick=()=>{$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded','false');CITY.resetSky&&CITY.resetSky();};
 // placement mode: drag the places and landmarks on the map, rotate them, keep the layout in this browser, copy it to share
 {const KEY='ville-pins';let saved={};try{saved=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}};
- const go=setInterval(()=>{if(!window.CITY||!CITY.scene||!MZ3.length)return;clearInterval(go);setTimeout(init,600);},250);
+ if(document.getElementById('mpin')){const go=setInterval(()=>{if(!window.CITY||!CITY.scene||!MZ3.length)return;clearInterval(go);setTimeout(init,600);},250);}
  function init(){const sc=CITY.scene,cv=CITY.cv,P=[];
   const near=(x,z,r)=>sc.children.filter(o=>o.isGroup&&Math.hypot(o.position.x-x,o.position.z-z)<r&&o.position.y<.5);
   const labelsAt=(x,z)=>sc.children.filter(o=>(o.isSprite||o.isMesh)&&o.position.y>1.5&&o.position.y<6&&Math.hypot(o.position.x-x,o.position.z-z)<.3);
