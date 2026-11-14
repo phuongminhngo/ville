@@ -294,7 +294,7 @@ const EX=[{"id": "about", "wing": "Hall", "label": "À PROPOS", "sub": "Je suis 
 const MUS={
  palais:{arr:'1er',x:-0.25,z:-4.75,name:'Le Palais',sec:'Communication',ey:'(le palais et sa pyramide)',desc:'Campagnes, lancements et stratégies de marque.',ids:['rodier','marou','kalia','chewvylaunch','penshow','easyform']},
  gare:{arr:'7e',x:-5.25,z:4.75,name:'La Gare',sec:'Marque employeur',ey:"(l'ancienne gare)",desc:"Le parcours candidat, de l'arrivée au premier jour.",ids:['website','linkedin','recrut','starting','hr','internal','merch']},
- serre:{arr:'1er',x:-10.8,z:-5.5,name:'La Serre',sec:'Vidéo & photo',ey:'(les nymphéas)',desc:'Interviews, témoignages, photobooks et campagnes.',ids:['cofounders','testimonials','onbvideo','seminar','walenty','chemistry','pouvoir']},
+ serre:{arr:'8e',x:-9.6,z:-8.4,name:'La Serre',sec:'Vidéo & photo',ey:'(les nymphéas)',desc:'Interviews, témoignages, photobooks et campagnes.',ids:['cofounders','testimonials','onbvideo','seminar','walenty','chemistry','pouvoir']},
  atelier:{arr:'4e',x:7,z:-6.5,name:'L’Atelier',sec:'Direction artistique',ey:'(les tuyaux colorés)',desc:'Identités visuelles, chartes et repositionnements.',ids:['rica','popflex','calme','bread','chewvy']},
  petit:{arr:'8e',x:-15.5,z:-2.5,name:'Le Pavillon',sec:'Nghi Lễ Cưới Hỏi',ey:'(le projet phare)',desc:'Mon produit 360°, de la stratégie à l’identité visuelle.',ids:['nghile_c','nghile_d']},
  accueil:{arr:'16e',x:2,z:6.5,name:'Chez Phuong',sec:'Accueil',ey:'(Chaillot)',desc:'Qui je suis, ma formation, mes outils et la suite.',ids:['about','formation','toolbox','avenir']},
@@ -406,7 +406,7 @@ const MZ=[
  {m:'croissant',x:6.12,y:.8,z:4.4,ry:Math.PI/2,id:'formation',f:"Trois écoles, deux pays, et quatre prix de recherche scientifique."},
  {m:'suitcase',x:-6.65,y:1.0,z:5.77,ry:0,id:'recrut',f:"Du brief du manager au contrat signé : un recrutement standardisé et automatisé."},
  {m:'tray',x:-18.1,y:.9,z:-1.47,ry:0,id:'nghile_c',f:"« trọn vẹn nghi lễ, vẹn tròn yêu thương » : mon produit 360°, conçu de zéro."},
- {m:'camera',x:-8.94,y:.62,z:-5.66,ry:Math.PI/2,id:'cofounders',f:"Les cofondateurs racontent l'histoire et la culture de Cloudi-Fi en vidéo."},
+ {m:'camera',x:-7.74,y:.62,z:-8.56,ry:Math.PI/2,id:'cofounders',f:"Les cofondateurs racontent l'histoire et la culture de Cloudi-Fi en vidéo."},
  {m:'envelope',x:-5,y:1.2,z:-8.97,ry:0,id:'internal',f:"10 newsletters depuis le début de l'année et 7 e-coffees."},
  {m:'heart',x:3.6,y:1.2,z:-1.86,ry:0,id:'linkedin',f:"6 → 12 posts LinkedIn par mois : une cadence doublée et tenue."},
  {m:'palette',x:8.6,y:1.4,z:-5.38,ry:0,id:'rica',f:"Rica Lewis : heritage denim × modernité asiatique."},
@@ -745,7 +745,7 @@ const B=(w,h,d,c)=>mesh(new THREE.BoxGeometry(w,h,d),c),C=(a,b,h,c,s=20)=>mesh(n
 const VT='"VT323",monospace',LBL=[],SCRIPT='"Great Vibes","Pinyon Script",cursive',PIXEL='"Silkscreen","Pixelify Sans",monospace',SANS='"DM Sans",system-ui,sans-serif';
 const NCOUNT={'Le Palais':5,'La Gare':7,'La Serre':7,'L’Atelier':5,'Le Pavillon':2,'chez Phuong':4,'La Poste':1};
 function star(x,cx,cy,r,col){x.fillStyle=col;x.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;x.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr);}x.closePath();x.fill();}
-const ARR={'Le Palais':'1er','La Gare':'7e','La Serre':'1er','L’Atelier':'4e','Le Pavillon':'8e','chez Phuong':'16e','La Poste':'1er'};
+const ARR={'Le Palais':'1er','La Gare':'7e','La Serre':'8e','L’Atelier':'4e','Le Pavillon':'8e','chez Phuong':'16e','La Poste':'1er'};
 function drawLabel(c,x,text){x.clearRect(0,0,c.width,c.height);const W=c.width,H=c.height;const parts=text.split(' · ');const [a,b]=parts.length>1?parts:[null,text];
  const key=b,arr=ARR[key]||ARR[a]||'';const n=NCOUNT[b]??NCOUNT[a];
  // street plaque: green frame, blue enamel, white letters; arched cartouche on top
@@ -928,7 +928,7 @@ window.OPT='combo';const SM0=true,CB=true;
    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.computeVertexNormals();return g;};
  const rmat=new THREE.MeshStandardMaterial({color:0x23406e,roughness:.2,metalness:.2,emissive:0x0d1a36,emissiveIntensity:.45,side:THREE.DoubleSide});
  const river=new THREE.Mesh(ribbon(true,.02),rmat);window.CITY.RV=RV;river.receiveShadow=true;scene.add(river);
- const RES=[[-13,6.5,2.5,2.3],[-10.1,5.2,1.6,1.5],[7.6,3.9,1.5,1.5],[4.6,5.0,1.9,1.5],[-16.5,.3,2.6,.7],[-6,6,2.4,1.2],[7,-3.8,1.9,.9],[-5,-10,1.6,1.4],[4,-8.8,.5,.5],[-2.5,-8.5,.5,.5],[-0.25,-4.75,3.6,2.3],[-10.8,-5.5,2.8,1.9],[-15.5,-2.5,3.3,1.4],[-5.25,4.75,3.7,1.4],[7,-6.5,2.4,1.5],[2,6.5,1.9,1.6],[5.5,-3,.8,.8],[-13.5,-8.8,1.7,1.7],[-13,6.5,1.9,1.9],[5,.7,2.5,1.1],[-6.9,-4.1,1.6,1.5]];
+ const RES=[[-13,6.5,2.5,2.3],[-10.1,5.2,1.6,1.5],[7.6,3.9,1.5,1.5],[4.6,5.0,1.9,1.5],[-16.5,.3,2.6,.7],[-6,6,2.4,1.2],[7,-3.8,1.9,.9],[-5,-10,1.6,1.4],[4,-8.8,.5,.5],[-2.5,-8.5,.5,.5],[-0.25,-4.75,3.6,2.3],[-9.6,-8.4,2.8,1.9],[-15.5,-2.5,3.3,1.4],[-5.25,4.75,3.7,1.4],[7,-6.5,2.4,1.5],[2,6.5,1.9,1.6],[5.5,-3,.8,.8],[-13.5,-8.8,1.7,1.7],[-13,6.5,1.9,1.9],[5,.7,2.5,1.1],[-6.9,-4.1,1.6,1.5]];
  const LAMPS=[];const free=(x,z)=>!RES.some(([cx,cz,hw,hd])=>Math.abs(x-cx)<hw&&Math.abs(z-cz)<hd);
  {const rvp=RV.getSpacedPoints(160);const nearR=(x,z)=>rvp.some(p=>Math.hypot(p.x-x,p.z-z)<2.4);const cm=M(0xf7f3ea),gm=M(0x9ccc5e);
   for(let gx=-18;gx<=12;gx+=2.6)for(let gz=-11;gz<=10;gz+=2.1){const x=gx+((gz*7)%3)*.3,z=gz;const w=2.0,d=1.5;const ok=[[0,0],[w/2,d/2],[-w/2,d/2],[w/2,-d/2],[-w/2,-d/2]].every(([a,b])=>inE(x+a,z+b,.72)&&free(x+a,z+b)&&!nearR(x+a,z+b));
@@ -1026,7 +1026,7 @@ window.OPT='combo';const SM0=true,CB=true;
   vent(-1.2,-.3,H+.45,.12,0);vent(-.4,.2,H+.35,.1,Math.PI);vent(1.3,-.2,H+.5,.13,.6);
   vent(-1.6,-D/2-1.2,.9,.14,2.6);vent(1.8,-D/2-1.3,.7,.12,-2.4);
   L2(scene,'Direction artistique · L’Atelier',7,3.4,-6.5);}
- {const g=new THREE.Group();g.position.set(-10.8,0,-5.5);g.scale.setScalar(.8);scene.add(g);at(B(5.6,.16,3.0,COL.walk),g,0,.08,0);const st=M(0xebe6dd);
+ {const g=new THREE.Group();g.position.set(-9.6,0,-8.4);g.scale.setScalar(.8);scene.add(g);at(B(5.6,.16,3.0,COL.walk),g,0,.08,0);const st=M(0xebe6dd);
   at(B(4.8,1.15,1.5,0xebe6dd),g,0,.74,-.2);at(B(4.9,.1,1.6,0xd3ccbf),g,0,1.36,-.2);
   // the long glazed side facing the garden: tall windows between stone piers
   for(let i=0;i<10;i++){const x=-2.2+i*.49;const w=new THREE.Mesh(new THREE.PlaneGeometry(.36,.85),new THREE.MeshPhysicalMaterial({color:0x8fb0c4,roughness:.1,metalness:.2}));w.position.set(x,.72,.56);g.add(w);at(B(.04,.85,.02,0xefe2c8),g,x,.72,.57);}
@@ -1038,7 +1038,7 @@ window.OPT='combo';const SM0=true,CB=true;
   const pond=mesh(new THREE.CylinderGeometry(.9,.9,.05,32),new THREE.MeshStandardMaterial({color:0x6f9fa8,roughness:.15,metalness:.2}));pond.scale.set(1.4,1,.55);pond.position.set(0,.2,1.4);g.add(pond);
   for(let i=0;i<9;i++){const lp=mesh(new THREE.CylinderGeometry(.11,.11,.02,12),0x6f9a58);lp.position.set(-1+Math.random()*2,.24,1.2+Math.random()*.45);g.add(lp);if(i%3===0)at(S(.05,0xf2a7b5),g,lp.position.x,.28,lp.position.z);}
   for(const s of[-1,1])for(let i=0;i<3;i++){const t=new THREE.Group();t.position.set(s*(3.1),0,-1+i*.9);g.add(t);at(C(.05,.07,.6,COL.trunk),t,0,.3,0);at(B(.6,.6,.6,0x5f9a58),t,0,.85,0);}
-  L2(scene,"Vidéo & photo · La Serre",-10.8,2.8,-5.5);}
+  L2(scene,"Vidéo & photo · La Serre",-9.6,2.8,-8.4);}
  {const g=new THREE.Group();g.position.set(-15.5,0,-2.5);scene.add(g);const st=0xece7de,trim=0xd3ccbf;
   const pf=facadeTex(11,1,'cream',{arch:true}),ps=facadeTex(4,1,'cream',{arch:true});
   at(B(5.6,.16,2.2,0xdedad2),g,0,.08,0);at(mesh(new THREE.BoxGeometry(5.0,1.15,1.7),[ps,ps,M(st),M(st),pf,pf]),g,0,.73,-.05);at(B(5.1,.1,1.8,trim),g,0,1.35,-.05);
