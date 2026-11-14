@@ -273,12 +273,11 @@ body.night .legend{background:rgba(20,22,50,.82);color:#eef}body.night .legend h
 <div class="lg-s nh-mouse"><h5>Trackpad</h5><ul><li><span>Cliquer-glisser</span><span>se déplacer</span></li><li><span>2 doigts ↔</span><span>tourner</span></li><li><span>2 doigts ↕</span><span>incliner</span></li><li><span>Pincer</span><span>zoomer</span></li><li><span>⌥ + 2 doigts</span><span>se déplacer</span></li><li><span>Clic à 2 doigts</span><span>menu</span></li></ul></div>
 <div class="lg-s nh-mouse"><h5>Clavier</h5><ul><li><span id="kmove">Flèches · Z Q S D</span><span>se déplacer</span></li><li><span id="krot">A / E</span><span>tourner</span></li><li><span id="ktilt">R / F</span><span>incliner</span></li><li><span>+ / −</span><span>zoomer</span></li></ul></div>
 <div class="lg-s nh-touch"><h5>Doigts</h5><ul><li><span>1 doigt</span><span>se déplacer</span></li><li><span>Pincer</span><span>zoomer</span></li><li><span>Tourner 2 doigts</span><span>pivoter</span></li><li><span>2 doigts ↕</span><span>incliner</span></li></ul></div>
-<div class="lg-s"><h5>Tour Eiffel</h5><ul><li><span>Cliquer dessus</span><span>elle scintille</span></li><li><span>La nuit</span><span>toute seule, souvent</span></li></ul></div>
+<div class="lg-s"><h5>Tour Eiffel</h5><ul><li><span>Double-clic dessus</span><span>elle scintille</span></li><li><span>La nuit</span><span>toute seule, souvent</span></li></ul></div>
 <div class="lg-s"><h5>Boussole</h5><ul><li><span>Anneau</span><span>tourner</span></li><li><span>▲ ▼</span><span>incliner, jusqu’en dessous</span></li><li><span>2D / 3D</span><span>vue du dessus</span></li></ul></div>
 </div>
 <div class="lg-b" id="lgp" role="tabpanel" hidden></div>
 <div class="lg-b" id="lgm" role="tabpanel" hidden><div class="lg-s"><h5>Ambiance</h5><div class="moods lg-moods" role="group" aria-label="Ambiance"><button data-mood="sun" aria-pressed="true">☀ Soleil</button><button data-mood="night" aria-pressed="false">☾ Nuit</button><button data-mood="rain" aria-pressed="false">☂ Pluie</button><button data-mood="snow" aria-pressed="false">❄ Hiver</button></div></div>
-<div class="lg-s"><h5>Tour Eiffel</h5><button class="lg-btn" id="lgeif">✨ Faire scintiller la tour</button></div>
 <div class="lg-s"><h5>Jeu</h5><button class="lg-btn" id="lgmos">▦ Chasse aux mosaïques <b id="lgmosn">0</b>/10</button></div>
 <div class="lg-s"><h5>Vue</h5><button class="lg-btn" id="lgall">⌂ Vue d’ensemble</button></div></div></aside>
 <div class="hint" id="hint">Cliquez sur un musée pour voir ses projets</div>
@@ -452,7 +451,7 @@ addEventListener('pointerdown',e=>{if(!$('menu').hidden&&!e.target.closest('#men
  {const lp=$('lgp');ORDER.forEach(k=>{const m=MUS[k];const s=document.createElement('div');s.className='lg-s';const h=document.createElement('h5');h.textContent=m.name+' · '+m.sec;s.appendChild(h);
    m.ids.forEach(id=>{const e=EXM[id];if(!e)return;const bt=document.createElement('button');bt.className='lg-pj';bt.textContent=e.title||e.label||id;bt.onclick=()=>openCard(id);s.appendChild(bt);});lp.appendChild(s);});}
  setInterval(()=>{if(window.CITY&&CITY.sparkle&&(mood==='night'||mood==='snow')&&!document.hidden)CITY.sparkle(6);},25000);
- $('lgmos').onclick=()=>$('mosc').click();$('lgeif').onclick=()=>{if(!window.CITY)return;CITY.flyTo(-13,6.5,16);setTimeout(()=>CITY.sparkle(8),500);};$('lgall').onclick=()=>$('mall').click();
+ $('lgmos').onclick=()=>$('mosc').click();$('lgall').onclick=()=>$('mall').click();
  setInterval(()=>{const a=$('mosn'),b2=$('lgmosn');if(a&&b2&&b2.textContent!==a.textContent)b2.textContent=a.textContent;},800);
  let st=null;try{st=localStorage.getItem('lgtab');}catch(e){}show(st!==null?(st||null):(matchMedia('(max-width:760px)').matches?null:'lgb'));
  $('mhelp').onclick=()=>{$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded','false');show('lgb');};}
@@ -464,7 +463,7 @@ addEventListener('pointerdown',e=>{if(!$('menu').hidden&&!e.target.closest('#men
   items.push(['✨ Faire scintiller la tour',()=>{CITY.flyTo(-13,6.5,16);setTimeout(()=>CITY.sparkle(8),500);}]);items.push(['↻ Tourner de 90°',()=>CITY.rotate(Math.PI/2)],['↺ Tourner de −90°',()=>CITY.rotate(-Math.PI/2)],['N Retour au nord',()=>CITY.north()]);
   cm.innerHTML='';items.forEach(([t,f])=>{const bt=document.createElement('button');bt.setAttribute('role','menuitem');bt.textContent=t;bt.onclick=()=>{close();f();};cm.appendChild(bt);});
   cm.hidden=false;const w=cm.offsetWidth,h=cm.offsetHeight;cm.style.left=Math.min(cx,innerWidth-w-8)+'px';cm.style.top=Math.min(cy,innerHeight-h-8)+'px';cm.firstChild.focus({preventScroll:true});};
- const wait=setInterval(()=>{if(window.CITY){clearInterval(wait);CITY.onContext=open;}},200);
+ const wait=setInterval(()=>{if(window.CITY){clearInterval(wait);CITY.onContext=open;CITY.onDouble=(cx,cy)=>{if(!CITY.eiffelHit)return false;const r=CITY.cv.getBoundingClientRect();const rc=new THREE.Raycaster();rc.setFromCamera({x:(cx-r.left)/r.width*2-1,y:-(cy-r.top)/r.height*2+1},CITY.cam);if(CITY.eiffelHit(rc.ray)){CITY.sparkle(8);return true;}return false;};}},200);
  addEventListener('pointerdown',e=>{if(!cm.hidden&&!cm.contains(e.target))close();},true);addEventListener('keydown',e=>{if(e.key==='Escape')close();});addEventListener('wheel',()=>close(),{passive:true});}
 $('mall').onclick=()=>{$('menu').hidden=true;if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
 $('mlist').onclick=()=>{$('menu').hidden=true;openSheet(true);};
@@ -677,7 +676,7 @@ function setup(id,bg,vh0,tgt0,el=.62){let elT=el;
   let prevMid={x:0,y:0};cv.addEventListener('pointerdown',()=>{if(ptrs.size===2){const m=mid();prevMid={x:m.x,y:m.y};}});
   const up=e=>{const was=ptrs.size;ptrs.delete(e.pointerId);const tap=down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<6;
     if(two&&was===2){if(performance.now()-two.t<260&&two.moved<10){zoomAt(vh*1.7,two.x,two.y);}two=null;if(ptrs.size===1){const [p]=[...ptrs.values()];drag={x:p.x,y:p.y,rot:false,a:az,el:el};}vel.set(0,0,0);return;}
-    if(qz){const moved=qz.moved;qz=null;lastTap=0;lastTapXY=null;if(!moved){const pt=ground(e.clientX,e.clientY);if(pt){tgtT.copy(tgt);vhT=vh;zoomAt(vh/2,e.clientX,e.clientY);}}down=null;drag=null;cv.style.cursor='grab';direct=false;tgtT.copy(tgt);vhT=vh;return;}
+    if(qz){const moved=qz.moved;qz=null;lastTap=0;lastTapXY=null;if(!moved&&!(api.onDouble&&api.onDouble(e.clientX,e.clientY))){const pt=ground(e.clientX,e.clientY);if(pt){tgtT.copy(tgt);vhT=vh;zoomAt(vh/2,e.clientX,e.clientY);}}down=null;drag=null;cv.style.cursor='grab';direct=false;tgtT.copy(tgt);vhT=vh;return;}
     if(tap&&down.ctx&&api.onContext&&ptrs.size===0){api.onContext(e.clientX,e.clientY);drag=null;down=null;cv.style.cursor='grab';direct=false;tgtT.copy(tgt);vhT=vh;return;}
     if(tap){lastTap=performance.now();lastTapXY={x:e.clientX,y:e.clientY};if(api.onPick){const r=cv.getBoundingClientRect();api.onPick((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);}vel.set(0,0,0);}
     if(performance.now()-lastMove>90)vel.set(0,0,0);
