@@ -381,7 +381,17 @@ function moodFx(){const sc=CITY.scene;FX={};const mk=(n,line)=>{const pos=new Fl
 function setMood(k){mood=k;night=k!=='sun'&&k!=='snow';document.querySelectorAll('.moods button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mood===k));
  document.body.classList.remove('night','m-blue','m-rain','m-snow');if(k==='night')document.body.classList.add('night','m-blue');else if(k!=='sun')document.body.classList.add('m-'+k);
  if(!window.CITY)return;night=false;applyNight();const c=MOODS[k];if(!FX)moodFx();
- FX.rain.o.visible=!!(c&&c.fx==='rain');FX.snow.o.visible=!!(c&&c.fx==='snow');FX.ripple.o.visible=!!FX.rain.o.visible;if(FX.spark)FX.spark.visible=!FX.rain.o.visible;ROOFS.forEach(([m,hx,sn])=>m.color.set(c&&c.roofs?sn:hx));(window.UMB||[]).forEach(u=>u.visible=k==='rain');(window.WIN||[]).forEach(w=>w.visible=k==='snow');if(CITY.XMAS)CITY.XMAS.visible=k==='snow';if(CITY.XMASE)CITY.XMASE.visible=k==='snow';if(k==='night'&&CITY.sparkle)CITY.sparkle(6);(window.SUMH||[]).forEach(h=>h.visible=k!=='snow');if(CITY.LITE){CITY.LITE.visible=!!(c&&c.lite);if(c&&c.lite)CITY.HALO.opacity=c.lite;}if(CITY.fields){const [fi,ic]=CITY.fields,sn=!!(c&&c.roofs);fi.instanceColor=sn?null:ic;fi.material.color.set(sn?0xeef2f6:0xffffff);fi.material.needsUpdate=true;}
+ FX.rain.o.visible=!!(c&&c.fx==='rain');FX.snow.o.visible=!!(c&&c.fx==='snow');FX.ripple.o.visible=!!FX.rain.o.visible;if(FX.spark)FX.spark.visible=!FX.rain.o.visible;ROOFS.forEach(([m,hx,sn])=>m.color.set(c&&c.roofs?sn:hx));(window.UMB||[]).forEach(u=>u.visible=k==='rain');(window.WIN||[]).forEach(w=>w.visible=k==='snow');if(CITY.XMAS)CITY.XMAS.visible=k==='snow';
+ // floodlit buildings: every stone, glass or roof surface of a building gets a warm glow at night (and a softer one in the rain and in winter)
+ if(!CITY.GLOW){const skip=new Set(),keep=new Set(),bb=new THREE.Box3(),sz=new THREE.Vector3(),nsm=new Set(NS.mats||[]);
+  const under=(o,f)=>{for(let q=o;q;q=q.parent)if(f(q))return true;return false;};
+  CITY.scene.traverse(o=>{if(!o.isMesh)return;const ms=Array.isArray(o.material)?o.material:[o.material];
+   if(under(o,q=>q.userData.crit||q.userData.dk||q===CITY.XMAS||q===CITY.XMASE||q===CITY.LITE)){ms.forEach(x=>skip.add(x));return;}
+   if(o.isInstancedMesh||!o.material||o.geometry.type==='PlaneGeometry'&&o.rotation.x<-1.5)return;
+   const gt=o.geometry.type;if(/Sphere|Icosahedron|Capsule|Octahedron|Torus|Circle|Ring/.test(gt))return;bb.setFromObject(o);bb.getSize(sz);if(sz.y<.45||Math.max(sz.x,sz.z)<.25||bb.min.y<-.5||bb.max.y>14)return;
+   ms.forEach(x=>{const c=x.color;if(c&&c.g>c.r*1.08&&c.g>c.b)return;if(x.isMeshStandardMaterial&&!nsm.has(x)&&x.emissive&&x.emissive.getHex()===0&&x.blending!==THREE.AdditiveBlending)keep.add(x);});});
+  CITY.GLOW=[...keep].filter(x=>!skip.has(x));}
+ {const g=k==='night'?.38:k==='rain'?.18:k==='snow'?.16:0;CITY.GLOW.forEach(x=>{x.emissive.set(g?0xffcf96:0);x.emissiveIntensity=g||1;});}if(CITY.XMASE)CITY.XMASE.visible=k==='snow';if(k==='night'&&CITY.sparkle)CITY.sparkle(6);(window.SUMH||[]).forEach(h=>h.visible=k!=='snow');if(CITY.LITE){CITY.LITE.visible=!!(c&&c.lite);if(c&&c.lite)CITY.HALO.opacity=c.lite;}if(CITY.fields){const [fi,ic]=CITY.fields,sn=!!(c&&c.roofs);fi.instanceColor=sn?null:ic;fi.material.color.set(sn?0xeef2f6:0xffffff);fi.material.needsUpdate=true;}
  if(!c){if(CITY.eiffelMat)CITY.eiffelMat.emissive.set(0);return;}NS.h.color.set(c.h[0]);NS.h.groundColor.set(c.h[1]);NS.h.intensity=c.h[2];NS.d.color.set(c.d[0]);NS.d.intensity=c.d[1];if(NS.r){NS.r.color.set(c.r[0]);NS.r.emissive.set(c.r[1]);}
  NS.mats.forEach(m=>{if(c.win){m.emissive.set(0xffd9a0);m.emissiveIntensity=c.win;}else{m.emissive.set(0);}});if(CITY.eiffelMat){CITY.eiffelMat.emissive.set(c.lite?0xffb347:0);CITY.eiffelMat.emissiveIntensity=c.lite?.55*c.lite:1;}}
 document.querySelectorAll('.moods button').forEach(b=>b.onclick=()=>setMood(b.dataset.mood));
@@ -754,7 +764,7 @@ function drawLabel(c,x,text){x.clearRect(0,0,c.width,c.height);const W=c.width,H
 function label(parent,text,x,y,z,size=1){const [c,cx]=cnv(640,230);drawLabel(c,cx,text);const t=tex(c);LBL.push(()=>{drawLabel(c,cx,text);t.needsUpdate=true;});
   const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,depthTest:false}));s.scale.set(2.6*size,.93*size,1);s.position.set(x,y,z);s.renderOrder=10;parent.add(s);return s;}
 if(document.fonts)Promise.all([`40px "VT323"`,`30px "Silkscreen"`].map(f=>document.fonts.load(f,'Aễ'))).then(()=>LBL.forEach(f=>f())).catch(()=>{});
-function critter(col,scale=1,beret){const g=new THREE.Group();const b=at(S(.17,col),g,0,.2,0);b.scale.set(1,1.1,.95);at(S(.19,col),g,0,.5,0);if(col===COL.rabbit)for(const s of[-1,1])at(mesh(new THREE.CapsuleGeometry(.045,.18,4,10),col),g,s*.07,.75,0,0,0,-s*.12);
+function critter(col,scale=1,beret){const g=new THREE.Group();g.userData.crit=1;const b=at(S(.17,col),g,0,.2,0);b.scale.set(1,1.1,.95);at(S(.19,col),g,0,.5,0);if(col===COL.rabbit)for(const s of[-1,1])at(mesh(new THREE.CapsuleGeometry(.045,.18,4,10),col),g,s*.07,.75,0,0,0,-s*.12);
   for(const s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(.03,8,6),new THREE.MeshBasicMaterial({color:0x1d1c1a}));e.position.set(s*.07,.52,.17);g.add(e);}
   if(beret)at(C(.15,.14,.05,beret),g,-.02,.67,0,0,0,.2);
   {const n=CLO.n++,R=k=>{const x=Math.sin(n*12.9898+k*78.233)*43758.5453;return x-Math.floor(x);},pick=(arr,k)=>arr[Math.floor(R(k)*arr.length)];
