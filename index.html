@@ -205,6 +205,10 @@ body.m-blue #map,body.m-rain #map{filter:brightness(.75) saturate(.85)}
 .genav .gcomp{position:absolute;left:28px;top:28px;width:40px;height:40px;cursor:grab;touch-action:none;box-shadow:none}
 .g3d{font:14px var(--term)!important;font-weight:700}
 html,body{overscroll-behavior:none}
+.pinbar{position:fixed;z-index:9;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);display:flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:calc(100% - 32px);padding:8px 10px;background:var(--paper,#fffaf2);border:1.5px solid var(--line);border-radius:14px;box-shadow:0 10px 26px rgba(60,30,40,.2);font:14px var(--term,monospace);color:var(--ink)}
+.pinbar b{font:12px "Silkscreen",monospace;color:#d0607f}.pinbar span{opacity:.8;min-width:9em}
+.pinbar button{all:unset;padding:5px 10px;border-radius:999px;border:1.5px solid var(--line);cursor:pointer;font:14px var(--term,monospace)}.pinbar button:hover{background:rgba(208,96,127,.14)}.pinbar button.pk{background:#d0607f;color:#fff;border-color:#d0607f}
+body.pinning #v3d{outline:3px dashed rgba(208,96,127,.6);outline-offset:-6px}
 .ctxm{position:fixed;z-index:10;min-width:200px;background:var(--paper,#fffaf2);border:1.5px solid var(--line);border-radius:14px;box-shadow:0 12px 30px rgba(60,30,40,.22);padding:6px;display:grid;gap:2px}
 .ctxm button{all:unset;box-sizing:border-box;padding:7px 10px;border-radius:9px;font:15px var(--term,monospace);color:var(--ink);cursor:pointer}
 .ctxm button:hover,.ctxm button:focus-visible{background:rgba(208,96,127,.14)}.ctxm button:first-child{color:#d0607f}
@@ -261,12 +265,13 @@ body.night .legend{background:rgba(20,22,50,.82);color:#eef}body.night .legend h
  <div class="menu" id="menu" hidden><div class="seg" role="group" aria-label="Vue" hidden><button id="b2d" aria-pressed="false">Plan 2D</button><button id="b3d" aria-pressed="true">3D</button></div>
  <button class="mosc" id="mosc" title="Des mosaïques en pixels sont cachées sur les murs : trouvez-les !">▦ Mosaïques <b id="mosn">0</b>/10</button>
  <div class="moods" role="group" aria-label="Ambiance"><button data-mood="sun" aria-pressed="true">☀ Soleil</button><button data-mood="night" aria-pressed="false">☾ Nuit</button><button data-mood="rain" aria-pressed="false">☂ Pluie</button><button data-mood="snow" aria-pressed="false">❄ Hiver</button></div><button id="bsun" hidden></button><button id="bnight" hidden></button>
- <button class="mi" id="mhelp">✥ Légende</button><button class="mi" id="msky">☁ Remettre le ciel en place</button><button class="mi" id="mall">⌂ Vue d’ensemble</button><button class="mi" id="mlist">☰ Tous les projets</button></div>
+ <button class="mi" id="mhelp">✥ Légende</button><button class="mi" id="mpin">✎ Placer les bâtiments</button><button class="mi" id="msky">☁ Remettre le ciel en place</button><button class="mi" id="mall">⌂ Vue d’ensemble</button><button class="mi" id="mlist">☰ Tous les projets</button></div>
 </div>
 <div class="zoom" id="zoom" hidden><button id="zin" aria-label="Zoomer">+</button><button id="zout" aria-label="Dézoomer">−</button><button id="rl" aria-label="Tourner à gauche">⟲</button><button id="rr" aria-label="Tourner à droite">⟳</button><button id="zall" class="wide">Vue d'ensemble</button></div>
 <div class="fade" id="fade" aria-hidden="true"></div>
 <div class="inbar" id="inbar" hidden><button id="inexit">← Retour à Paris</button><span id="inname"></span></div>
 <div class="ctxm" id="ctxm" role="menu" hidden></div>
+<div class="pinbar" id="pinbar" role="toolbar" aria-label="Placer les bâtiments" hidden><b>✎ Placer les bâtiments</b><span id="pinsel">Glissez un bâtiment pour le déplacer</span><button id="pinl" aria-label="Tourner à gauche">⟲</button><button id="pinr" aria-label="Tourner à droite">⟳</button><button id="pincopy">Copier la disposition</button><button id="pinreset">Réinitialiser</button><button id="pindone" class="pk">Terminé</button></div>
 <aside class="legend" id="legend" aria-label="Légende, projets et thème"><div class="lg-tabs" role="tablist"><button class="lg-t" id="lgh" data-p="lgb" role="tab" aria-selected="true">✥ Légende</button><button class="lg-t" data-p="lgp" role="tab" aria-selected="false">☰ Projets</button></div>
 <div class="lg-b" id="lgb" role="tabpanel">
 <div class="lg-s nh-mouse"><h5>Souris</h5><ul><li><span>Glisser</span><span>se déplacer</span></li><li><span>Molette</span><span>zoomer</span></li><li><span>Clic droit + glisser</span><span>tourner · incliner</span></li><li><span>Clic droit</span><span>menu</span></li></ul></div>
@@ -496,6 +501,31 @@ addEventListener('pointerdown',e=>{if(!$('menu').hidden&&!e.target.closest('#men
   const end=e=>{if(D&&e.pointerId===D.id){e.stopImmediatePropagation();D=null;save();cv.style.cursor='';}};cv.addEventListener('pointerup',end,{capture:true});cv.addEventListener('pointercancel',end,{capture:true});
  },250);}
 $('msky').onclick=()=>{$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded','false');CITY.resetSky&&CITY.resetSky();};
+// placement mode: drag the places and landmarks on the map, rotate them, keep the layout in this browser, copy it to share
+{const KEY='ville-pins';let saved={};try{saved=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}};
+ const go=setInterval(()=>{if(!window.CITY||!CITY.scene||!MZ3.length)return;clearInterval(go);setTimeout(init,600);},250);
+ function init(){const sc=CITY.scene,cv=CITY.cv,P=[];
+  const near=(x,z,r)=>sc.children.filter(o=>o.isGroup&&Math.hypot(o.position.x-x,o.position.z-z)<r&&o.position.y<.5);
+  const labelsAt=(x,z)=>sc.children.filter(o=>(o.isSprite||o.isMesh)&&o.position.y>1.5&&o.position.y<6&&Math.hypot(o.position.x-x,o.position.z-z)<.3);
+  ORDER.forEach(k=>{const m=MUS[k];const g=near(m.x,m.z,.05)[0];if(!g)return;const mos=MZ3.filter((g2,i)=>g2&&MZ[i]&&m.ids.includes(MZ[i].id));
+   P.push({k,name:m.name,g,extra:[...labelsAt(m.x,m.z),...mos],x0:m.x,z0:m.z,r0:g.rotation.y,mus:m});});
+  [['tour','Tour',-13,6.5,.05],['arc','Arc',-13.5,-8.8,1.2],['nd','Cathédrale',5,.7,1.5],['butte','Butte',-1,-16.6,1.5]].forEach(([k,name,x,z,r])=>{const g=near(x,z,r).sort((a,b)=>b.children.length-a.children.length)[0];if(g)P.push({k,name,g,extra:labelsAt(g.position.x,g.position.z),x0:g.position.x,z0:g.position.z,r0:g.rotation.y});});
+  const place=(p,x,z,ry)=>{const dx=x-p.g.position.x,dz=z-p.g.position.z;p.g.position.x=x;p.g.position.z=z;p.extra.forEach(o=>{o.position.x+=dx;o.position.z+=dz;});if(ry!=null)p.g.rotation.y=ry;if(p.mus){p.mus.x=x;p.mus.z=z;}};
+  P.forEach(p=>{const s=saved[p.k];if(s)place(p,s[0],s[1],s[2]);});
+  let on=false,sel=null,D=null;const rc=new THREE.Raycaster(),box=new THREE.Box3();let hl=null;
+  const pickP=(cx,cy)=>{const r=cv.getBoundingClientRect();rc.setFromCamera({x:(cx-r.left)/r.width*2-1,y:-(cy-r.top)/r.height*2+1},CITY.cam);const h=rc.intersectObjects(P.map(p=>p.g),true)[0];if(!h)return null;return P.find(p=>{for(let q=h.object;q;q=q.parent)if(q===p.g)return true;return false;});};
+  const mark=p=>{sel=p;if(hl){sc.remove(hl);hl=null;}if(!p){$('pinsel').textContent='Glissez un bâtiment pour le déplacer';return;}box.setFromObject(p.g);hl=new THREE.Box3Helper(box.clone(),0xd0607f);sc.add(hl);$('pinsel').textContent=p.name;};
+  const store=p=>{saved[p.k]=[+p.g.position.x.toFixed(2),+p.g.position.z.toFixed(2),+p.g.rotation.y.toFixed(3)];save();mark(p);};
+  cv.addEventListener('pointerdown',e=>{if(!on||e.button!==0)return;const p=pickP(e.clientX,e.clientY);if(!p)return;e.stopImmediatePropagation();e.preventDefault();const g0=CITY.groundAt(e.clientX,e.clientY);if(!g0)return;
+    D={p,id:e.pointerId,ox:p.g.position.x-g0.x,oz:p.g.position.z-g0.z};cv.setPointerCapture(e.pointerId);mark(p);cv.style.cursor='grabbing';},{capture:true});
+  cv.addEventListener('pointermove',e=>{if(!D||e.pointerId!==D.id)return;e.stopImmediatePropagation();const g=CITY.groundAt(e.clientX,e.clientY);if(!g)return;place(D.p,g.x+D.ox,g.z+D.oz);if(hl){box.setFromObject(D.p.g);hl.box.copy(box);}},{capture:true});
+  const end=e=>{if(!D||e.pointerId!==D.id)return;e.stopImmediatePropagation();store(D.p);D=null;cv.style.cursor='';};cv.addEventListener('pointerup',end,{capture:true});cv.addEventListener('pointercancel',end,{capture:true});
+  const rot=s=>{if(!sel)return;sel.g.rotation.y+=s*Math.PI/12;store(sel);};$('pinl').onclick=()=>rot(1);$('pinr').onclick=()=>rot(-1);
+  $('pincopy').onclick=()=>{const t=JSON.stringify(saved);(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{$('pinsel').textContent='Copié ! Colle-le dans la conversation.';},()=>{prompt('Copie ce texte :',t);});};
+  $('pinreset').onclick=()=>{P.forEach(p=>place(p,p.x0,p.z0,p.r0));saved={};save();mark(null);};
+  const setOn=v=>{on=v;$('pinbar').hidden=!v;document.body.classList.toggle('pinning',v);if(!v)mark(null);else if(CITY.tiltT()<1.0)CITY.tilt(1.1);};
+  $('mpin').onclick=()=>{$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded','false');setOn(true);};$('pindone').onclick=()=>setOn(false);
+  addEventListener('keydown',e=>{if(!on)return;if(e.key==='Escape')setOn(false);});}}
 $('mall').onclick=()=>{$('menu').hidden=true;if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
 $('mlist').onclick=()=>{$('menu').hidden=true;openSheet(true);};
 if($('brec'))$('brec').onclick=()=>{if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
