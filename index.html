@@ -972,7 +972,7 @@ window.OPT='combo';const SM0=true,CB=true;
   const pm=new THREE.PointsMaterial({size:6,sizeAttenuation:false,opacity:.7,map:new THREE.CanvasTexture(sc),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,color:0xfff2d8});const pts=new THREE.Points(g,pm);scene.add(pts);
   anims.push((t,dt)=>{for(let i=0;i<N;i++){life[i]-=dt;if(life[i]<0)put(i);}g.attributes.position.needsUpdate=true;pm.size=5+Math.sin(t*4)*1.5;});}
  // bridges across the Seine
- window.BRG=[];for(const bx of[-6.0,-13.0]){let u=0,bd=1e9;for(let q=0;q<=1;q+=.001){const pp=RV.getPointAt(q);if(!inE(pp.x,pp.z,.8))continue;const d=Math.abs(pp.x-bx);if(d<bd){bd=d;u=q;}}const p=RV.getPointAt(u),t=RV.getTangentAt(u);BRG.push([new THREE.Vector3(p.x-t.z*1.75,0,p.z+t.x*1.75),new THREE.Vector3(p.x+t.z*1.75,0,p.z-t.x*1.75)]);for(const e of BRG[BRG.length-1])RES.push([e.x,e.z,.5,.5]);RES.push([p.x,p.z,.6,.6]);const br=new THREE.Group();br.position.set(p.x,0,p.z);br.rotation.y=Math.atan2(t.x,t.z)+Math.PI/2;scene.add(br);
+ window.BRG=[];for(const bx of[-6.0,'tour']){let u=0,bd=1e9;for(let q=0;q<=1;q+=.001){const pp=RV.getPointAt(q);if(!inE(pp.x,pp.z,.8))continue;const d=bx==='tour'?Math.hypot(pp.x+10.74,pp.z-5.38):Math.abs(pp.x-bx);if(d<bd){bd=d;u=q;}}const p=RV.getPointAt(u),t=RV.getTangentAt(u);BRG.push([new THREE.Vector3(p.x-t.z*1.75,0,p.z+t.x*1.75),new THREE.Vector3(p.x+t.z*1.75,0,p.z-t.x*1.75)]);for(const e of BRG[BRG.length-1])RES.push([e.x,e.z,.5,.5]);RES.push([p.x,p.z,.6,.6]);const br=new THREE.Group();br.position.set(p.x,0,p.z);br.rotation.y=Math.atan2(t.x,t.z)+Math.PI/2;scene.add(br);
   {const L=3.5,E=.3,CH=1.3,yAt=x=>{const t=(x+L/2)/L;return (1-t)*(1-t)*E+2*t*(1-t)*CH+t*t*E;};
    const sh=new THREE.Shape();sh.moveTo(-L/2,0);sh.lineTo(-L/2,E);sh.quadraticCurveTo(0,CH,L/2,E);sh.lineTo(L/2,0);sh.lineTo(-L/2,0);
    const mid=new THREE.Path();mid.moveTo(.5,0);mid.absellipse(0,0,.5,.6,0,Math.PI,false);mid.lineTo(.5,0);sh.holes.push(mid);
@@ -1407,7 +1407,7 @@ window.OPT='combo';const SM0=true,CB=true;
     const pl=new THREE.Mesh(new THREE.PlaneGeometry(1.4,.62),new THREE.MeshBasicMaterial({map:tex(c),side:THREE.DoubleSide}));pl.position.y=.9;bs.add(pl);bs.userData.face=1;SIGNS.push(bs);}
    // ===== the little train going round the city =====
    {const tA=EA*TS,tB=EB*TS;const HA=Math.atan2(((SM?-12.73:-18)-OZ)/EB,((SM?-3.29:-1)-OX)/EA);
-    const S=a=>{const d=Math.atan2(Math.sin(a-HA),Math.cos(a-HA)),w=.6;return Math.abs(d)<w?TS+.3*.5*(1+Math.cos(Math.PI*d/w)):TS;};
+    const S=a=>TS;
     const P=a=>{const s=S(a);return new THREE.Vector3(OX+Math.cos(a)*EA*s,GY,OZ+Math.sin(a)*EB*s);};
     const strip=(off,hw,y,mat)=>{const pos=[],N=480;for(let i=0;i<N;i++){const q=[i/N*Math.PI*2,(i+1)/N*Math.PI*2].map(a=>{const p=P(a),d=P(a+.001).sub(p).normalize(),n=new THREE.Vector3(-d.z,0,d.x);return [p.clone().addScaledVector(n,off-hw),p.clone().addScaledVector(n,off+hw)];});
       const [[a0,b0],[a1,b1]]=q;pos.push(a0.x,y,a0.z,a1.x,y,a1.z,b0.x,y,b0.z,b0.x,y,b0.z,a1.x,y,a1.z,b1.x,y,b1.z);}
