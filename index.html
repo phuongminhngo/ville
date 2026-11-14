@@ -1114,7 +1114,7 @@ window.OPT='combo';const SM0=true,CB=true;
   const k=new THREE.Group();k.position.set(4.3,0,-2.3);scene.add(k);at(C(.4,.45,1.2,COL.green,12),k,0,.6,0);at(mesh(new THREE.ConeGeometry(.6,.5,12),COL.green),k,0,1.45,0);at(S(.12,COL.gold),k,0,1.75,0);at(C(.42,.42,.3,0xf2e6c8,12),k,0,1.0,0);
   L2(scene,'Contact · La Poste',4.3,2.3,-2.3,.8);
  }
- {const e=new THREE.Group();e.position.set(-10.74,0,5.38);e.rotation.y=-.385;scene.add(e);window.CITY.LM=window.CITY.LM||{};window.CITY.LM.tour=e;
+ {const e=new THREE.Group();e.position.set(-10.74,0,5.38);e.rotation.y=-.909;scene.add(e);window.CITY.LM=window.CITY.LM||{};window.CITY.LM.tour=e;
   // open lattice tower: every beam is one instance of a single box, so it stays light
   const rose=0x8d9299,dk=0x6c7178,mats=[];const beams=[];
   const beam=(p,q,w=.05)=>beams.push([p.clone(),q.clone(),w]);
@@ -1172,7 +1172,7 @@ window.OPT='combo';const SM0=true,CB=true;
   anims.push(t=>sparks.forEach((sp,i)=>sp.visible=Math.sin(t*7+i*2.3)>.2));
   
   // a small formal park around the tower: gravel plaza, four lawns with low hedges, flower beds, rows of trees, benches
-  {const P=new THREE.Group();P.position.set(-10.74,0,5.38);P.rotation.y=-.385;scene.add(P);window.CITY.LM.park=P;const W=4.4,D=3.9;
+  {const P=new THREE.Group();P.position.set(-10.74,0,5.38);P.rotation.y=-.909;scene.add(P);window.CITY.LM.park=P;const W=4.4,D=3.9;
    const fl=(w,d,c,y)=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(w,d),M(c));p.rotation.x=-Math.PI/2;p.position.y=y;p.receiveShadow=true;P.add(p);return p;};
    fl(W,D,0xe6dccb,.012);const pz=new THREE.Mesh(new THREE.CircleGeometry(1.55,24),M(0xddd2bf));pz.rotation.x=-Math.PI/2;pz.position.y=.014;P.add(pz);
    const lawns=[],o=new THREE.Object3D();for(const sx of[-1,1])for(const sz of[-1,1]){const cx=sx*(W/4+.32),cz=sz*(D/4+.28),lw=W/2-.95,ld=D/2-.85;const l=fl(lw,ld,0x9fcf7f,.02);l.position.x=cx;l.position.z=cz;lawns.push([cx,cz,lw,ld]);}
