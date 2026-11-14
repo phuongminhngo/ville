@@ -1172,7 +1172,7 @@ window.OPT='combo';const SM0=true,CB=true;
   anims.push(t=>sparks.forEach((sp,i)=>sp.visible=Math.sin(t*7+i*2.3)>.2));
   
   // a small formal park around the tower: gravel plaza, four lawns with low hedges, flower beds, rows of trees, benches
-  {const P=new THREE.Group();P.position.set(-10.74,0,5.38);P.rotation.y=-.909;scene.add(P);window.CITY.LM.park=P;const W=4.4,D=3.9;
+  {const P=new THREE.Group();P.position.set(-10.74,0,5.38);P.rotation.y=-.909;P.scale.set(.78,1,.78);scene.add(P);window.CITY.LM.park=P;const W=4.4,D=3.9;
    const fl=(w,d,c,y)=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(w,d),M(c));p.rotation.x=-Math.PI/2;p.position.y=y;p.receiveShadow=true;P.add(p);return p;};
    fl(W,D,0xe6dccb,.012);const pz=new THREE.Mesh(new THREE.CircleGeometry(1.55,24),M(0xddd2bf));pz.rotation.x=-Math.PI/2;pz.position.y=.014;P.add(pz);
    const lawns=[],o=new THREE.Object3D();for(const sx of[-1,1])for(const sz of[-1,1]){const cx=sx*(W/4+.32),cz=sz*(D/4+.28),lw=W/2-.95,ld=D/2-.85;const l=fl(lw,ld,0x9fcf7f,.02);l.position.x=cx;l.position.z=cz;lawns.push([cx,cz,lw,ld]);}
