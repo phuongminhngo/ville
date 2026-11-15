@@ -205,6 +205,12 @@ body.m-blue #map,body.m-rain #map{filter:brightness(.75) saturate(.85)}
 .genav .gcomp{position:absolute;left:28px;top:28px;width:40px;height:40px;cursor:grab;touch-action:none;box-shadow:none}
 .g3d{font:14px var(--term)!important;font-weight:700}
 html,body{overscroll-behavior:none}
+.card .nl-flag{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;align-items:start}@media (max-width:640px){.card .nl-flag{grid-template-columns:1fr}}
+.card .nl-flag video{aspect-ratio:auto}.card .nl-site{border:1.5px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.card .nl-site .ub{display:flex;align-items:center;gap:5px;padding:6px 8px;background:#f3eee6;border-bottom:1px solid var(--line);font-size:14px}.card .nl-site .ub i{width:8px;height:8px;border-radius:50%;background:#d8cfc4}.card .nl-site .ub span{flex:1;margin-left:4px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.card .nl-site .ub a{color:var(--pink);text-decoration:none}
+.card .nl-site .vp{height:230px;overflow-y:auto;overscroll-behavior:contain}.card .nl-site .vp img{display:block;width:100%}.card .nl-site small{display:block;text-align:center;font-size:13px;color:var(--muted);padding:3px}
+.card .nl-src{font-size:14px;color:var(--muted);margin-top:-4px}
+.card .nl-feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}.card .nl-feat div{border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;background:#fff;font-size:17px;line-height:1.2}.card .nl-feat b{display:block;font:normal 12px var(--pixel);color:var(--pink);margin-bottom:3px}
 #dtags{position:fixed;inset:0;pointer-events:none;z-index:3}
 .dtag{all:unset;position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;white-space:nowrap;background:#fffaf2;border:1.5px solid #2a2321;border-radius:999px;padding:3px 10px;font:16px VT323,monospace;color:#2a2321;box-shadow:0 3px 8px rgba(60,30,40,.15)}
 .dtag::after{content:"";position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);border:6px solid transparent;border-top-color:#2a2321;border-bottom:0}
@@ -385,31 +391,19 @@ function rhHtml(e){const ms=e.rh.map(id=>RHM[id]).filter(Boolean);if(!ms.length)
  if(ms.length===1)h.push(rhMission(ms[0],dv&&dv.v));
  else ms.forEach((m,i)=>h.push(`<details class="rh-mis"${i===0?' open':''}><summary><b>${esc(m.n)}</b><small>${esc(m.d)}</small></summary>${rhMission(m)}</details>`));
  return h.join('');}
-function nghileHtml(){let h='';   h+=`<p class="nl-badge">★ Le projet qui montre ma façon de travailler</p>
-   <p class="lead">Un produit numérique bilingue qui aide les jeunes Vietnamiens et leurs parents à comprendre les rites du mariage, puis à décider ensemble, rite par rite, ce qu'ils gardent, adaptent ou laissent de côté.</p>
-   <a class="nl-live" href="https://nghilecuoihoi.netlify.app/" target="_blank" rel="noopener"><span class="nl-dot" aria-hidden="true"></span><span><b>Le site est en ligne</b><small>nghilecuoihoi.netlify.app · en vietnamien et en français ↗</small></span></a>
-   <p class="plabel" style="margin-top:0">Le film d'introduction <span>· 14 s</span></p><video class="vid" style="margin:0 0 16px" src="nghile/intro.mp4" poster="nghile/intro-poster.jpg" controls playsinline preload="none" aria-label="Film d'introduction : le mariage vietnamien et ses six rites"></video>
-   <p class="plabel" style="margin-top:0">Les premières 24 h en ligne</p><div class="nl-kpis"><div><b>867</b><small>pages vues</small></div><div><b>384</b><small>visiteurs uniques</small></div><div><b>73 %</b><small>des vues depuis le Vietnam</small></div><div><b>253</b><small>visites venues de Threads</small></div></div><p class="ctx" style="border:0;padding:0;margin:4px 0 14px">Analytics Netlify, du 11 au 12 octobre 2026.</p>
-   <h3>Le problème</h3>
-   <p class="lead">Un mariage vietnamien se décide à deux générations. Combien de tráp ? Le sính lễ reste-t-il une négociation ? Les jeunes n'ont aucune source fiable pour comprendre les rites qu'on leur demande pourtant de trancher.</p>
-   <h3>Comment je l'ai construit</h3>
-   <ol class="nl-steps">${[
-    ['Documenter','Un rapport de veille : les rites, leurs variantes par région et religion, jusqu\'au code Hồng Đức de 1470.'],
-    ['Écouter','Une enquête bilingue en six axes. 9 répondants sur 15 vivent un désaccord familial concret.'],
-    ['Comparer','Un benchmark : The Knot, Zola, Marry.vn, réseaux sociaux, wedding planners. Personne ne relie le sens des rites à la décision en famille.'],
-    ['Pivoter','D\'objets de déco vers un outil : « Découvrir » pour comprendre, « Décider ensemble » pour trancher.'],
-    ['Nommer','« Nghi lễ cưới hỏi », c\'est ce que les gens tapent sur Google. Et « hỏi » veut aussi dire « demander ».'],
-    ['Construire','Le site : six rites, trois régions, trois traditions religieuses, un lexique, un questionnaire de 7 minutes.'],
-    ['Lancer','Mise en ligne sur Netlify, référencement, puis appel aux retours de la communauté.'],
-    ['Défendre','Le rapport de veille en slides, avec mes notes de présentation, pour le rendu du 23 octobre.']
-   ].map(r=>`<li><b>${r[0]}</b><span>${r[1]}</span></li>`).join('')}</ol>
-   <h3>Le produit</h3>
-   <ul><li><b>Découvrir</b> : chaque rite, du Dạm ngõ au Lại mặt, expliqué selon la région et la religion de chaque famille.</li><li><b>Décider ensemble</b> : chacun remplit le même questionnaire, reçoit un code et l'envoie à l'autre famille sur Zalo.</li><li><b>Comparer</b> : les deux codes collés côte à côte montrent ce qui est d'accord et ce qui reste à rediscuter.</li><li><b>Le Wedding Outline</b> : le plan commun, imprimable, qui peut servir de brief au wedding planner.</li></ul>
-   <h3>Le modèle</h3>
-   <p class="lead">Gratuit pour les familles, financé par l'écosystème du mariage : partenaires mis en avant, Wedding Outline premium, affiliation. Mobile d'abord, avec Zalo comme porte d'entrée au Vietnam.</p>
-   <h3>La charte graphique</h3><figure class="nl-sheet"><img src="nghile/charte-v2.jpg" loading="lazy" width="2000" height="1069" alt="Charte graphique de Nghi Lễ Cưới Hỏi : logos, motifs, palette, typographies et maquettes"></figure>
-   <h3>Ce que ce projet montre</h3>
-   <div class="tags">${['Veille et recherche','Enquête utilisateur','Benchmark','Stratégie de marque','Naming','Direction artistique','Conception produit','Contenu bilingue','Mise en ligne'].map(t=>`<span>${t}</span>`).join('')}</div>`;;return h;}
+function nghileHtml(){const S=[['Documenter',"Un rapport de veille : les rites, leurs variantes par région et religion, jusqu'au code Hồng Đức de 1470."],['Écouter',"Une enquête bilingue en six axes. 9 répondants sur 15 vivent un désaccord familial concret."],['Comparer',"Un benchmark : The Knot, Zola, Marry.vn, réseaux sociaux, wedding planners. Personne ne relie le sens des rites à la décision en famille."],['Pivoter',"D'objets de déco vers un outil : « Découvrir » pour comprendre, « Décider ensemble » pour trancher."],['Nommer',"« Nghi lễ cưới hỏi », c'est ce que les gens tapent sur Google. Et « hỏi » veut aussi dire « demander »."],['Construire',"Le site : six rites, trois régions, trois traditions religieuses, un lexique, un questionnaire de 7 minutes."],['Lancer',"Mise en ligne sur Netlify, référencement, puis appel aux retours de la communauté."],['Défendre',"Le rapport de veille en slides, avec mes notes de présentation, pour le rendu du 23 octobre."]];
+ const F=[['Découvrir',"Chaque rite, du Dạm ngõ au Lại mặt, expliqué selon la région et la religion de chaque famille."],['Décider ensemble',"Chacun remplit le même questionnaire, reçoit un code et l'envoie à l'autre famille sur Zalo."],['Comparer',"Les deux codes côte à côte montrent ce qui est d'accord et ce qui reste à rediscuter."],['Wedding Outline',"Le plan commun, imprimable, qui peut servir de brief au wedding planner."]];
+ const U='https://nghilecuoihoi.netlify.app/';
+ return `<div class="nl-flag"><video src="nghile/intro.mp4" poster="nghile/intro-poster.jpg" controls playsinline preload="none" aria-label="Film d'introduction de Nghi Lễ Cưới Hỏi, 14 secondes"></video>
+ <div class="nl-site"><div class="ub"><i></i><i></i><i></i><span>nghilecuoihoi.netlify.app</span><a href="${U}" target="_blank" rel="noopener">Ouvrir ↗</a></div><div class="vp" tabindex="0" aria-label="Aperçu de la page d'accueil, à faire défiler"><a href="${U}" target="_blank" rel="noopener"><img src="nghile/site.jpg" alt="Page d'accueil du site Nghi Lễ Cưới Hỏi : les six rites du mariage, puis le détail du Dạm ngõ" loading="lazy"></a></div><small>Faites défiler le site</small></div></div>
+ <span class="nl-badge">Conçu de zéro · août à octobre 2026</span>
+ <p>Un produit numérique bilingue qui aide les jeunes Vietnamiens et leurs parents à comprendre les rites du mariage, puis à décider ensemble, rite par rite, ce qu'ils gardent, adaptent ou laissent de côté.</p>
+ <div class="nl-kpis"><div><b>867</b><small>pages vues</small></div><div><b>384</b><small>visiteurs uniques</small></div><div><b>253</b><small>visites via Threads</small></div></div><p class="nl-src">Premières 24 h en ligne, Analytics Netlify</p>
+ <a class="nl-live" href="${U}" target="_blank" rel="noopener"><span class="nl-dot"></span><span><b>Voir le site en ligne ↗</b><small>en vietnamien et en français</small></span></a>
+ <details class="rh-part" open><summary><span><b>Le problème</b></span></summary><div class="rh-pb"><p>Un mariage vietnamien se décide à deux générations. Combien de tráp ? Le sính lễ reste-t-il une négociation ? Les jeunes n'ont aucune source fiable pour comprendre les rites qu'on leur demande pourtant de trancher.</p></div></details>
+ <details class="rh-part"><summary><span><b>Les 8 étapes, de l'idée au lancement</b></span></summary><div class="rh-pb"><ol class="nl-steps">${S.map(r=>`<li><b>${r[0]}</b><span>${r[1]}</span></li>`).join('')}</ol></div></details>
+ <details class="rh-part"><summary><span><b>Le produit</b></span></summary><div class="rh-pb"><div class="nl-feat">${F.map(r=>`<div><b>${r[0]}</b>${r[1]}</div>`).join('')}</div></div></details>
+ <details class="rh-part"><summary><span><b>La charte graphique</b></span></summary><div class="rh-pb"><p>Un rouge porte-bonheur, un brun profond et des blancs chauds. Playfair Display pour les titres, Ballet en accent calligraphié, Be Vietnam Pro pour le texte.</p><img class="rh-photo" src="nghile/charte-v3.jpg" loading="lazy" alt="Planche de charte de Nghi Lễ Cưới Hỏi : logo, palette, typographies et maquettes"></div></details>`;}
 function openCard(id){const e=EXM[id];if(!e)return;const h=[];
  h.push(`<button class="x" id="cx" aria-label="Fermer la fiche">✕</button>`);
  if(e.eyebrow)h.push(`<div class="ey">(${esc(e.eyebrow)})</div>`);h.push(`<h3>${px(e.title||e.label)}</h3>`);
