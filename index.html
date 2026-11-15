@@ -616,6 +616,46 @@ $('msky').onclick=()=>{$('menu').hidden=true;$('bmenu').setAttribute('aria-expan
   const setOn=v=>{on=v;$('pinbar').hidden=!v;document.body.classList.toggle('pinning',v);if(!v)mark(null);else if(CITY.tiltT()<1.0)CITY.tilt(1.1);};
   $('mpin').onclick=()=>{$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded','false');setOn(true);};$('pindone').onclick=()=>setOn(false);
   addEventListener('keydown',e=>{if(!on)return;if(e.key==='Escape')setOn(false);});}}
+// ---- guided tour for screen recording: open the page with ?tour (or #tour)
+if(/[?&#]tour\b/.test(location.search+location.hash)){const go=setInterval(()=>{if(!window.CITY||!CITY.LM||!MZ3.length)return;clearInterval(go);setTimeout(tourSetup,800);},200);}
+function tourSetup(){
+ const mk=(id,css,html='')=>{const d=document.createElement('div');d.id=id;d.style.cssText=css;d.innerHTML=html;document.body.appendChild(d);return d;};
+ const keep=new Set(['v3d','dtags','dtip','cardwrap']);const hid=[];
+ document.querySelectorAll('body *').forEach(e=>{if(e.closest('#cardwrap,#dtags,#dtip'))return;const cs=getComputedStyle(e);if((cs.position==='fixed'||cs.position==='absolute')&&!keep.has(e.id)&&!e.querySelector('#v3d')&&e.style.visibility!=='hidden'){e.style.visibility='hidden';hid.push(e);}});
+ try{localStorage.removeItem('ville-sky');localStorage.removeItem('ville-pins');}catch(x){}
+ const cap=mk('tcap','position:fixed;left:50%;bottom:4.5vh;transform:translateX(-50%);z-index:99;background:#fffaf2;border:2px solid #2a2321;border-radius:999px;padding:.6em 1.6em;font:clamp(14px,1.7vw,24px) Silkscreen,monospace;color:#2b4a8f;box-shadow:0 6px 16px rgba(60,30,40,.2);white-space:nowrap;opacity:0;transition:opacity .35s');
+ const stp=mk('tstp','position:fixed;right:2.2vw;top:3vh;z-index:99;background:#d0607f;color:#fff;border-radius:999px;padding:.4em 1em;font:clamp(12px,1.2vw,17px) Silkscreen,monospace;opacity:0;transition:opacity .35s');
+ const cur=mk('tcur','position:fixed;left:0;top:0;z-index:120;width:34px;height:34px;pointer-events:none;opacity:0;transition:opacity .25s','<svg viewBox="0 0 24 24" width="34" height="34"><path d="M3 2l7 19 2.5-7.5L20 11z" fill="#fff" stroke="#2a2321" stroke-width="1.6" stroke-linejoin="round"/></svg>');
+ const end=mk('tend','position:fixed;inset:0;z-index:110;display:grid;place-items:center;text-align:center;background:rgba(246,201,214,.86);opacity:0;pointer-events:none;transition:opacity .6s','<div><div style="font:clamp(48px,7vw,110px) \'Pinyon Script\',cursive;color:#2b4a8f;line-height:1">Phuong <span style="color:#d0607f">Ngo</span></div><div style="font:clamp(24px,3.2vw,48px) Silkscreen,monospace;color:#2a2321;margin-top:.5em">Venez visiter</div><div style="font:clamp(22px,2.6vw,40px) VT323,monospace;color:#2a2321;margin-top:.3em">phuongminhngo.github.io/ville</div><div style="display:inline-block;margin-top:.9em;background:#d0607f;color:#fff;border-radius:999px;padding:.6em 1.5em;font:clamp(14px,1.5vw,22px) Silkscreen,monospace">Cliquez pour visiter →</div></div>');
+ const shield=mk('tshield','position:fixed;inset:0;z-index:98');
+ const start=mk('tstart','position:fixed;inset:0;z-index:130;display:grid;place-items:center;background:rgba(42,35,33,.55);color:#fff;text-align:center;font:18px VT323,monospace;cursor:pointer','<div><div style="font:22px Silkscreen,monospace">Visite guidée · 18 s</div><p style="margin:.8em 0 1.2em;max-width:30em;line-height:1.3">Mettez la fenêtre en plein écran, lancez l’enregistrement d’écran,<br>puis cliquez n’importe où. Touche R pour rejouer à la fin.</p><div style="display:inline-block;background:#d0607f;border-radius:999px;padding:.5em 1.4em;font:18px Silkscreen,monospace">▶ Lancer</div></div>');
+ const wait=ms=>new Promise(r=>setTimeout(r,ms));const ease=k=>k<0?0:k>1?1:k*k*(3-2*k);
+ const during=(ms,f)=>new Promise(res=>{const t0=performance.now();const tick=()=>{const k=Math.min(1,(performance.now()-t0)/ms);f(k);if(k<1)requestAnimationFrame(tick);else res();};requestAnimationFrame(tick);});
+ const say=(t,s)=>{cap.style.opacity=0;setTimeout(()=>{cap.textContent=t;cap.style.opacity=t?1:0;},t?180:0);stp.textContent=s;stp.style.opacity=s?1:0;};
+ const scr=v=>{const p=v.clone().project(CITY.cam);const r=CITY.cv.getBoundingClientRect();return [r.left+(p.x+1)/2*r.width,r.top+(1-p.y)/2*r.height];};
+ const moveCur=(x,y)=>{cur.style.transform=`translate(${x-5}px,${y-4}px)`;CITY.cv.dispatchEvent(new PointerEvent('pointermove',{clientX:x,clientY:y,pointerType:'mouse',bubbles:true}));};
+ async function run(){start.style.display='none';end.style.opacity=0;if(IN.on)exitMuseum(true);closeCard();setMood('sun');
+  const plane=CITY.DRAG.find(o=>o.userData.dk==='pl').children[0],v=new THREE.Vector3();
+  // 1 · the plane and its banner
+  plane.getWorldPosition(v);CITY.focus(v.x*.6,v.z*.6-2,24);CITY.tilt(.75);await wait(900);
+  say('Bienvenue dans ma ville','1 / 6');await during(3200,k=>{plane.getWorldPosition(v);CITY.tgtT.set(v.x*.6,0,v.z*.6-2);CITY.rotate(.0012);});
+  // 2 · streets, animals and the métro
+  say('Ici, tout le monde travaille sur un projet','2 / 6');const tr=CITY.train[5].position;CITY.flyTo(tr.x,tr.z,8);CITY.tilt(.55);
+  await during(3200,k=>{const t=CITY.train[5].position;if(k>.25)CITY.tgtT.set(t.x,0,t.z);});
+  // 3 · into Le Pavillon
+  say('Chaque objet raconte une mission','3 / 6');CITY.flyTo(MUS.petit.x,MUS.petit.z,FIT.petit*1.25+3);CITY.tilt(.95);await wait(1100);enterMuseum('petit');await wait(2100);
+  // 4 · hover and open the projet phare
+  say('Mon projet phare, de l’idée au produit en ligne','4 / 6');const f=DH.frames.find(f=>f.userData.pid==='nghile_c');f.userData.obj.getWorldPosition(v);
+  const [tx,ty]=scr(v);const sx=innerWidth*.82,sy=innerHeight*.82;cur.style.opacity=1;await during(1100,k=>{const e=ease(k);moveCur(sx+(tx-sx)*e,sy+(ty-sy)*e);});await wait(700);
+  cur.style.transform+=' scale(.85)';await wait(120);openCard('nghile_c');$('dtip').hidden=true;cur.style.opacity=0;const vid=document.querySelector('#card video');if(vid){vid.muted=true;vid.play().catch(()=>{});}
+  const c=$('card');await wait(1100);await during(1500,k=>{c.scrollTop=ease(k)*Math.min(520,c.scrollHeight-c.clientHeight);});await wait(300);
+  // 5 · the tower at night
+  say('Même la nuit, ça brille','5 / 6');closeCard();exitMuseum(true);setMood('night');const T=CITY.LM.tour.position;CITY.focus(T.x,T.z,14);CITY.tilt(.62);await wait(500);CITY.sparkle(8);
+  await during(2200,k=>CITY.rotate(.0016));
+  // 6 · end card
+  say('','6 / 6');end.style.opacity=1;await during(2600,k=>CITY.rotate(.001));stp.style.opacity=0;}
+ start.onclick=()=>run();addEventListener('keydown',e=>{if((e.key==='r'||e.key==='R')&&start.style.display==='none')run();});
+}
 $('mall').onclick=()=>{$('menu').hidden=true;if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
 $('mlist').onclick=()=>{$('menu').hidden=true;openSheet(true);};
 if($('brec'))$('brec').onclick=()=>{if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
