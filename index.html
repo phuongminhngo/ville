@@ -654,8 +654,8 @@ function tourSetup(){
   await during(3200,k=>{const t=CITY.train[5].position;if(k>.25)CITY.tgtT.set(t.x,0,t.z);});
   // 6 · the signposts to the other two portfolios
   say('Et deux autres portfolios vous attendent','6 / 7');const sg=(CITY.outerSigns||[]).slice(0,2);
-  for(const s of sg){s.getWorldPosition(v);CITY.flyTo(v.x,v.z,7);CITY.tgtT.set(v.x,v.y+1.15,v.z);CITY.tilt(.45);
-   await wait(900);await during(1400,k=>CITY.zoomTo(7-2.4*ease(k)));}
+  for(const s of sg){s.getWorldPosition(v);v.y+=1.15;CITY.tgt.copy(v);CITY.tgtT.copy(v);CITY.zoomTo(7.5);CITY.tilt(.45);
+   await wait(250);await during(1800,k=>{s.getWorldPosition(v);v.y+=1.15;CITY.tgt.copy(v);CITY.tgtT.copy(v);CITY.zoomTo(7.5-2.8*ease(k));});}
   // 7 · end card
   say('','7 / 7');end.style.opacity=1;await during(2600,k=>CITY.rotate(.001));stp.style.opacity=0;}
  start.onclick=()=>run();addEventListener('keydown',e=>{if((e.key==='r'||e.key==='R')&&start.style.display==='none')run();});
