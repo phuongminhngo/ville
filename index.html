@@ -637,24 +637,26 @@ function tourSetup(){
  async function run(){start.style.display='none';end.style.opacity=0;if(IN.on)exitMuseum(true);closeCard();setMood('sun');
   const plane=CITY.DRAG.find(o=>o.userData.dk==='pl').children[0],v=new THREE.Vector3();
   // 1 · the plane and its banner, close up
-  plane.getWorldPosition(v);CITY.focus(v.x,v.z,9);CITY.tgtT.set(v.x,v.y,v.z);CITY.tilt(.5);await wait(1100);
-  say('Bienvenue dans ma ville','1 / 7');await during(3400,k=>{plane.getWorldPosition(v);CITY.tgtT.set(v.x,v.y,v.z);CITY.zoomTo(9-1.5*ease(k));});
+  plane.getWorldPosition(v);CITY.focus(v.x,v.z,10);CITY.tgtT.set(v.x,v.y,v.z);CITY.tilt(.5);await wait(1100);
+  say('Bienvenue dans ma ville','1 / 7');await during(3400,k=>{CITY.zoomTo(10-2.5*ease(k));});
   // 2 · into Le Pavillon
-  say('Chaque objet raconte une mission','2 / 7');CITY.flyTo(MUS.petit.x,MUS.petit.z,FIT.petit*1.25+3);CITY.tilt(.95);await wait(1100);enterMuseum('petit');await wait(2100);
+  say('Chaque bâtiment rassemble des projets','2 / 7');CITY.flyTo(MUS.petit.x,MUS.petit.z,FIT.petit*1.25+3);CITY.tilt(.95);await wait(1100);enterMuseum('petit');await wait(2100);
   // 3 · hover and open the projet phare
-  say('Mon projet phare, de l’idée au produit en ligne','3 / 7');const f=DH.frames.find(f=>f.userData.pid==='nghile_c');f.userData.obj.getWorldPosition(v);
+  say('Un clic, et tout le projet s’ouvre','3 / 7');const f=DH.frames.find(f=>f.userData.pid==='nghile_c');f.userData.obj.getWorldPosition(v);
   const [tx,ty]=scr(v);const sx=innerWidth*.82,sy=innerHeight*.82;cur.style.opacity=1;await during(1100,k=>{const e=ease(k);moveCur(sx+(tx-sx)*e,sy+(ty-sy)*e);});await wait(700);
   cur.style.transform+=' scale(.85)';await wait(120);openCard('nghile_c');$('dtip').hidden=true;cur.style.opacity=0;const vid=document.querySelector('#card video');if(vid){vid.muted=true;vid.play().catch(()=>{});}
   const c=$('card');await wait(1100);await during(1500,k=>{c.scrollTop=ease(k)*Math.min(520,c.scrollHeight-c.clientHeight);});await wait(300);
   // 4 · the whole tower through the four seasons
-  say('Même la nuit, ça brille','4 / 7');closeCard();exitMuseum(true);setMood('sun');const T=CITY.LM.tour.position;CITY.focus(T.x,T.z,13);CITY.tgtT.set(T.x,3.6,T.z);CITY.tilt(.42);await wait(600);CITY.sparkle(12);
+  say('Soleil, pluie, neige ou nuit : à vous de choisir','4 / 7');closeCard();exitMuseum(true);setMood('sun');const T=CITY.LM.tour.position;CITY.focus(T.x,T.z,13);CITY.tgtT.set(T.x,3.6,T.z);CITY.tilt(.42);await wait(600);CITY.sparkle(12);
   {let m=0;const seq=['sun','rain','snow','night'];await during(3600,k=>{const i=Math.min(3,Math.floor(k*4));if(i!==m){m=i;setMood(seq[i]);CITY.sparkle(4);}CITY.rotate(.0018);});}
   // 5 · streets, animals and the métro
-  setMood('sun');say('Ici, tout le monde travaille sur un projet','5 / 7');const tr=CITY.train[5].position;CITY.flyTo(tr.x,tr.z,8);CITY.tilt(.55);
+  setMood('sun');say('Une ville vivante, à explorer librement','5 / 7');const tr=CITY.train[5].position;CITY.flyTo(tr.x,tr.z,8);CITY.tilt(.55);
   await during(3200,k=>{const t=CITY.train[5].position;if(k>.25)CITY.tgtT.set(t.x,0,t.z);});
   // 6 · the signposts to the other two portfolios
-  say('Et deux autres portfolios à explorer','6 / 7');const sg=(CITY.outerSigns||[]).slice(0,2);
-  for(const s of sg){s.getWorldPosition(v);CITY.flyTo(v.x,v.z,3.6);CITY.tilt(.45);await during(2100,k=>{s.getWorldPosition(v);v.y=.9;const [px,py]=scr(v);const r=CITY.cv.getBoundingClientRect();CITY.panScreen&&CITY.panScreen(0,0);const cx=r.left+r.width/2,cy=r.top+r.height*.45;const g1=CITY.groundAt(cx,cy),g2=CITY.groundAt(px,py);if(g1&&g2){CITY.tgtT.x+=(g2.x-g1.x)*.12;CITY.tgtT.z+=(g2.z-g1.z)*.12;}});}
+  say('Et deux autres portfolios vous attendent','6 / 7');const sg=(CITY.outerSigns||[]).slice(0,2);
+  for(const s of sg){s.getWorldPosition(v);CITY.flyTo(v.x,v.z,5);CITY.tilt(.45);
+   await during(700,k=>{s.getWorldPosition(v);v.y=.9;const [px,py]=scr(v);const r=CITY.cv.getBoundingClientRect();const g1=CITY.groundAt(r.left+r.width/2,r.top+r.height*.45),g2=CITY.groundAt(px,py);if(g1&&g2){CITY.tgtT.x+=(g2.x-g1.x)*.2;CITY.tgtT.z+=(g2.z-g1.z)*.2;}});
+   await during(1500,k=>CITY.zoomTo(5-1.6*ease(k)));}
   // 7 · end card
   say('','7 / 7');end.style.opacity=1;await during(2600,k=>CITY.rotate(.001));stp.style.opacity=0;}
  start.onclick=()=>run();addEventListener('keydown',e=>{if((e.key==='r'||e.key==='R')&&start.style.display==='none')run();});
