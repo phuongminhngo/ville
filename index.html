@@ -656,6 +656,10 @@ function tourSetup(){
   say('','6 / 6');end.style.opacity=1;await during(2600,k=>CITY.rotate(.001));stp.style.opacity=0;}
  start.onclick=()=>run();addEventListener('keydown',e=>{if((e.key==='r'||e.key==='R')&&start.style.display==='none')run();});
 }
+// the pixel font (Silkscreen) has no Vietnamese accents: in that font, show the name without them
+{const RX=/[ăđơưĂĐƠƯ\u1EA0-\u1EF9]/;const strip=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').normalize('NFC');
+ const fix=root=>{const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode()){const t=n.nodeValue;if(!RX.test(t))continue;const el=n.parentElement;if(!el)continue;if(/Silkscreen/i.test(getComputedStyle(el).fontFamily)){const s=strip(t);if(s!==t)n.nodeValue=s;}}};
+ let q=false;const run=()=>{q=false;fix(document.body);};new MutationObserver(()=>{if(!q){q=true;requestAnimationFrame(run);}}).observe(document.body,{childList:true,subtree:true,characterData:true});run();}
 $('mall').onclick=()=>{$('menu').hidden=true;if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
 $('mlist').onclick=()=>{$('menu').hidden=true;openSheet(true);};
 if($('brec'))$('brec').onclick=()=>{if(typeof IN!=='undefined'&&IN.on)exitMuseum();selectMus(null);window.CITY&&CITY.reset();};
@@ -881,6 +885,7 @@ const fm=window.FORM||'lowpoly';if(!fm)return;const meshes=[];scene.traverse(o=>
 };
 
 function start3d(){
+const noVN=s=>!/[ăđơưĂĐƠƯ\u1EA0-\u1EF9]/.test(String(s))?String(s):String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').normalize('NFC');window.noVN=noVN;
 
 (async function(){
 try{await Promise.race([Promise.all([document.fonts.load('30px "Silkscreen"'),document.fonts.load('40px "VT323"')]),new Promise(r=>setTimeout(r,2500))]);}catch(e){}
@@ -981,7 +986,7 @@ function drawLabel(c,x,text){x.clearRect(0,0,c.width,c.height);const W=c.width,H
  const T=b.toUpperCase();let sz=a?40:46;x.font=`${sz}px ${PIXEL}`;while(x.measureText(T).width>R-L-70&&sz>18){sz-=2;x.font=`${sz}px ${PIXEL}`;}
  x.fillText(T,W/2,a?top+(Bm-top)*.5:top+(Bm-top)*.64);
  if(a){x.fillStyle='#cfe0ff';x.font=`40px ${VT}`;x.fillText(a+(n!=null?`  ·  ${n} projet${n>1?'s':''}`:''),W/2,top+(Bm-top)*.82);}}
-function label(parent,text,x,y,z,size=1){const [c,cx]=cnv(640,230);drawLabel(c,cx,text);const t=tex(c);LBL.push(()=>{drawLabel(c,cx,text);t.needsUpdate=true;});
+function label(parent,text,x,y,z,size=1){text=noVN(text);const [c,cx]=cnv(640,230);drawLabel(c,cx,text);const t=tex(c);LBL.push(()=>{drawLabel(c,cx,text);t.needsUpdate=true;});
   const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,depthTest:false}));s.scale.set(2.6*size,.93*size,1);s.position.set(x,y,z);s.renderOrder=10;parent.add(s);return s;}
 if(document.fonts)Promise.all([`40px "VT323"`,`30px "Silkscreen"`].map(f=>document.fonts.load(f,'Aễ'))).then(()=>LBL.forEach(f=>f())).catch(()=>{});
 function critter(col,scale=1,beret){const g=new THREE.Group();g.userData.crit=1;const b=at(S(.17,col),g,0,.2,0);b.scale.set(1,1.1,.95);at(S(.19,col),g,0,.5,0);if(col===COL.rabbit)for(const s of[-1,1])at(mesh(new THREE.CapsuleGeometry(.045,.18,4,10),col),g,s*.07,.75,0,0,0,-s*.12);
