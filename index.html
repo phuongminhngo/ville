@@ -637,8 +637,8 @@ function tourSetup(){
  async function run(){start.style.display='none';end.style.opacity=0;if(IN.on)exitMuseum(true);closeCard();setMood('sun');
   const plane=CITY.DRAG.find(o=>o.userData.dk==='pl').children[0],v=new THREE.Vector3();
   // 1 · the plane and its banner
-  plane.getWorldPosition(v);CITY.focus(v.x*.6,v.z*.6-2,24);CITY.tilt(.75);await wait(900);
-  say('Bienvenue dans ma ville','1 / 6');await during(3200,k=>{plane.getWorldPosition(v);CITY.tgtT.set(v.x*.6,0,v.z*.6-2);CITY.rotate(.0012);});
+  plane.getWorldPosition(v);CITY.focus(v.x,v.z,9);CITY.tgtT.set(v.x,v.y,v.z);CITY.tilt(.5);await wait(1100);
+  say('Bienvenue dans ma ville','1 / 6');await during(3400,k=>{plane.getWorldPosition(v);CITY.tgtT.set(v.x,v.y,v.z);CITY.zoomTo(9-1.5*ease(k));});
   // 2 · streets, animals and the métro
   say('Ici, tout le monde travaille sur un projet','2 / 6');const tr=CITY.train[5].position;CITY.flyTo(tr.x,tr.z,8);CITY.tilt(.55);
   await during(3200,k=>{const t=CITY.train[5].position;if(k>.25)CITY.tgtT.set(t.x,0,t.z);});
@@ -650,8 +650,8 @@ function tourSetup(){
   cur.style.transform+=' scale(.85)';await wait(120);openCard('nghile_c');$('dtip').hidden=true;cur.style.opacity=0;const vid=document.querySelector('#card video');if(vid){vid.muted=true;vid.play().catch(()=>{});}
   const c=$('card');await wait(1100);await during(1500,k=>{c.scrollTop=ease(k)*Math.min(520,c.scrollHeight-c.clientHeight);});await wait(300);
   // 5 · the tower at night
-  say('Même la nuit, ça brille','5 / 6');closeCard();exitMuseum(true);setMood('night');const T=CITY.LM.tour.position;CITY.focus(T.x,T.z,14);CITY.tilt(.62);await wait(500);CITY.sparkle(8);
-  await during(2200,k=>CITY.rotate(.0016));
+  say('Même la nuit, ça brille','5 / 6');closeCard();exitMuseum(true);setMood('sun');const T=CITY.LM.tour.position;CITY.focus(T.x,T.z,13);CITY.tgtT.set(T.x,3.6,T.z);CITY.tilt(.42);await wait(600);CITY.sparkle(12);
+  {let m=0;const seq=['sun','rain','snow','night'];await during(3600,k=>{const i=Math.min(3,Math.floor(k*4));if(i!==m){m=i;setMood(seq[i]);CITY.sparkle(4);}CITY.rotate(.0018);});}
   // 6 · end card
   say('','6 / 6');end.style.opacity=1;await during(2600,k=>CITY.rotate(.001));stp.style.opacity=0;}
  start.onclick=()=>run();addEventListener('keydown',e=>{if((e.key==='r'||e.key==='R')&&start.style.display==='none')run();});
