@@ -1115,7 +1115,8 @@ const RH={
      "Vlog 3",
      6
     ]
-   ]
+   ],
+   "co": ""
   }
  ],
  "GK": {
@@ -1136,7 +1137,7 @@ const RH={
  }
 };const RHM={};RH.M.forEach(m=>RHM[m.id]=m);const YTOK=/^https?:$/.test(location.protocol)&&!/claude|anthropic/i.test(location.hostname);
 function rhMission(m,cv){const h=[];const dv=(m.parts||[]).find(p=>p.v);
- h.push(`<div class="rh-props"><span><i>Outils</i>${(m.tools||[]).map(t=>`<em>${esc(t)}</em>`).join('')}</span><span><i>Entreprise</i><em>${esc(m.co||'Cloudi-Fi')}</em></span></div>`);
+ h.push(`<div class="rh-props"><span><i>Outils</i>${(m.tools||[]).map(t=>`<em>${esc(t)}</em>`).join('')}</span>${m.co===''?'':`<span><i>Entreprise</i><em>${esc(m.co||'Cloudi-Fi')}</em></span>`}</div>`);
  if(m.ctx)h.push(`<h4>Le contexte</h4><p>${esc(m.ctx)}</p>`);
  h.push(`<h4>Ce que j'ai fait</h4><p>${esc(m.did)}</p>${m.items?`<ul>${m.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`:''}`);
  if(!dv&&m.cover&&m.cover.img)h.push(`<h4>En image</h4><img class="rh-photo" src="${esc(m.cover.img)}" alt="${esc(m.n)}" loading="lazy">`);
