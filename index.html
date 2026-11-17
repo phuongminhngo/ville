@@ -740,12 +740,15 @@ function hallFrames(S,ids,len,wallX,y=1.7,w=1.25,h=.95){const n=ids.length;ids.f
 function ringFrames(S,ids,a,b,y=1.4,w=1.2,h=.9){ids.forEach((id,i)=>{const t=Math.PI+(i+.5)/ids.length*Math.PI*2*.86-Math.PI*.86;const x=Math.sin(t)*a*.97,z=-Math.cos(t)*b*.97;workFrame(S,id,w,h,x,y,z,Math.atan2(-x,z)+Math.PI);});}
 function buildInterior(k){const S=new THREE.Group();IN.frames=[];IN.anims=[];const ids=MUS[k].ids;
  let start=[0,1.55,6],look=0,min=[-2,-6],max=[2,7],bg=0xf6dcc2;
- if(k==='gare'){bg=0xf6dcc2;inBox(S,7,.1,18,0xe9dcc6,0,-.05,0);for(const s of[-1,1]){inBox(S,1.6,1.2,18,0xefe5d2,s*4.3,.6,0);inBox(S,.3,3.6,18,0xefe5d2,s*5.2,1.8,0);}
-  const v=new THREE.Mesh(new THREE.CylinderGeometry(5.2,5.2,18,40,1,true,-Math.PI/2,Math.PI),new THREE.MeshPhysicalMaterial({color:0xcfe0ea,transparent:true,opacity:.25,side:THREE.DoubleSide}));v.rotation.set(Math.PI/2,0,Math.PI/2);v.position.y=3.6;S.add(v);
-  for(let i=0;i<10;i++){const r=new THREE.Mesh(new THREE.TorusGeometry(5.2,.06,6,40,Math.PI),inMat(0x8a6a4a,{metalness:.4}));r.position.set(0,3.6,-9+i*2);S.add(r);}
-  const ck=new THREE.Mesh(new THREE.CircleGeometry(1.3,48),inMat(0xfbf6ea,{emissive:0xfff2d0,emissiveIntensity:.3}));ck.position.set(0,5.4,-8.9);S.add(ck);const rim=new THREE.Mesh(new THREE.TorusGeometry(1.3,.12,8,48),inMat(0xc9a24a,{metalness:.6}));rim.position.copy(ck.position);S.add(rim);
-  const hands=[inBox(S,.06,.9,.02,0x2a2321,0,5.4,-8.85),inBox(S,.06,.6,.02,0x2a2321,0,5.4,-8.84)];IN.anims.push(t=>{hands.forEach((hd,i)=>{const a=t*(i?.05:.6);hd.rotation.z=-a;hd.position.set(Math.sin(a)*(i?.3:.45),5.4+Math.cos(a)*(i?.3:.45),hd.position.z);});});
-  hallFrames(S,ids,14,4.95,2.3);visitor(S,0xf7f3ec,-1.4,3.2,2.6,1.2);visitor(S,0xd9a066,1.2,1.5,-2.4,1.1);visitor(S,0x2f2f33,-.9,-1.4,3,1);min=[-3,-7];max=[3,8];start=[0,2.0,8];}
+ if(k==='gare'){bg=0xf6dcc2;inBox(S,18,.1,7,0xe9dcc6,0,-.05,0);for(const s of[-1,1]){inBox(S,18,1.2,1.6,0xefe5d2,0,.6,s*4.3);inBox(S,18,3.6,.3,0xefe5d2,0,1.8,s*5.2);}
+  // the hall runs east-west like the station outside: glass barrel vault along x, iron ribs, the big clock on the west end
+  const v=new THREE.Mesh(new THREE.CylinderGeometry(5.2,5.2,18,40,1,true,0,Math.PI),new THREE.MeshPhysicalMaterial({color:0xcfe0ea,transparent:true,opacity:.25,side:THREE.DoubleSide}));v.rotation.z=Math.PI/2;v.position.y=3.6;S.add(v);
+  for(let i=0;i<10;i++){const r=new THREE.Mesh(new THREE.TorusGeometry(5.2,.06,6,40,Math.PI),inMat(0x8a6a4a,{metalness:.4}));r.rotation.y=Math.PI/2;r.position.set(-9+i*2,3.6,0);S.add(r);}
+  const cg=new THREE.Group();cg.position.set(-8.9,5.4,0);cg.rotation.y=Math.PI/2;S.add(cg);
+  const ck=new THREE.Mesh(new THREE.CircleGeometry(1.3,48),inMat(0xfbf6ea,{emissive:0xfff2d0,emissiveIntensity:.3}));cg.add(ck);const rim=new THREE.Mesh(new THREE.TorusGeometry(1.3,.12,8,48),inMat(0xc9a24a,{metalness:.6}));cg.add(rim);
+  const hands=[inBox(cg,.06,.9,.02,0x2a2321,0,0,.05),inBox(cg,.06,.6,.02,0x2a2321,0,0,.06)];IN.anims.push(t=>{hands.forEach((hd,i)=>{const a=t*(i?.05:.6);hd.rotation.z=-a;hd.position.set(Math.sin(a)*(i?.3:.45),Math.cos(a)*(i?.3:.45),hd.position.z);});});
+  ids.forEach((id,i)=>{const side=i%2?1:-1,m=Math.ceil(ids.length/2),kk=Math.floor(i/2);const x=-7+14*(kk+.5)/m;workFrame(S,id,2.3,1.6,x,2.3,side*4.95,side>0?Math.PI:0);});
+  visitor(S,0xf7f3ec,3.2,-1.4,2.6,1.2);visitor(S,0xd9a066,1.5,1.2,-2.4,1.1);visitor(S,0x2f2f33,-1.4,-.9,3,1);min=[-7,-3];max=[8,3];start=[8,2.0,0];}
  if(k==='palais'){bg=0xe9d6c0;const W=15,D=12;inBox(S,W,.1,D,0xb07d52,0,-.05,0);for(let i=0;i<=W;i++)inBox(S,.03,.005,D,0x8d6240,-W/2+i,.005,0);
   // a big square courtyard-hall: red gallery walls on three sides, arcades, a glass roof and the pyramid in the middle
   inBox(S,W,4,.2,0x8e3b3b,0,2,-D/2);for(const s2 of[-1,1])inBox(S,.2,4,D,0x8e3b3b,s2*W/2,2,0);
