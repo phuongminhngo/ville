@@ -1162,7 +1162,24 @@ window.OPT='combo';const SM0=true,CB=true;
  const per=flat(new THREE.RingGeometry(.93,.975,160),COL.road,.005);per.scale.set(EA,EB,1);per.position.x=OX;per.position.z=OZ;
  const bd=flat(new THREE.RingGeometry(.56,.575,160),COL.road,.004);bd.scale.set(EA,EB,1);bd.position.x=OX;bd.position.z=OZ;
  // avenues radiating from the star roundabout
- const ET=[-14.04,-7.98],AV=[];for(let i=0;i<12;i++){const a=i/12*Math.PI*2-.876;const dx=Math.cos(a),dz=-Math.sin(a),R=.93,qa=(dx/EA)**2+(dz/EB)**2,qb=2*((ET[0]-OX)*dx/EA**2+(ET[1]-OZ)*dz/EB**2),qc=((ET[0]-OX)/EA)**2+((ET[1]-OZ)/EB)**2-R*R;const len=Math.min(i===0?4.6:9.5,(-qb+Math.sqrt(qb*qb-4*qa*qc))/(2*qa));const av=new THREE.Mesh(new THREE.PlaneGeometry(len,.5),M(0xa9adb3));av.rotation.set(-Math.PI/2,0,a);av.position.set(ET[0]+Math.cos(a)*len/2,.006,ET[1]-Math.sin(a)*len/2);av.receiveShadow=true;scene.add(av);AV.push([dx,dz,len]);}
+ const inE0=(x,z,k=1)=>((x-OX)/EA)**2+((z-OZ)/EB)**2<k;
+ const ET=[-14.04,-7.98],AV=[];
+ // each avenue runs on until it meets the river quay, a building, or the périphérique, and ends with a rounded cap
+ const RV0=new THREE.CatmullRomCurve3([[19,0,6.5],[12,0,3.2],[7,0,1.0],[3,0,.4],[-3,0,-.2],[-8,0,-.4],[-11.5,0,.3],[-14,0,2.0],[-16,0,4.5],[-18,0,8],[-21,0,11]].map(p=>new THREE.Vector3(...p))).getSpacedPoints(160);
+ const BLD=[[-10.74,5.38,2.5,2.3],[-6,6,2.4,1.2],[-0.04,-6.2,3.6,2.3],[-16.15,-2.14,2.8,1.9],[-8.23,-5.46,3.0,1.15],[-2.7,3.97,3.7,1.4],[-16.5,.3,2.6,.7],[-5,-10,1.6,1.4]];
+ const blocked=(x,z)=>RV0.some(p=>Math.hypot(p.x-x,p.z-z)<1.75)||BLD.some(([cx,cz,hw,hd])=>Math.abs(x-cx)<hw&&Math.abs(z-cz)<hd);
+ const AVM=M(0xa9adb3);
+ for(let i=0;i<12;i++){const a=i/12*Math.PI*2-.876;const dx=Math.cos(a),dz=-Math.sin(a),R=.93,qa=(dx/EA)**2+(dz/EB)**2,qb=2*((ET[0]-OX)*dx/EA**2+(ET[1]-OZ)*dz/EB**2),qc=((ET[0]-OX)/EA)**2+((ET[1]-OZ)/EB)**2-R*R;let len=(-qb+Math.sqrt(qb*qb-4*qa*qc))/(2*qa);
+  for(let t=1.6;t<len;t+=.1){if(blocked(ET[0]+dx*t,ET[1]+dz*t)){len=t;break;}}
+  const av=new THREE.Mesh(new THREE.PlaneGeometry(len,.5),AVM);av.rotation.set(-Math.PI/2,0,a);av.position.set(ET[0]+Math.cos(a)*len/2,.006,ET[1]-Math.sin(a)*len/2);av.receiveShadow=true;scene.add(av);
+  const cap=new THREE.Mesh(new THREE.CircleGeometry(.25,16),AVM);cap.rotation.x=-Math.PI/2;cap.position.set(ET[0]+dx*len,.006,ET[1]+dz*len);cap.receiveShadow=true;scene.add(cap);AV.push([dx,dz,len]);}
+ // the Champ de Mars allée carries on past the small Eiffel park, towards the quay on one side and the boulevard on the other
+ {const PC=[-10.74,5.38],r=-.909,ux=Math.cos(r),uz=-Math.sin(r),h0=4.4/2*.78,wd=1.3*.78,SM=M(0xe6dccb),BL2=BLD.filter(b=>Math.hypot(b[0]-PC[0],b[1]-PC[1])>.5);
+  const hit=(x,z)=>RV0.some(p=>Math.hypot(p.x-x,p.z-z)<1.6)||BL2.some(([cx,cz,hw,hd])=>Math.abs(x-cx)<hw&&Math.abs(z-cz)<hd)||!inE0(x,z,.86);
+  for(const sd of[-1,1]){let L=0;for(let t=h0;t<h0+6;t+=.1){if(hit(PC[0]+ux*sd*t,PC[1]+uz*sd*t))break;L=t-h0;}if(L<.3)continue;
+   const st=new THREE.Mesh(new THREE.PlaneGeometry(L,wd),SM);st.rotation.set(-Math.PI/2,0,sd>0?r:r+Math.PI);const m=h0+L/2;st.position.set(PC[0]+ux*sd*m,.011,PC[1]+uz*sd*m);st.receiveShadow=true;scene.add(st);
+   const lw=new THREE.Mesh(new THREE.PlaneGeometry(Math.max(.1,L-.3),wd*.5),M(0x9fcf7f));lw.rotation.copy(st.rotation);lw.position.set(st.position.x,.016,st.position.z);lw.receiveShadow=true;scene.add(lw);const cp=new THREE.Mesh(new THREE.CircleGeometry(wd/2,18),SM);cp.rotation.x=-Math.PI/2;cp.position.set(PC[0]+ux*sd*(h0+L),.011,PC[1]+uz*sd*(h0+L));scene.add(cp);
+   for(let t=h0+.5;t<h0+L-.2;t+=.9)for(const k of[-1,1]){const tr=new THREE.Mesh(new THREE.IcosahedronGeometry(.22,0),M(0x6f9f5a));tr.position.set(PC[0]+ux*sd*t-uz*k*wd*.62,.32,PC[1]+uz*sd*t+ux*k*wd*.62);tr.castShadow=true;scene.add(tr);}}}
  {const pts=[];AV.forEach(([dx,dz,len])=>{for(let t=2.2;t<len;t+=.9)for(const sd of[-1,1])pts.push(ET[0]+dx*t-dz*sd*.3,.32,ET[1]+dz*t+dx*sd*.3);});
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xffd27a,size:.16})));
   const n=pts.length/6|0,im=new THREE.InstancedMesh(new THREE.SphereGeometry(.17,7,5),M(0x6f9a5a),n),o=new THREE.Object3D();let k=0;
@@ -1223,7 +1240,11 @@ window.OPT='combo';const SM0=true,CB=true;
     for(const sx of[-1,1])at(B(.12,.32,.12,0xe4dfd5),pg,sx*.42*s,2.85,0);dormer(pg,0,2.15,.62*s,0,stone);at(B(.06,.3,.06,gold),pg,0,3.25,0);return pg;};
   wing(5.2,1.0,0,-1.6);wing(3.2,1.0,-2.7,.4,Math.PI/2);wing(3.2,1.0,2.7,.4,Math.PI/2);
   pav(-2.7,-1.6);pav(2.7,-1.6);pav(0,-1.6,1.15);pav(-2.7,2.2,.9);pav(2.7,2.2,.9);
-  const bm=new THREE.MeshStandardMaterial({color:0x6fc3d6,roughness:.15,metalness:.2});for(let i=0;i<3;i++){const a=-Math.PI/2+(i-1)*1.0;const tri=new THREE.Shape([new THREE.Vector2(-.45,0),new THREE.Vector2(.45,0),new THREE.Vector2(0,.85)]);const bs=new THREE.Mesh(new THREE.ShapeGeometry(tri),bm);bs.rotation.set(-Math.PI/2,0,a);bs.position.set(Math.cos(a+Math.PI/2)*-.9,.06,.6+Math.sin(a+Math.PI/2)*-.9);g.add(bs);}
+  const bm=new THREE.MeshStandardMaterial({color:0x6fc3d6,roughness:.15,metalness:.2});for(let i=0;i<3;i++){const a=-Math.PI/2+(i-1)*1.0;const tri=new THREE.Shape([new THREE.Vector2(-.45,0),new THREE.Vector2(.45,0),new THREE.Vector2(0,.85)]);const bs=new THREE.Mesh(new THREE.ShapeGeometry(tri),bm);bs.rotation.set(-Math.PI/2,0,a);bs.position.set(Math.cos(a+Math.PI/2)*-.9,.075,.6+Math.sin(a+Math.PI/2)*-.9);g.add(bs);
+   // a stone curb around each basin, so it reads as water
+   const cy=.85/3,sc=(x,y,k)=>new THREE.Vector2(x*k,cy+(y-cy)*k),rim=new THREE.Shape([sc(-.45,0,1.25),sc(.45,0,1.25),sc(0,.85,1.25)]);rim.holes.push(new THREE.Path([new THREE.Vector2(-.45,0),new THREE.Vector2(0,.85),new THREE.Vector2(.45,0)]));
+   const cu=new THREE.Mesh(new THREE.ExtrudeGeometry(rim,{depth:.09,bevelEnabled:false}),M(0xe6dccb));cu.rotation.copy(bs.rotation);cu.position.set(bs.position.x,.01,bs.position.z);cu.castShadow=true;cu.receiveShadow=true;g.add(cu);
+   const jet=new THREE.Mesh(new THREE.ConeGeometry(.035,.22,6),new THREE.MeshStandardMaterial({color:0xdff3f7,transparent:true,opacity:.8}));const cw=new THREE.Vector3(0,cy,0).applyEuler(bs.rotation);jet.position.set(bs.position.x+cw.x,.18,bs.position.z+cw.z);g.add(jet);}
   const pyr=new THREE.Mesh(new THREE.ConeGeometry(1.0,1.15,4),new THREE.MeshPhysicalMaterial({color:0x9fd2df,roughness:.05,metalness:.2,transparent:true,opacity:.55}));pyr.rotation.y=Math.PI/4;pyr.position.set(0,.6,.6);pyr.castShadow=true;g.add(pyr);
   const ed=new THREE.LineSegments(new THREE.WireframeGeometry(new THREE.ConeGeometry(1.0,1.15,4,7,true)),new THREE.LineBasicMaterial({color:0x2f4a52,transparent:true,opacity:.8}));ed.rotation.copy(pyr.rotation);ed.position.copy(pyr.position);g.add(ed);
   L2(scene,'Marque employeur · Le Palais',-0.04,3.8,-6.2);}
@@ -1766,14 +1787,14 @@ window.OPT='combo';const SM0=true,CB=true;
    const w=crit(COL.rabbit,-3.6,5.4,.25,1.15,COL.dark);const sg=sign('Bienvenue !');sg.position.set(0,1.15,.15);w.add(sg);const p=at(C(.02,.02,.6,COL.trunk,6),w,0,.75,.12);}
   // Nghi Lễ Cưới Hỏi: the wedding procession in front of Le Pavillon. Six animals in áo dài carry the mâm quả,
   // four bearers carry the red-and-gold kiệu with the bride inside, walking east along the forecourt.
-  {const PX=.3,PZ=-2.35,pr=[];const ao=(k,col)=>{const d=mesh(new THREE.CylinderGeometry(.13,.22,.5,14),col);d.position.y=.27;k.add(d);};
+  {const DX=-8.23,DZ=-4.36,pr=[];const ao=(k,col)=>{const d=mesh(new THREE.CylinderGeometry(.13,.22,.5,14),col);d.position.y=.27;k.add(d);};
    const khan=(g,y=.7)=>{at(C(.12,.13,.08,0xf2c14e,14),g,0,y,0);};
-   for(let i=0;i<4;i++){const col=i<2?0xc8102e:(i%2?0xf2c14e:0xc8102e);const g=new THREE.Group();g.position.set(PX-8.1+i*.55,0,PZ+(i%2?.22:-.22));g.rotation.y=Math.PI/2;scene.add(g);
+   for(let i=0;i<4;i++){const col=i<2?0xc8102e:(i%2?0xf2c14e:0xc8102e);const g=new THREE.Group();g.position.set(DX+(i%2?.8:-.8),0,DZ+1.0+Math.floor(i/2)*.6);g.rotation.y=0;scene.add(g);
     const k=critter(i===2?COL.rabbit:i===3?COL.cat:COL.duck,.85,0);g.add(k);ao(g,col);
     if(i>1){at(C(.2,.17,.06,0xb3141f,16),g,0,.76,0);const lid=mesh(new THREE.SphereGeometry(.17,14,8,0,Math.PI*2,0,Math.PI/2),0xc8102e);lid.position.y=.79;g.add(lid);at(S(.04,COL.gold),g,0,.97,0);}
     else khan(g,.62);pr.push(g);}
    if(/wcar/.test(location.search)){// xe hoa: a white car dressed with flowers, ribbons and the red song hỷ
-    const car=new THREE.Group();car.position.set(PX-9.5,0,PZ-.55);car.scale.setScalar(1.45);scene.add(car);at(B(1.2,.26,.52,0xfbf8f1),car,0,.27,0);const cab=new THREE.Mesh(new THREE.BoxGeometry(.6,.26,.48),new THREE.MeshPhysicalMaterial({color:0xbfd6e2,transparent:true,opacity:.55,roughness:.1}));cab.position.set(-.1,.53,0);car.add(cab);at(B(.62,.03,.5,0xfbf8f1),car,-.1,.67,0);
+    const car=new THREE.Group();car.position.set(DX,0,DZ+1.3);car.rotation.y=-Math.PI/2;car.scale.setScalar(1.45);scene.add(car);at(B(1.2,.26,.52,0xfbf8f1),car,0,.27,0);const cab=new THREE.Mesh(new THREE.BoxGeometry(.6,.26,.48),new THREE.MeshPhysicalMaterial({color:0xbfd6e2,transparent:true,opacity:.55,roughness:.1}));cab.position.set(-.1,.53,0);car.add(cab);at(B(.62,.03,.5,0xfbf8f1),car,-.1,.67,0);
     for(const [x,z] of[[-.38,-.27],[.38,-.27],[-.38,.27],[.38,.27]])at(C(.13,.13,.08,0x2a2321,14),car,x,.13,z,Math.PI/2,0,0);
     const fl=[0xe2566f,0xf7a1b5,0xfbf8f1,0xc8102e];for(let j=0;j<9;j++)at(S(.07,fl[j%4]),car,.38+(j%3)*.07,.45,-.14+Math.floor(j/3)*.14);
     for(const sz of[-1,1]){at(B(.04,.02,.62,0xf7a1b5),car,.3,.42,sz*.13,0,0,-.25);}
@@ -1781,7 +1802,7 @@ window.OPT='combo';const SM0=true,CB=true;
     const gr=critter(COL.duck,.5,COL.dark);gr.position.set(-.1,.32,-.1);gr.rotation.y=Math.PI/2;car.add(gr);const br=critter(COL.rabbit,.5,0);br.position.set(-.1,.32,.12);br.rotation.y=Math.PI/2;car.add(br);
     anims.push(t=>{pr.forEach((g,i)=>g.position.y=Math.abs(Math.sin(t*4+i))*.04);car.position.y=Math.abs(Math.sin(t*6))*.012;});}else{
    // the kiệu (palanquin)
-   const kv=new THREE.Group();kv.position.set(PX-9.6,0,PZ);kv.rotation.y=Math.PI/2;scene.add(kv);
+   const kv=new THREE.Group();kv.position.set(DX,0,DZ+1.45);kv.rotation.y=0;scene.add(kv);
    for(const sx of[-1,1])at(C(.025,.025,2.1,0x7a1a12,6),kv,sx*.26,.62,0,Math.PI/2,0,0);
    at(B(.56,.06,.62,0xb3141f),kv,0,.66,0);for(const [x,z] of[[-.24,-.27],[.24,-.27],[-.24,.27],[.24,.27]])at(C(.025,.025,.62,COL.gold,6),kv,x,.98,z);
    const rf=mesh(new THREE.ConeGeometry(.5,.32,4).rotateY(Math.PI/4),0xc8102e);rf.scale.set(1,1,1.1);rf.position.y=1.45;kv.add(rf);at(B(.62,.05,.68,COL.gold),kv,0,1.3,0);at(S(.06,COL.gold),kv,0,1.66,0);
@@ -1789,7 +1810,7 @@ window.OPT='combo';const SM0=true,CB=true;
    const bride=critter(COL.rabbit,.6,0);bride.position.y=.69;kv.add(bride);const bd=mesh(new THREE.CylinderGeometry(.09,.14,.32,12),0xc8102e);bd.position.y=.86;kv.add(bd);at(C(.09,.1,.06,0xf2c14e,14),kv,0,1.12,0);
    const bearers=[];for(const [x,z] of[[-.36,-.95],[.36,-.95],[-.36,.95],[.36,.95]]){const g=new THREE.Group();g.position.set(x,0,z);kv.add(g);const k=critter(COL.duck,.8,0);g.add(k);ao(g,0xc8102e);khan(g,.58);bearers.push(g);}
    // a parasol-bearer (lọng) at the front of the kiệu
-   const lg=new THREE.Group();lg.position.set(PX-8.75,0,PZ-.45);lg.rotation.y=Math.PI/2;scene.add(lg);lg.add(critter(COL.cat,.8,0));ao(lg,0xf2c14e);at(C(.015,.015,1.4,COL.trunk,4),lg,.18,.75,0);const lp=mesh(new THREE.ConeGeometry(.42,.18,12,1,true),0xc8102e);lp.material=lp.material.clone();lp.material.side=THREE.DoubleSide;lp.position.set(.18,1.5,0);lg.add(lp);
+   const lg=new THREE.Group();lg.position.set(DX+.55,0,DZ+2.55);lg.rotation.y=0;scene.add(lg);lg.add(critter(COL.cat,.8,0));ao(lg,0xf2c14e);at(C(.015,.015,1.4,COL.trunk,4),lg,.18,.75,0);const lp=mesh(new THREE.ConeGeometry(.42,.18,12,1,true),0xc8102e);lp.material=lp.material.clone();lp.material.side=THREE.DoubleSide;lp.position.set(.18,1.5,0);lg.add(lp);
    anims.push(t=>{pr.forEach((g,i)=>g.position.y=Math.abs(Math.sin(t*4+i))*.04);bearers.forEach((g,i)=>g.position.y=Math.abs(Math.sin(t*4+i*1.6))*.04);kv.position.y=Math.abs(Math.sin(t*4))*.025;lg.position.y=Math.abs(Math.sin(t*4+2))*.04;});}}
   // Paris, ville de l'amour: a few couples in love, with a heart floating above each
   {const hs=new THREE.Shape();hs.moveTo(0,-.12);hs.bezierCurveTo(-.02,-.1,-.16,-.02,-.16,.06);hs.bezierCurveTo(-.16,.14,-.06,.17,0,.09);hs.bezierCurveTo(.06,.17,.16,.14,.16,.06);hs.bezierCurveTo(.16,-.02,.02,-.1,0,-.12);
