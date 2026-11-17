@@ -1697,7 +1697,7 @@ window.OPT='combo';const SM0=true,CB=true;
   // sky: clouds, a hot-air balloon, birds and a little plane with a banner
   const cm=new THREE.MeshStandardMaterial({color:0xfff1ea,roughness:1,transparent:true,opacity:.92});
   [[-22,10,-14],[-4,12,-21],[10,11,-22],[-27,9,2],[-15,13,-24]].forEach(([x,y,z],ci)=>{const c=new THREE.Group();c.position.set(x,y,z);for(let i=0;i<5;i++){const p=new THREE.Mesh(new THREE.SphereGeometry(1,12,8),cm);p.scale.set(1.3+Math.random(),.6+Math.random()*.4,1);p.position.set((i-2)*1.1,Math.random()*.4,Math.random()*.6);c.add(p);}scene.add(c);dragWrap(c,'cl'+ci);anims.push(t=>c.position.x=x+Math.sin(t*.05+z)*1.5);});
-  [[-17,7,8,0xe2564f,0xf6d77a,0],[12,8.5,-10,0x7fb3d5,0xfbf8f1,2],[-26,9,-9,0xc9b8f0,0xf6c94a,4]].forEach(([x,y,z,c1,c2,ph])=>{const b=new THREE.Group();b.position.set(x,y,z);scene.add(b);dragWrap(b,'ba'+ph);
+  [[19,11,4,0xe2564f,0xf6d77a,0],[12,8.5,-10,0x7fb3d5,0xfbf8f1,2],[-26,9,-9,0xc9b8f0,0xf6c94a,4]].forEach(([x,y,z,c1,c2,ph])=>{const b=new THREE.Group();b.position.set(x,y,z);scene.add(b);dragWrap(b,'ba'+ph);
    const env=new THREE.Mesh(new THREE.IcosahedronGeometry(.9,1),new THREE.MeshStandardMaterial({color:c1,roughness:.6,flatShading:true}));env.scale.set(1,1.15,1);b.add(env);
    const bot=new THREE.Mesh(new THREE.ConeGeometry(.62,.75,8).rotateX(Math.PI),new THREE.MeshStandardMaterial({color:c2,roughness:.6,flatShading:true}));bot.position.y=-.9;b.add(bot);
    const bk=new THREE.Mesh(new THREE.BoxGeometry(.35,.3,.35),M(0x8a5a3a));bk.position.y=-1.45;b.add(bk);for(const [sx,sz] of[[1,1],[1,-1],[-1,1],[-1,-1]]){const r=new THREE.Mesh(new THREE.BoxGeometry(.015,.55,.015),M(0x6b6058));r.position.set(sx*.15,-1.05,sz*.15);b.add(r);}
