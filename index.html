@@ -1757,11 +1757,37 @@ window.OPT='combo';const SM0=true,CB=true;
   {const cols=[COL.cat,COL.duck,COL.peng,COL.rabbit];const arr=[];for(let i=0;i<4;i++){const k=crit(cols[i],-7.4+i*.8,6.4-i*.25,Math.PI*.85);const sc=at(B(.26,.22,.12,[0xe2564f,0x3b6fb6,0xf6c94a,0x3f9a6b][i]),k,.26,.14,0);arr.push([k,-7.4+i*.8,6.4-i*.25,i]);}
    anims.push(t=>arr.forEach(([k,x,z,i])=>{const u=(t*.12+i*.25)%1;k.position.set(x+u*.2,Math.abs(Math.sin(t*6+i))*.05,z-u*1.0);}));
    const w=crit(COL.rabbit,-3.6,5.4,.25,1.15,COL.dark);const sg=sign('Bienvenue !');sg.position.set(0,1.15,.15);w.add(sg);const p=at(C(.02,.02,.6,COL.trunk,6),w,0,.75,.12);}
-  {const pr=[];for(let i=0;i<6;i++){const col=i<2?0xc8102e:(i%2?0xf2c14e:0xc8102e);const g=new THREE.Group();g.position.set(-18+i*.75,0,.2+Math.sin(i)*.12);g.rotation.y=Math.PI/2;scene.add(g);
-    const k=critter(i===2?COL.rabbit:i===3?COL.cat:COL.duck,1.0,0);g.add(k);const dress=mesh(new THREE.CylinderGeometry(.13,.22,.5,14),col);dress.position.y=.27;g.add(dress);
-    if(i>1){at(C(.2,.17,.06,0xb3141f,16),g,0,.86,0);const lid=mesh(new THREE.SphereGeometry(.17,14,8,0,Math.PI*2,0,Math.PI/2),0xc8102e);lid.position.y=.89;g.add(lid);at(S(.04,COL.gold),g,0,1.07,0);}
-    else at(C(.11,.13,.08,0xf2c14e,14),g,0,.7,0);pr.push(g);}
-   anims.push(t=>pr.forEach((g,i)=>g.position.y=Math.abs(Math.sin(t*4+i))*.04));}
+  // Nghi Lễ Cưới Hỏi: the wedding procession in front of Le Pavillon. Six animals in áo dài carry the mâm quả,
+  // four bearers carry the red-and-gold kiệu with the bride inside, walking east along the forecourt.
+  {const PZ=-2.75,pr=[];const ao=(k,col)=>{const d=mesh(new THREE.CylinderGeometry(.13,.22,.5,14),col);d.position.y=.27;k.add(d);};
+   const khan=(g,y=.7)=>{at(C(.12,.13,.08,0xf2c14e,14),g,0,y,0);};
+   for(let i=0;i<6;i++){const col=i<2?0xc8102e:(i%2?0xf2c14e:0xc8102e);const g=new THREE.Group();g.position.set(-8.1+i*.5,0,PZ+(i%2?.22:-.22));g.rotation.y=Math.PI/2;scene.add(g);
+    const k=critter(i===2?COL.rabbit:i===3?COL.cat:COL.duck,.85,0);g.add(k);ao(g,col);
+    if(i>1){at(C(.2,.17,.06,0xb3141f,16),g,0,.76,0);const lid=mesh(new THREE.SphereGeometry(.17,14,8,0,Math.PI*2,0,Math.PI/2),0xc8102e);lid.position.y=.79;g.add(lid);at(S(.04,COL.gold),g,0,.97,0);}
+    else khan(g,.62);pr.push(g);}
+   // the kiệu (palanquin)
+   const kv=new THREE.Group();kv.position.set(-9.6,0,PZ);kv.rotation.y=Math.PI/2;scene.add(kv);
+   for(const sx of[-1,1])at(C(.025,.025,2.1,0x7a1a12,6),kv,sx*.26,.62,0,Math.PI/2,0,0);
+   at(B(.56,.06,.62,0xb3141f),kv,0,.66,0);for(const [x,z] of[[-.24,-.27],[.24,-.27],[-.24,.27],[.24,.27]])at(C(.025,.025,.62,COL.gold,6),kv,x,.98,z);
+   const rf=mesh(new THREE.ConeGeometry(.5,.32,4).rotateY(Math.PI/4),0xc8102e);rf.scale.set(1,1,1.1);rf.position.y=1.45;kv.add(rf);at(B(.62,.05,.68,COL.gold),kv,0,1.3,0);at(S(.06,COL.gold),kv,0,1.66,0);
+   for(const sx of[-1,1]){const cu=mesh(new THREE.BoxGeometry(.02,.5,.6),0xf2c14e);cu.material=cu.material.clone();cu.material.transparent=true;cu.material.opacity=.55;cu.position.set(sx*.25,1.02,0);kv.add(cu);}
+   const bride=critter(COL.rabbit,.6,0);bride.position.y=.69;kv.add(bride);const bd=mesh(new THREE.CylinderGeometry(.09,.14,.32,12),0xc8102e);bd.position.y=.86;kv.add(bd);at(C(.09,.1,.06,0xf2c14e,14),kv,0,1.12,0);
+   const bearers=[];for(const [x,z] of[[-.36,-.95],[.36,-.95],[-.36,.95],[.36,.95]]){const g=new THREE.Group();g.position.set(x,0,z);kv.add(g);const k=critter(COL.duck,.8,0);g.add(k);ao(g,0xc8102e);khan(g,.58);bearers.push(g);}
+   // a parasol-bearer (lọng) at the front of the kiệu
+   const lg=new THREE.Group();lg.position.set(-8.75,0,PZ-.45);lg.rotation.y=Math.PI/2;scene.add(lg);lg.add(critter(COL.cat,.8,0));ao(lg,0xf2c14e);at(C(.015,.015,1.4,COL.trunk,4),lg,.18,.75,0);const lp=mesh(new THREE.ConeGeometry(.42,.18,12,1,true),0xc8102e);lp.material=lp.material.clone();lp.material.side=THREE.DoubleSide;lp.position.set(.18,1.5,0);lg.add(lp);
+   anims.push(t=>{pr.forEach((g,i)=>g.position.y=Math.abs(Math.sin(t*4+i))*.04);bearers.forEach((g,i)=>g.position.y=Math.abs(Math.sin(t*4+i*1.6))*.04);kv.position.y=Math.abs(Math.sin(t*4))*.025;lg.position.y=Math.abs(Math.sin(t*4+2))*.04;});}
+  // Paris, ville de l'amour: a few couples in love, with a heart floating above each
+  {const hs=new THREE.Shape();hs.moveTo(0,-.12);hs.bezierCurveTo(-.02,-.1,-.16,-.02,-.16,.06);hs.bezierCurveTo(-.16,.14,-.06,.17,0,.09);hs.bezierCurveTo(.06,.17,.16,.14,.16,.06);hs.bezierCurveTo(.16,-.02,.02,-.1,0,-.12);
+   const HG=new THREE.ExtrudeGeometry(hs,{depth:.05,bevelEnabled:false});HG.translate(0,0,-.025);const hearts=[];
+   const couple=(x,z,ry,a,b,bench)=>{const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;scene.add(g);const y=bench?.22:0;
+    if(bench){at(B(.9,.06,.28,0x8a5a3a),g,0,.22,0);at(B(.9,.26,.05,0x8a5a3a),g,0,.38,-.13);for(const sx of[-1,1])at(B(.04,.22,.24,COL.iron),g,sx*.4,.11,0);}
+    const k1=critter(a,.8,0);k1.position.set(-.16,y,0);k1.rotation.y=bench?.35:Math.PI/2-.2;g.add(k1);const k2=critter(b,.8,0);k2.position.set(.16,y,0);k2.rotation.y=bench?-.35:-Math.PI/2+.2;g.add(k2);
+    const h=new THREE.Mesh(HG,new THREE.MeshStandardMaterial({color:0xe2566f,emissive:0xe2566f,emissiveIntensity:.35,roughness:.5}));h.position.set(0,y+.95,0);h.userData.y=y+.95;g.add(h);hearts.push(h);return g;};
+   couple(-12.7,7.6,0,COL.rabbit,COL.cat,1);
+   couple(-5.6,-2.6,Math.PI,COL.duck,COL.peng,0);
+   couple(1.2,-1.6,.4,COL.cat,COL.rabbit,1);
+   couple(-17.2,1.4,-.6,COL.peng,COL.duck,0);
+   anims.push(t=>hearts.forEach((h,i)=>{h.position.y=h.userData.y+Math.sin(t*2+i)*.06;h.rotation.y=Math.sin(t+i)*.6;const s=1+Math.sin(t*5+i)*.08;h.scale.setScalar(s);}));}
   {const ph=crit(COL.peng,-11.6,-1.9,2.6);const tri=new THREE.Group();tri.position.set(-11.25,0,-2.2);scene.add(tri);for(let i=0;i<3;i++){const a=i/3*Math.PI*2;at(C(.012,.012,.6,COL.iron,4),tri,Math.cos(a)*.08,.3,Math.sin(a)*.08,Math.sin(a)*.2,0,-Math.cos(a)*.2);}at(B(.2,.13,.12,0x2a2321),tri,0,.64,0);at(C(.04,.04,.1,0x2a2321,8),tri,0,.64,-.1,Math.PI/2,0,0);
    const vg=crit(COL.cat,-8.7,-1.9,-2.5);at(B(.22,.16,.3,0x2a2321),vg,.15,.62,.12);const fl=new THREE.Mesh(new THREE.SphereGeometry(.05,8,6),new THREE.MeshBasicMaterial({color:0xff5050}));fl.position.set(.15,.74,0);vg.add(fl);anims.push(t=>fl.visible=Math.sin(t*5)>0);}
   {const pt=crit(COL.duck,5.7,-3.6,.9,1.1,COL.dark);const e=new THREE.Group();e.position.set(6.3,0,-3.4);e.rotation.y=-.6;scene.add(e);for(const s of[-1,1])at(C(.015,.015,1.0,COL.trunk,4),e,s*.18,.5,0,0,0,s*.12);
