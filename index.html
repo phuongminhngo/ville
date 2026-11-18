@@ -2146,6 +2146,20 @@ window.OPT='combo';const SM0=true,CB=true;
   {const [c,x]=cnv(64,256,'#d0607f');x.fillStyle='#fffaf2';x.font='34px Silkscreen, monospace';x.textAlign='center';x.save();x.translate(38,128);x.rotate(-Math.PI/2);x.fillText('CHEZ PHUONG',0,0);x.restore();
    const bn=new THREE.Mesh(new THREE.PlaneGeometry(.26,1.0),new THREE.MeshBasicMaterial({map:tex(c),side:THREE.DoubleSide}));bn.position.set(1.225,.8,.912);g.add(bn);}
   {const flag=new THREE.Group();flag.position.set(0,1.5,-1.05);g.add(flag);at(C(.02,.02,.9,COL.iron),flag,0,.45,0);at(B(.5,.3,.02,COL.red),flag,.26,.75,0);}
+  // a cà phê sữa đá on the terrace: a café table, a phin dripping into a glass of condensed milk, and one already stirred with ice
+  {const cf=new THREE.Group();cf.position.set(1.3,.12,1.15);cf.scale.setScalar(1.5);g.add(cf);
+   at(C(.2,.2,.03,0x3b4766,16),cf,0,.3,0);at(C(.025,.03,.29,COL.iron,6),cf,0,.15,0);at(C(.1,.12,.02,COL.iron,10),cf,0,.01,0);
+   for(const [x,z,r] of[[-.3,0,Math.PI/2],[.3,0,-Math.PI/2]]){const st=new THREE.Group();st.position.set(x,0,z);st.rotation.y=r;cf.add(st);at(C(.09,.09,.025,0xd0607f,12),st,0,.19,0);for(const k of[-1,1])at(C(.012,.012,.18,COL.iron,4),st,k*.05,.09,0);}
+   const gm=new THREE.MeshStandardMaterial({color:0xe8f3f6,transparent:true,opacity:.35,roughness:.1});
+   const g1=new THREE.Group();g1.position.set(-.07,.315,.02);cf.add(g1);g1.add(new THREE.Mesh(new THREE.CylinderGeometry(.05,.042,.15,14,1,true),gm));at(C(.04,.04,.03,0xfbf3dc,12),g1,0,-.055,0);at(C(.044,.044,.05,0x5a3420,12),g1,0,-.015,0);
+   at(C(.05,.05,.012,0xb9bcc0,14),g1,0,.08,0);at(C(.036,.03,.06,0xb9bcc0,12),g1,0,.115,0);at(C(.04,.04,.008,0x9a9da2,12),g1,0,.15,0);
+   const g2=new THREE.Group();g2.position.set(.08,.315,-.03);cf.add(g2);g2.add(new THREE.Mesh(new THREE.CylinderGeometry(.05,.042,.15,14,1,true),gm));at(C(.044,.04,.11,0xa8774f,12),g2,0,-.02,0);
+   for(const [x,y,z] of[[-.015,.04,.01],[.018,.03,-.012],[.004,.055,.016]]){const ic=new THREE.Mesh(new THREE.BoxGeometry(.03,.03,.03),new THREE.MeshStandardMaterial({color:0xffffff,transparent:true,opacity:.75,roughness:.05}));ic.position.set(x,y,z);ic.rotation.set(.4,.6,.2);g2.add(ic);}
+   const sp=at(C(.004,.004,.2,0xc9a24a,4),g2,.02,.06,0);sp.rotation.z=.25;
+   const sg=new THREE.Group();sg.position.set(.34,0,.22);sg.rotation.y=-.5;cf.add(sg);at(B(.02,.5,.02,COL.iron),sg,0,.25,0);
+   {const [c,x]=cnv(256,96,'#fffaf2');x.fillStyle='#5a3420';x.font='bold 34px "Trebuchet MS", Arial, sans-serif';x.textAlign='center';x.fillText('CÀ PHÊ',128,42);x.fillText('SỮA ĐÁ',128,82);
+    const pl=new THREE.Mesh(new THREE.PlaneGeometry(.3,.11),new THREE.MeshBasicMaterial({map:tex(c),side:THREE.DoubleSide}));pl.position.set(0,.52,0);sg.add(pl);}
+   const um=new THREE.Group();um.position.set(0,0,0);cf.add(um);at(C(.012,.012,.75,COL.iron,4),um,0,.67,0);const cn=mesh(new THREE.ConeGeometry(.42,.16,8),0x2f6b52);cn.position.y=1.08;um.add(cn);}
   for(const s of[-1,1])at(B(.08,.5,.08,0xfbf8f1),g,s*.7,.37,1.35);
   L2(scene,'Accueil · chez Phuong',2.88,3.6,5.81);
   const k=new THREE.Group();k.position.set(5.5,0,5.3);scene.add(k);at(C(.4,.45,1.2,COL.green,12),k,0,.6,0);at(mesh(new THREE.ConeGeometry(.6,.5,12),COL.green),k,0,1.45,0);at(S(.12,COL.gold),k,0,1.75,0);at(C(.42,.42,.3,0xf2e6c8,12),k,0,1.0,0);
