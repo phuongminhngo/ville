@@ -1354,7 +1354,7 @@ function hintMz(){const left=MZ.map((z,i)=>i).filter(i=>!found.has(i));if(!left.
 // center the logo art exactly in its box (the notes and stars overflow the h1 box, so measure them)
 function centerLogo(){const box=document.querySelector('.logo'),h=box&&box.querySelector('.h2x');if(!h)return;h.style.transform='';
  const br=box.getBoundingClientRect();let l=1e9,t=1e9,r=-1e9,bt=-1e9;h.querySelectorAll('.sc,.px,.st,.an i').forEach(el=>{let q=el.getBoundingClientRect();if(el.tagName==='I'){const rg=document.createRange();rg.selectNodeContents(el);q=rg.getBoundingClientRect();}if(!q.width)return;l=Math.min(l,q.left);t=Math.min(t,q.top);r=Math.max(r,q.right);bt=Math.max(bt,q.bottom);});
- const fs=parseFloat(getComputedStyle(h).fontSize)||22;const dx=(br.left+br.width/2)-(l+r)/2,dy=(br.top+br.height/2)-(t+bt)/2-5*fs/22;h.style.transform=`translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px)`;}
+ const fs=parseFloat(getComputedStyle(h).fontSize)||22;const dx=(br.left+br.width/2)-(l+r)/2,dy=(br.top+br.height/2)-(t+bt)/2+3*fs/22;h.style.transform=`translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px)`;}
 centerLogo();if(document.fonts){document.fonts.ready.then(centerLogo);document.fonts.addEventListener('loadingdone',centerLogo);}setTimeout(centerLogo,700);setTimeout(centerLogo,2000);addEventListener('resize',centerLogo);
 
 // ================= game-style interface =================
