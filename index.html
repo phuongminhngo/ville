@@ -1378,7 +1378,7 @@ addEventListener('pointerdown',e=>{if(!$('menu').hidden&&!e.target.closest('#men
  setInterval(()=>{if(window.CITY&&CITY.sparkle&&(mood==='night'||mood==='snow')&&!document.hidden)CITY.sparkle(6);},25000);
  $('lgmos').onclick=()=>$('mosc').click();$('lgall').onclick=()=>$('mall').click();
  setInterval(()=>{const a=$('mosn'),b2=$('lgmosn');if(a&&b2&&b2.textContent!==a.textContent)b2.textContent=a.textContent;},800);
- let st=null;try{st=localStorage.getItem('lgtab');}catch(e){}if(st==='lgm')st='lgb';show(st!==null?(st||null):(matchMedia('(max-width:760px)').matches?null:'lgp'));
+ show(matchMedia('(max-width:760px)').matches?null:'lgp');
  $('mhelp').onclick=()=>{$('menu').hidden=true;$('bmenu').setAttribute('aria-expanded','false');show('lgb');};}
 {const cm=$('ctxm');const close=()=>{cm.hidden=true;};
  const open=(cx,cy)=>{if(!window.CITY)return;const r=CITY.cv.getBoundingClientRect();const nx=(cx-r.left)/r.width*2-1,ny=-(cy-r.top)/r.height*2+1;const k=museumAt(nx,ny),g=CITY.groundAt(cx,cy);const flat=CITY.tiltT()>1.3;
