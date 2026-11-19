@@ -1299,13 +1299,20 @@ function seasonize(S){const T=THREE,sc=CITY.scene;
    const c=o.material.color;if(!green(c))return;bb.setFromObject(o);bb.getSize(sz);
    const kind=(sz.y<.2||Math.max(sz.x,sz.z)>1.5)?'lawn':'leaf';o.material=o.material.clone();L.push([o,kind,c.clone(),n++,o.isInstancedMesh]);});
   window.__SEA=L;window.__SEAI=IC;}
- const P={spring:{leaf:[0xf6b8cb,0xf9d3df,0x9fd27f,0xf3a3bd,0xb6e08f],lawn:0xa9dc86},
-  summer:null,
-  autumn:{leaf:[0xe8a23e,0xd8633a,0xeac35a,0xc0532f,0xb98a3e],lawn:0xd8cf8c},
-  winter:{leaf:[0xe6eef3,0xd3dfe6,0x6f8f7a,0xeef3f6,0xc7d5dd],lawn:0xeef2f6}};
- const p=P[S];
- __SEA.forEach(([o,k,c0,i])=>{const m=o.material;if(!p)m.color.copy(c0);else if(k==='lawn')m.color.set(p.lawn);else m.color.set(p.leaf[(i*7+3)%p.leaf.length]);});
- __SEAI.forEach(([o,orig,idx])=>{const a=o.instanceColor.array;a.set(orig);if(p){const c=new T.Color();idx.forEach(i=>{c.set(p.leaf[(i*5+1)%p.leaf.length]);c.toArray(a,i*3);});}o.instanceColor.needsUpdate=true;});};
+ const P={spring:{leaf:[0xf7a8c4,0xfbd3e1,0xec7fa9,0xfdf1f5,0xc9e98f,0x86cc62,0xd3a2e8,0xf6c0a6],lawn:0xa9dc86},
+  summer:{leaf:[0xd2e46a,0x9fd25e,0x5fae55,0x2f7048,0x3c9480,0x84a03c,0x6cc49a,0x1e5238],lawn:null},
+  autumn:{leaf:[0xf4c64c,0xea8a2c,0xd4502c,0xa3302a,0xc9a43a,0x8a5a2b,0x98a345,0xf2a65e],lawn:0xd8cf8c},
+  winter:{leaf:[0xf6f9fc,0xdbe6ee,0xb6c9d5,0x2c5846,0x4b7464,0x8eaab7,0xeaf0f4,0x6a8a79],lawn:0xeef2f6}};
+ const p=P[S]||P.summer,N=p.leaf.length;
+ // each tree and bush gets its own palette color plus a small random shade
+ const h=i=>{let x=Math.sin(i*127.1+11.7)*43758.5;return x-Math.floor(x);};
+ const tint=(c,i,a)=>{const q={};c.getHSL(q);c.setHSL(q.h+(h(i+3)-.5)*.05*a,Math.min(1,q.s*(.8+h(i+7)*.4)),Math.max(.1,Math.min(.95,q.l+(h(i+5)-.5)*.2*a)));return c;};
+ const c=new T.Color();
+ __SEA.forEach(([o,k,c0,i])=>{const m=o.material;
+  if(k==='lawn'){if(p.lawn)m.color.set(p.lawn);else m.color.copy(c0);tint(m.color,i*3,.4);}
+  else if(o.isInstancedMesh){const first=!o.instanceColor;m.color.set(0xffffff);for(let q=0;q<o.count;q++){c.set(p.leaf[Math.floor(h(q*2.3+i*17)*N)]);tint(c,q*3+i,1);o.setColorAt(q,c);}o.instanceColor.needsUpdate=true;if(first)m.needsUpdate=true;}
+  else{m.color.set(p.leaf[Math.floor(h(i)*N)]);tint(m.color,i,1);}});
+ __SEAI.forEach(([o,orig,idx],j)=>{const a=o.instanceColor.array;a.set(orig);idx.forEach(i=>{c.set(p.leaf[Math.floor(h(i*1.7+j*31)*N)]);tint(c,i*2+j,1);c.toArray(a,i*3);});o.instanceColor.needsUpdate=true;});};
 
 const SEASON={sun:'spring',night:'summer',rain:'autumn',snow:'winter'};
 function applySeason(k){const go=()=>{if(!window.CITY||!CITY.scene||!CITY.LM)return false;try{seasonize(SEASON[k]||'summer');}catch(e){}return true;};if(!go()){const t=setInterval(()=>{if(go())clearInterval(t);},300);}}
