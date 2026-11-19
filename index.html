@@ -2614,7 +2614,7 @@ window.OPT='combo';const SM0=true,CB=true;
    const w=crit(COL.rabbit,-3.6,5.4,.25,1.15,COL.dark);const sg=sign('Bienvenue !');sg.position.set(0,1.15,.15);w.add(sg);const p=at(C(.02,.02,.6,COL.trunk,6),w,0,.75,.12);}
   // Nghi Lễ Cưới Hỏi: the wedding procession in front of Le Pavillon. Six animals in áo dài carry the mâm quả,
   // four bearers carry the red-and-gold kiệu with the bride inside, walking east along the forecourt.
-  {const DX=-8.01,DZ=-6.31,pr=[];const ao=(k,col)=>{const d=mesh(new THREE.CylinderGeometry(.13,.22,.5,14),col);d.position.y=.27;k.add(d);};
+  {const DX=-8.01,DZ=-6.31,pr=[];const ao=(k,col,sc=.85)=>{const d=mesh(new THREE.CylinderGeometry(.16*sc/.85,.21*sc/.85,.3*sc/.85,14),col);d.position.y=.16*sc/.85;k.add(d);const sh=mesh(new THREE.SphereGeometry(.155*sc/.85,14,8,0,Math.PI*2,0,Math.PI/2),col);sh.position.y=.3*sc/.85;k.add(sh);};
    const khan=(g,y=.7)=>{at(C(.12,.13,.08,0xf2c230,14),g,0,y,0);};
    for(let i=0;i<4;i++){const col=i<2?0xd43b2f:(i%2?0xf2c230:0xd43b2f);const g=new THREE.Group();g.position.set(DX+(i%2?.8:-.8),0,DZ+.25+Math.floor(i/2)*.55);g.rotation.y=0;scene.add(g);
     const k=critter(i===2?COL.rabbit:i===3?COL.cat:COL.duck,.85,0);g.add(k);ao(g,col);
@@ -2638,10 +2638,10 @@ window.OPT='combo';const SM0=true,CB=true;
    at(B(.56,.06,.62,0xb8352a),kv,0,.66,0);for(const [x,z] of[[-.24,-.27],[.24,-.27],[-.24,.27],[.24,.27]])at(C(.025,.025,.62,COL.gold,6),kv,x,.98,z);
    const rf=mesh(new THREE.ConeGeometry(.5,.32,4).rotateY(Math.PI/4),0xd43b2f);rf.scale.set(1,1,1.1);rf.position.y=1.45;kv.add(rf);at(B(.62,.05,.68,COL.gold),kv,0,1.3,0);at(S(.06,COL.gold),kv,0,1.66,0);
    for(const sx of[-1,1]){const cu=mesh(new THREE.BoxGeometry(.02,.5,.6),0xf2c230);cu.material=cu.material.clone();cu.material.transparent=true;cu.material.opacity=.55;cu.position.set(sx*.25,1.02,0);kv.add(cu);}
-   const bride=critter(COL.rabbit,.6,0);bride.position.y=.69;kv.add(bride);const bd=mesh(new THREE.CylinderGeometry(.09,.14,.32,12),0xd43b2f);bd.position.y=.86;kv.add(bd);at(C(.09,.1,.06,0xf2c230,14),kv,0,1.12,0);
-   const bearers=[];for(const [x,z] of[[-.36,-.95],[.36,-.95],[-.36,.95],[.36,.95]]){const g=new THREE.Group();g.position.set(x,0,z);kv.add(g);const k=critter(COL.duck,.8,0);g.add(k);ao(g,0xd43b2f);khan(g,.58);bearers.push(g);}
+   const bride=critter(COL.rabbit,.6,0);bride.position.y=.69;kv.add(bride);const bd=mesh(new THREE.CylinderGeometry(.11,.14,.18,12),0xd43b2f);bd.position.y=.79;kv.add(bd);at(C(.09,.1,.06,0xf2c230,14),kv,0,1.12,0);
+   const bearers=[];for(const [x,z] of[[-.36,-.95],[.36,-.95],[-.36,.95],[.36,.95]]){const g=new THREE.Group();g.position.set(x,0,z);kv.add(g);const k=critter(COL.duck,.8,0);g.add(k);ao(g,0xd43b2f,.8);khan(g,.58);bearers.push(g);}
    // a parasol-bearer (lọng) at the front of the kiệu
-   const lg=new THREE.Group();lg.position.set(DX+.55,0,DZ+1.9);lg.rotation.y=0;scene.add(lg);lg.add(critter(COL.cat,.8,0));ao(lg,0xf2c230);at(C(.015,.015,1.4,COL.trunk,4),lg,.18,.75,0);const lp=mesh(new THREE.ConeGeometry(.42,.18,12,1,true),0xd43b2f);lp.material=lp.material.clone();lp.material.side=THREE.DoubleSide;lp.position.set(.18,1.5,0);lg.add(lp);
+   const lg=new THREE.Group();lg.position.set(DX+.55,0,DZ+1.9);lg.rotation.y=0;scene.add(lg);lg.add(critter(COL.cat,.8,0));ao(lg,0xf2c230,.8);at(C(.015,.015,1.4,COL.trunk,4),lg,.18,.75,0);const lp=mesh(new THREE.ConeGeometry(.42,.18,12,1,true),0xd43b2f);lp.material=lp.material.clone();lp.material.side=THREE.DoubleSide;lp.position.set(.18,1.5,0);lg.add(lp);
    anims.push(t=>{pr.forEach((g,i)=>g.position.y=Math.abs(Math.sin(t*4+i))*.04);bearers.forEach((g,i)=>g.position.y=Math.abs(Math.sin(t*4+i*1.6))*.04);kv.position.y=Math.abs(Math.sin(t*4))*.025;lg.position.y=Math.abs(Math.sin(t*4+2))*.04;});}}
   // Paris, ville de l'amour: a few couples in love, with a heart floating above each
   {const hs=new THREE.Shape();hs.moveTo(0,-.12);hs.bezierCurveTo(-.02,-.1,-.16,-.02,-.16,.06);hs.bezierCurveTo(-.16,.14,-.06,.17,0,.09);hs.bezierCurveTo(.06,.17,.16,.14,.16,.06);hs.bezierCurveTo(.16,-.02,.02,-.1,0,-.12);
