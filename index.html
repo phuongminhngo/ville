@@ -1290,7 +1290,26 @@ function moodFx(){const sc=CITY.scene;FX={};const mk=(n,line)=>{const pos=new Fl
   FX.ripple={o:grp};CITY.anims.push((t,dt)=>{if(!grp.visible)return;rings.forEach(r=>{r.age+=dt;if(r.age<0){r.m.material.opacity=0;return;}const k=r.age/.9;if(k>=1){put(r);return;}const s=.03+k*.16;r.m.scale.set(s,1,s);r.m.material.opacity=.75*(1-k);});});}
  CITY.anims.push((t,dt)=>{for(const k of['rain','snow']){const f=FX[k];if(!f.o.visible)continue;const v=f.line?9:.9;f.sp.forEach((p,i)=>{p[1]-=v*dt;if(f.line===false)p[0]+=Math.sin(t+i)*.004;if(p[1]<0)p[1]=12;if(f.line){f.pos.set([p[0],p[1],p[2],p[0]+.04,p[1]-.4,p[2]],i*6);}else f.pos.set(p,i*3);});f.g.attributes.position.needsUpdate=true;}});
  ROOFS=[];const seen=new Set();sc.traverse(o=>{if(!o.isMesh)return;(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(seen.has(m)||!m.color)return;seen.add(m);const hx=m.color.getHex();if(hx===0x70809c||hx===0x5b6a86)ROOFS.push([m,hx,0xf3f6fa]);else if(hx===0xa9cf7f||hx===0x9ccc5e||hx===0xb9cf9b||hx===0x9fbf8a||hx===0x8fb072)ROOFS.push([m,hx,0xdfe6f1]);});});}
-function setMood(k){mood=k;night=k!=='sun'&&k!=='snow';document.querySelectorAll('.moods button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mood===k));
+// seasons: each sky mood also dresses the trees and lawns (Soleil = printemps, Nuit = été, Pluie = automne, Hiver = hiver)
+function seasonize(S){const T=THREE,sc=CITY.scene;
+ const green=c=>c&&c.g>c.r*1.08&&c.g>c.b;
+ if(!window.__SEA){const L=[],IC=[];const bb=new T.Box3(),sz=new T.Vector3();let n=0;const fld=CITY.fields&&CITY.fields[0];
+  sc.traverse(o=>{if(!o.isMesh||Array.isArray(o.material)||!o.material.color)return;for(let q=o;q;q=q.parent)if(q.userData&&q.userData.crit)return;
+   if(o.isInstancedMesh&&o.instanceColor&&o!==fld){const a=o.instanceColor.array,c=new T.Color(),idx=[];for(let i=0;i<o.count;i++){c.fromArray(a,i*3);if(green(c))idx.push(i);}if(idx.length)IC.push([o,a.slice(),idx]);return;}
+   const c=o.material.color;if(!green(c))return;bb.setFromObject(o);bb.getSize(sz);
+   const kind=(sz.y<.2||Math.max(sz.x,sz.z)>1.5)?'lawn':'leaf';o.material=o.material.clone();L.push([o,kind,c.clone(),n++,o.isInstancedMesh]);});
+  window.__SEA=L;window.__SEAI=IC;}
+ const P={spring:{leaf:[0xf6b8cb,0xf9d3df,0x9fd27f,0xf3a3bd,0xb6e08f],lawn:0xa9dc86},
+  summer:null,
+  autumn:{leaf:[0xe8a23e,0xd8633a,0xeac35a,0xc0532f,0xb98a3e],lawn:0xd8cf8c},
+  winter:{leaf:[0xe6eef3,0xd3dfe6,0x6f8f7a,0xeef3f6,0xc7d5dd],lawn:0xeef2f6}};
+ const p=P[S];
+ __SEA.forEach(([o,k,c0,i])=>{const m=o.material;if(!p)m.color.copy(c0);else if(k==='lawn')m.color.set(p.lawn);else m.color.set(p.leaf[(i*7+3)%p.leaf.length]);});
+ __SEAI.forEach(([o,orig,idx])=>{const a=o.instanceColor.array;a.set(orig);if(p){const c=new T.Color();idx.forEach(i=>{c.set(p.leaf[(i*5+1)%p.leaf.length]);c.toArray(a,i*3);});}o.instanceColor.needsUpdate=true;});};
+
+const SEASON={sun:'spring',night:'summer',rain:'autumn',snow:'winter'};
+function applySeason(k){const go=()=>{if(!window.CITY||!CITY.scene||!CITY.LM)return false;try{seasonize(SEASON[k]||'summer');}catch(e){}return true;};if(!go()){const t=setInterval(()=>{if(go())clearInterval(t);},300);}}
+function setMood(k){mood=k;applySeason(k);night=k!=='sun'&&k!=='snow';document.querySelectorAll('.moods button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mood===k));
  document.body.classList.remove('night','m-blue','m-rain','m-snow');if(k==='night')document.body.classList.add('night','m-blue');else if(k!=='sun')document.body.classList.add('m-'+k);
  if(!window.CITY)return;night=false;applyNight();const c=MOODS[k];if(!FX)moodFx();
  FX.rain.o.visible=!!(c&&c.fx==='rain');FX.snow.o.visible=!!(c&&c.fx==='snow');FX.ripple.o.visible=!!FX.rain.o.visible;if(FX.spark)FX.spark.visible=!FX.rain.o.visible;ROOFS.forEach(([m,hx,sn])=>m.color.set(c&&c.roofs?sn:hx));(window.UMB||[]).forEach(u=>u.visible=k==='rain');(window.WIN||[]).forEach(w=>w.visible=k==='snow');if(CITY.XMAS)CITY.XMAS.visible=k==='snow';
