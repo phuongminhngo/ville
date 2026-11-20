@@ -2764,8 +2764,13 @@ window.OPT='combo';const SM0=true,CB=true;
   anims.push((t,dt)=>crowd.forEach(w=>{if(w.hid>0){w.hid-=dt;if(w.hid<=0){const ds=DOORS.filter(d=>d.distanceTo(w.c.position)>2);const d=ds.length?ds[Math.floor(Math.random()*ds.length)]:w.c.position;w.c.position.copy(d);w.sd=side(d);w.c.visible=true;puff(d);w.bs=w.bs||w.c.scale.x;w.grow=.35;w.c.scale.setScalar(.01);w.to=d.clone();w.wait=.6+Math.random();}return;}
    if(w.wait>0){w.wait-=dt;w.c.position.y=0;return;}const d=w.to.clone().sub(w.c.position);d.y=0;const L=d.length();if(w.grow>0){w.grow=Math.max(0,w.grow-dt);w.c.scale.setScalar(w.bs*(1-w.grow/.35));}if(L<.1){if(w.door){if(w.shr===undefined){w.bs=w.bs||w.c.scale.x;w.shr=.35;puff(w.c.position);}w.shr-=dt;w.c.scale.setScalar(w.bs*Math.max(.01,w.shr/.35));if(w.shr>0)return;w.shr=undefined;w.door=false;w.c.visible=false;w.c.scale.setScalar(w.bs);w.hid=2+Math.random()*4;return;}if(w.path&&w.path.length){const nx=w.path.shift();w.onBr=!!nx.br;if(w.onBr)w.brS=w.c.position.clone();w.to=nx.v;return;}w.onBr=false;if(Math.random()<.35&&window.BRG&&BRG.length){const pos=w.c.position;let best=null,bd=1e9;BRG.forEach(([a,b])=>{const near=side(a)===w.sd?a:b,far=near===a?b:a;const d=near.distanceTo(pos);if(d<bd&&clear(pos,near)){bd=d;best=[near,far];}});const other=-w.sd,dest=spotOn(other);if(best&&dest&&clear(best[1],dest)){w.sd=other;w.path=[{v:best[1].clone(),br:true},{v:dest}];w.to=best[0].clone();return;}}w.to=pick(w)||w.c.position.clone();w.wait=1+Math.random()*4;return;}
    d.multiplyScalar(Math.min(L,w.sp*dt)/L);w.c.position.add(d);w.c.rotation.y=Math.atan2(d.x,d.z);let by=0;if(w.onBr){const tot=w.brS.distanceTo(w.to)||1,tt=Math.min(1,Math.max(0,1-Math.hypot(w.to.x-w.c.position.x,w.to.z-w.c.position.z)/tot));by=(1-tt)*(1-tt)*.3+2*tt*(1-tt)*1.3+tt*tt*.3;}w.c.position.y=by+Math.abs(Math.sin(t*7+w.ph))*.05;}));}
- const walkers=[];for(let i=0;i<9;i++){const c=critter([COL.rabbit,COL.cat,COL.duck,COL.peng][i%4],.9,i===0?COL.dark:0);scene.add(c);walkers.push({c,o:i/9,lane:i%2?5.6:-.6});}
- anims.push(t=>walkers.forEach(w=>{const u=((t*.03+w.o)%1);const uu=.27+u*.46,p=RV.getPointAt(uu),tg=RV.getTangentAt(uu);w.c.position.set(p.x-tg.z*(w.lane>0?1.35:-1.35),0,p.z+tg.x*(w.lane>0?1.35:-1.35));w.c.rotation.y=Math.atan2(tg.x,tg.z);w.c.position.y=Math.abs(Math.sin(t*6+w.o*9))*.05;}));
+ const walkers=[];for(let i=0;i<9;i++){const c=critter([COL.rabbit,COL.cat,COL.duck,COL.peng][i%4],.9,i===0?COL.dark:0);c.userData.quay=1;scene.add(c);walkers.push({c,o:i/9,lane:i%2?5.6:-.6});}
+ // quay walkers: hug the river when a building stands on the quay; if even that is blocked, slip through in fairy dust
+ anims.push(t=>walkers.forEach(w=>{const u=((t*.03+w.o)%1);const uu=.27+u*.46,p=RV.getPointAt(uu),tg=RV.getTangentAt(uu),sg=w.lane>0?1:-1,S=window.CITY&&window.CITY.solid;let x,z,ok=false;
+  for(const d of [1.35,1.2,1.05,.95]){x=p.x-tg.z*sg*d;z=p.z+tg.x*sg*d;if(!S||!S(x,z)){ok=true;break;}}
+  if(!ok){x=p.x-tg.z*sg*1.35;z=p.z+tg.x*sg*1.35;}
+  if(!ok!==!!w.gone){w.gone=!ok;if(window.CITY.puff)window.CITY.puff(w.c.position);}
+  w.c.visible=!w.gone;w.c.position.set(x,0,z);w.c.rotation.y=Math.atan2(tg.x,tg.z);w.c.position.y=Math.abs(Math.sin(t*6+w.o*9))*.05;}));
  if(window.__form)window.__form(scene);
  if(window.__style)window.__style(scene,anims);
 
@@ -2783,5 +2788,13 @@ const w8=setInterval(()=>{if(window.CITY&&CITY.RV){clearInterval(w8);CITY.onPick
 setView('3d');
 </script>
 
+<script>
+// any other animal that walks through a wall slips through in fairy dust instead of showing inside it
+(function phase(){if(!window.CITY||!CITY.solid||!CITY.puff||!CITY.crowd)return setTimeout(phase,200);const skip=new Set(CITY.crowd.map(w=>w.c)),L=[],v=new THREE.Vector3();
+ CITY.scene.traverse(o=>{if(o.userData&&o.userData.crit&&!o.userData.quay&&!skip.has(o))L.push({o,last:o.getWorldPosition(new THREE.Vector3()),hid:false});});
+ const hill=(x,z)=>z<-10.8&&Math.abs(x+5)<5;
+ setInterval(()=>{L.forEach(e=>{e.o.getWorldPosition(v);const moved=v.distanceTo(e.last)>.005;e.last.copy(v);if(!moved&&!e.hid)return;const inside=CITY.solid(v.x,v.z)&&!hill(v.x,v.z)&&v.y<.6;
+  if(inside!==e.hid){e.hid=inside;e.o.visible=!inside;CITY.puff(v);}});},120);})();
+</script>
 </body>
 </html>
