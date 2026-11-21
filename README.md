@@ -4,6 +4,7 @@
 
 - **La ville en 3D :** https://phuongminhngo.github.io/ville/
 - **Mon CV en 1 page :** https://phuongminhngo.github.io/ville/essentiel.html (English: [essential.html](https://phuongminhngo.github.io/ville/essential.html))
+- **English version:** https://phuongminhngo.github.io/ville/en.html
 - **LinkedIn :** https://www.linkedin.com/in/phuongminhngo21/
 - **Email :** phuongminhngo21@gmail.com
 
