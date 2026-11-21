@@ -65,9 +65,9 @@ for fr, en in [('} projet${', '} project${'), ('aria-label="Démo : ', 'aria-lab
     assert fr in s, fr
     s = s.replace(fr, en)
 # language switch: in the English page it points back to French
-old = '<a class="lg-lang" href="en.html" hreflang="en" lang="en" title="English version">EN</a>'
+old = '<a class="ib ib-lang lg-lang" id="blang" href="en.html" hreflang="en" lang="en" aria-label="English version" title="English version">EN</a>'
 assert old in s
-s = s.replace(old, '<a class="lg-lang" href="./" hreflang="fr" lang="fr" title="Version française">FR</a>')
+s = s.replace(old, '<a class="ib ib-lang lg-lang" id="blang" href="./" hreflang="fr" lang="fr" aria-label="Version française" title="Version française">FR</a>')
 
 for fr, en in SRC:
     if fr not in s: print('MISSING', fr[:60])
