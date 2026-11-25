@@ -130,3 +130,9 @@ _order=['comment on travaille','les OKRs de chaque','mon tableau de bord, mes t�
 for (_fr,_en),_pre in zip(_PP,_order):
     _k=[k for k in _bodies if k.startswith(_pre)][0]
     EXTRA[_fr+' : '+_k]=_en+': '+_bodies[_k]
+
+EXTRA.update({
+ "Projet phare · 5 · Piloter · Cloudi-Fi":"Flagship project · 5 · Manage · Cloudi-Fi","(Projet phare · 5 · Piloter · Cloudi-Fi)":"(Flagship project · 5 · Manage · Cloudi-Fi)",
+ "mon produit 360°":"my 360° product","(mon produit 360°)":"(my 360° product)","Projet personnel · de l'idée au produit en ligne":"Personal project · from idea to live product",
+ "(Projet personnel · de l'idée au produit en ligne)":"(Personal project · from idea to live product)","Mon produit 360° : construit de zéro.":"My 360° product: built from scratch.",
+})
