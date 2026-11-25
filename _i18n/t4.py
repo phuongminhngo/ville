@@ -138,3 +138,21 @@ EXTRA.update({
 })
 
 EXTRA.update({"★ Projet phare":"★ Flagship project","People platform →":"People platform →"})
+
+EXTRA.update({
+ "Les process RH vivaient dans des messages et des outils dispersés. Je les ai réunis dans une seule plateforme, construite avec notre agent IA, où chacun ne voit que ce qui le concerne.":"HR processes lived in messages and scattered tools. I brought them together in one platform, built with our AI agent, where each person sees only what concerns them.",
+ "Moi : la conception, les contenus, les règles d'accès et le déploiement auprès de l'équipe. L'agent IA : la construction des pages et les tâches automatiques en coulisses.":"Me: the design, the content, the access rules and the roll-out to the team. The AI agent: building the pages and running the automatic tasks behind the scenes.",
+ "Pour les collaborateurs : congés, objectifs, tâches et entretiens au même endroit":"For employees: time off, goals, tasks and reviews in one place",
+ "Pour les managers : validations, soldes et KPIs de l'équipe sur une seule page":"For managers: approvals, balances and team KPIs on a single page",
+ "Pour les RH : des campagnes d'entretiens qui partent et se relancent toutes seules":"For HR: review campaigns that send and chase themselves",
+ "Tout ce que contient la plateforme":"Everything the platform holds","Mon rôle et celui de l’agent IA":"My role and the AI agent's",
+ "Mon projet personnel : un produit conçu de zéro, 384 visiteurs uniques dans les premières 24 h.":"My personal project: a product built from scratch, 384 unique visitors in the first 24 h.",
+ "★ Voir mon projet phare":"★ See my flagship project","Explorer la ville":"Explore the city","· SIRH & communication interne":"· HRIS & internal communication",
+})
+
+SRC += [
+ ("say('Mon projet phare : tout le SIRH au même endroit'", "say('My flagship project: all of HRIS in one place'"),
+ ("say('Mon projet signature : un produit conçu de zéro'", "say('My signature project: a product built from scratch'"),
+ ("<i>· SIRH &amp; communication interne</i></span><a class=\"w1\" href=\"#people\">★ Voir mon projet phare</a><button class=\"w2\" type=\"button\">Explorer la ville</button>", "<i>· HRIS &amp; internal communication</i></span><a class=\"w1\" href=\"#people\">★ See my flagship project</a><button class=\"w2\" type=\"button\">Explore the city</button>"),
+ ("w.setAttribute('aria-label','Bienvenue')", "w.setAttribute('aria-label','Welcome')"),
+]
