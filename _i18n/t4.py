@@ -136,3 +136,5 @@ EXTRA.update({
  "mon produit 360°":"my 360° product","(mon produit 360°)":"(my 360° product)","Projet personnel · de l'idée au produit en ligne":"Personal project · from idea to live product",
  "(Projet personnel · de l'idée au produit en ligne)":"(Personal project · from idea to live product)","Mon produit 360° : construit de zéro.":"My 360° product: built from scratch.",
 })
+
+EXTRA.update({"★ Projet phare":"★ Flagship project","People platform →":"People platform →"})
