@@ -97,3 +97,36 @@ for _x in _j.load(open(__import__('os').path.join(__import__('os').path.dirname(
     _t = _x.strip()
     if _r.match(r'^(RVB|CMJN) [\d ]+$', _t):
         EXTRA[_t] = _t.replace('RVB', 'RGB').replace('CMJN', 'CMYK')
+
+# People platform card (rewritten Nov 2026)
+EXTRA.update({
+ "Un seul espace pour tous les sujets RH de Cloudi-Fi, avec un menu latéral et un guide sur chaque page. Chacun ne voit que ce qu'il a le droit de voir, et un agent IA tient les données à jour.":"One place for every people topic at Cloudi-Fi, with a sidebar and a guide on every page. Each person sees only what they are allowed to see, and an AI agent keeps the data up to date.",
+ "Démo : l'espace manager":"Demo: the manager space","Démo : l'espace prestataire":"Demo: the contractor space","Démo guidée":"Guided demo",
+ "valider les congés, suivre les soldes, les factures et les KPIs de l'équipe":"approve time off, follow the team's balances, invoices and KPIs",
+ "poser un congé, suivre son solde et le calendrier partagé, envoyer une facture":"request time off, follow your balance and the shared calendar, send an invoice",
+ "People handbook":"People handbook","Espace d'équipe":"Team space","Espace personnel":"Personal space","Pour les RH":"For HR","Partout":"Everywhere",
+ "comment on travaille (entreprise, politiques, programmes, infos pratiques, handbooks des équipes, ressources) avec une barre de recherche ; chacun propose des ressources, validées par la direction ou les RH ; l'organigramme en bas, où chacun modifie sa propre carte":"how we work (company, policies, programmes, practical info, team handbooks, resources) with a search bar; anyone can suggest a resource, approved by leadership or HR; the org chart at the bottom, where everyone edits their own card",
+ "les OKRs de chaque équipe et l'objectif de l'entreprise, les ressources de l'équipe, les KPIs par personne pour les managers, la validation des congés avec les soldes, et les factures des prestataires dès qu'elles arrivent":"every team's OKRs and the company target, the team's resources, KPIs per person for managers, time-off approvals with balances, and contractor invoices as soon as they arrive",
+ "mon tableau de bord, mes tâches, mes KPIs, la gestion des congés et des factures pour les prestataires (formulaire, solde, demandes, calendrier partagé) et mes entretiens, privés ; les collègues sur PayFit ou Remote voient où faire leur demande":"my dashboard, my tasks, my KPIs, time off and invoices for contractors (form, balance, requests, shared calendar) and my reviews, kept private; colleagues on PayFit or Remote see where to ask",
+ "les campagnes d'entretiens et de feedback des pairs, le Hiring Hub (postes ouverts, candidats, file d'actions, tendances), les analytics de la newsletter et des e-coffees, les réponses aux e-mails, l'onboarding et les pages LinkedIn":"review and peer feedback campaigns, the Hiring Hub (open roles, candidates, action queue, trends), newsletter and e-coffee analytics, email replies, onboarding and LinkedIn pages",
+ "un guide et une démo guidée sur chaque page, une visite de toute la plateforme, un bouton commentaire, un journal de toutes les modifications, et « voir en tant que » pour les managers et les RH":"a guide and a guided demo on every page, a tour of the whole platform, a comment button, a log of every change, and “view as” for managers and HR",
+ "l'agent IA envoie les e-mails de congés au salarié et au valideur, synchronise les congés avec le fichier Time Off, envoie les formulaires, relances et invitations Google Meet des campagnes, et tient les tâches d'onboarding à jour":"the AI agent sends time-off emails to the employee and the approver, syncs time off with the Time Off sheet, sends campaign forms, reminders and Google Meet invites, and keeps onboarding tasks up to date",
+ ": valider les congés, suivre les soldes, les factures et les KPIs de l'équipe":": approve time off, follow the team's balances, invoices and KPIs",
+ ": poser un congé, suivre son solde et le calendrier partagé, envoyer une facture":": request time off, follow your balance and the shared calendar, send an invoice",
+})
+
+EXTRA.update({
+ "Le SIRH tout-en-un, tenu à jour par un agent IA":"All-in-one HRIS, kept up to date by an AI agent","Agent IA":"AI agent",
+ "J'ai conçu la plateforme avec un agent IA : le People handbook, un espace d'équipe, un espace personnel et des pages réservées aux RH.":"I designed the platform with an AI agent: the People handbook, a team space, a personal space and pages for HR only.",
+ "Valider les congés, suivre les soldes, les factures et les KPIs de l'équipe":"Approve time off, follow the team's balances, invoices and KPIs",
+ "Poser un congé, suivre son solde et le calendrier partagé, envoyer une facture":"Request time off, follow your balance and the shared calendar, send an invoice",
+})
+_PP=[("People handbook","People handbook"),("Espace d'équipe","Team space"),("Espace personnel","Personal space"),("Pour les RH","For HR"),("Partout","Everywhere"),("En coulisses","Behind the scenes")]
+for _fr,_en in _PP:
+    for _k,_v in list(EXTRA.items()):
+        pass
+_bodies={k:v for k,v in EXTRA.items() if k.startswith(('comment on travaille','les OKRs de chaque','mon tableau de bord, mes tâches','les campagnes d','un guide et une démo','l\'agent IA envoie'))}
+_order=['comment on travaille','les OKRs de chaque','mon tableau de bord, mes tâches','les campagnes d','un guide et une démo',"l'agent IA envoie"]
+for (_fr,_en),_pre in zip(_PP,_order):
+    _k=[k for k in _bodies if k.startswith(_pre)][0]
+    EXTRA[_fr+' : '+_k]=_en+': '+_bodies[_k]
